@@ -1,7 +1,7 @@
 import { Filter } from 'lucide-react'
 import { useState } from 'react'
 import { AddClientModal } from './AddClientModal'
-import { ClientFilterModal } from './ClientFilterModal'
+import { ClientFilterDropdown } from './ClientFilterDropdown'
 import { ClientActionsDropdown } from './ClientActionsDropdown'
 import { EditClientModal } from './EditClientModal'
 import { DeleteConfirmModal } from './DeleteConfirmModal'
@@ -185,27 +185,36 @@ export function ProjectTable() {
             <span>Ajouter un client</span>
           </button>
         
-          <button
-            onClick={() => setIsFilterModalOpen(true)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors text-sm ${
-              hasActiveFilters()
-                ? 'border-blue-300 bg-blue-50 text-blue-700'
-                : 'border-gray-200 hover:bg-gray-50 text-gray-700'
-            }`}
-          >
-            <div className="relative">
-              <Filter className="w-4 h-4" />
+          <div className="relative">
+            <button
+              onClick={() => setIsFilterModalOpen(!isFilterModalOpen)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors text-sm ${
+                hasActiveFilters()
+                  ? 'border-blue-300 bg-blue-50 text-blue-700'
+                  : 'border-gray-200 hover:bg-gray-50 text-gray-700'
+              }`}
+            >
+              <div className="relative">
+                <Filter className="w-4 h-4" />
+                {hasActiveFilters() && (
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full"></div>
+                )}
+              </div>
+              <span>Filtrer</span>
               {hasActiveFilters() && (
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full"></div>
+                <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                  {filteredClients.length}
+                </span>
               )}
-            </div>
-            <span>Filtrer</span>
-            {hasActiveFilters() && (
-              <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                {filteredClients.length}
-              </span>
-            )}
-          </button>
+            </button>
+
+            <ClientFilterDropdown
+              isOpen={isFilterModalOpen}
+              onClose={() => setIsFilterModalOpen(false)}
+              onApplyFilters={handleApplyFilters}
+              currentFilters={activeFilters}
+            />
+          </div>
         </div>
       </div>
 
@@ -277,13 +286,6 @@ export function ProjectTable() {
         onAddClient={handleAddClient}
       />
 
-      {/* Filter Modal */}
-      <ClientFilterModal
-        isOpen={isFilterModalOpen}
-        onClose={() => setIsFilterModalOpen(false)}
-        onApplyFilters={handleApplyFilters}
-        currentFilters={activeFilters}
-      />
 
       {/* Edit Client Modal */}
       <EditClientModal
