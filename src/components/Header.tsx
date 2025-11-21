@@ -1,7 +1,7 @@
 // src/components/Header.tsx
 import React from 'react'
 import { Search, Bell, ChevronDown, Menu } from 'lucide-react'
-import colorixLogo from '../assets/colorixorigin.png'
+import colorixLogo from '../assets/Colo.svg'
 
 interface HeaderProps {
   onToggleSidebar: () => void
@@ -25,7 +25,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
             <img
               src={colorixLogo}
               alt="Colorix logo"
-              className="w-10 h-10"
+              className="w-20 h-25"
             />
             <div>
               <span className="text-2xl font-bold text-gray-800 leading-none block">
