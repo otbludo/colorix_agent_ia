@@ -115,7 +115,7 @@ export function LoginPage() {
               <img
                 src={colorixLogo}
                 alt="Colorix logo"
-                className="w-16 h-16 drop-shadow-[0_10px_35px_rgba(10,40,80,0.55)]"
+                className="w-40 h-33 drop-shadow-[0_10px_35px_rgba(10,40,80,0.55)]"
               />
             </div>
             <div className="inline-flex items-center gap-3 rounded-full bg-white/5 px-4 py-1 border border-white/10">
@@ -141,9 +141,7 @@ export function LoginPage() {
           {/* Carte de connexion */}
           <div className="w-full max-w-md mx-auto">
             <div className="bg-gradient-to-b from-white/15 via-white/10 to-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_25px_80px_rgba(3,12,32,0.45)] px-8 py-10">
-              <div className="flex justify-center mb-6">
-                <img src={colorixLogo} alt="Colorix" className="w-14 h-14" />
-              </div>
+             
               {/* Titres */}
               <div className="text-center mb-8 space-y-2">
                 <h2 className="text-2xl font-semibold text-white">

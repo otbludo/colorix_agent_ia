@@ -128,7 +128,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <img
                 src={colorixLogo}
                 alt="Colorix logo"
-                className="w-10 h-10 drop-shadow-lg"
+                className="w-40 h-36 drop-shadow-lg"
                 style={{ filter: 'drop-shadow(0 6px 12px rgba(5,25,62,0.45))' }}
               />
             </div>
