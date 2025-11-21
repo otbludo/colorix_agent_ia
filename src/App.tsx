@@ -1,15 +1,24 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { Dashboard } from './pages/Dashboard'
 import { LoginPage } from './pages/LoginPages'
 
 function App() {
-  const [count, setCount] = useState(0)
+  return (
+    <Routes>
+      {/* Route par défaut : redirection vers /login (tu peux changer vers /dashboard si tu préfères) */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
 
-   return <Dashboard />
-  // return <LoginPage />
+      {/* Page de login */}
+      <Route path="/login" element={<LoginPage />} />
+
+      {/* Tableau de bord */}
+      <Route path="/dashboard" element={<Dashboard />} />
+
+      {/* Route catch-all : si l'URL ne correspond à rien */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  )
 }
 
 export default App
