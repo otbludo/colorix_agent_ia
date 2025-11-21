@@ -1,14 +1,13 @@
 // src/components/Header.tsx
 import React from 'react'
 import { Search, Bell, ChevronDown, Menu } from 'lucide-react'
+import colorixLogo from '../assets/colorixorigin.png'
 
 interface HeaderProps {
   onToggleSidebar: () => void
 }
 
 export function Header({ onToggleSidebar }: HeaderProps) {
-  const colorixBlue = '#1e3a8a'
-
   return (
     <header className="bg-white px-4 sm:px-6 lg:px-8 py-4 shadow-md sticky top-0 z-20">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-8">
@@ -23,12 +22,11 @@ export function Header({ onToggleSidebar }: HeaderProps) {
           </button>
 
           <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: colorixBlue }}
-            >
-              <div className="w-6 h-6 border-4 border-white rounded-full"></div>
-            </div>
+            <img
+              src={colorixLogo}
+              alt="Colorix logo"
+              className="w-10 h-10"
+            />
             <div>
               <span className="text-2xl font-bold text-gray-800 leading-none block">
                 COLORIX

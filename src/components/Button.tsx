@@ -11,11 +11,12 @@ export function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    'px-8 py-3 rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900'
+    'px-8 py-3 rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent'
   const variantStyles = {
     primary:
-      'bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-xl active:scale-95',
-    secondary: 'bg-gray-700 hover:bg-gray-600 text-white',
+      'bg-[#2ec866] hover:bg-[#29b159] text-white shadow-lg shadow-[#29b159]/30 hover:shadow-xl active:scale-95',
+    secondary:
+      'bg-white/15 text-white border border-white/30 hover:bg-white/25 active:scale-95',
   }
   return (
     <button

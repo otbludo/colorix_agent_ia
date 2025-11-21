@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Input } from '../components/Input'
 import { Button } from '../components/Button'
+import colorixLogo from '../assets/colorixorigin.png'
 
 export function LoginPage() {
   const [email, setEmail] = useState('')
@@ -12,9 +13,9 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-black relative overflow-hidden flex items-center justify-center px-4">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#020c1f] via-[#051937] to-[#073061] relative overflow-hidden flex items-center justify-center px-4">
       {/* Pattern impression & communication sur tout le fond */}
-      <div className="absolute inset-0 opacity-[0.12]">
+      <div className="absolute inset-0 opacity-[0.2]">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern
@@ -28,7 +29,7 @@ export function LoginPage() {
               {/* Imprimante */}
               <g
                 transform="translate(10, 10)"
-                stroke="#1f2937"
+                stroke="#0f3667"
                 strokeWidth="1.5"
                 fill="none"
               >
@@ -41,7 +42,7 @@ export function LoginPage() {
               {/* Carte de visite / flyer */}
               <g
                 transform="translate(70, 10)"
-                stroke="#1f2937"
+                stroke="#0f3667"
                 strokeWidth="1.5"
                 fill="none"
               >
@@ -54,7 +55,7 @@ export function LoginPage() {
               {/* Bulle de discussion */}
               <g
                 transform="translate(10, 70)"
-                stroke="#1f2937"
+                stroke="#0f3667"
                 strokeWidth="1.5"
                 fill="none"
               >
@@ -68,7 +69,7 @@ export function LoginPage() {
               {/* Mégaphone */}
               <g
                 transform="translate(70, 70)"
-                stroke="#1f2937"
+                stroke="#0f3667"
                 strokeWidth="1.5"
                 fill="none"
               >
@@ -92,10 +93,16 @@ export function LoginPage() {
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            fill="#4F7CFF"
-            fillOpacity="1"
-            d="M0,160 C320,100 420,220 720,180 C1020,140 1120,200 1440,160 L1440,320 L0,320 Z"
+            fill="url(#colorixWave)"
+            d="M0,170 C320,120 420,230 720,190 C1020,150 1120,210 1440,170 L1440,320 L0,320 Z"
           />
+          <defs>
+            <linearGradient id="colorixWave" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#0c58c9" />
+              <stop offset="50%" stopColor="#1b7bff" />
+              <stop offset="100%" stopColor="#34c759" />
+            </linearGradient>
+          </defs>
         </svg>
       </div>
 
@@ -104,6 +111,13 @@ export function LoginPage() {
         <div className="flex flex-col items-center gap-10 text-center">
           {/* Texte / branding au-dessus du formulaire */}
           <div className="space-y-6 max-w-xl">
+            <div className="flex justify-center">
+              <img
+                src={colorixLogo}
+                alt="Colorix logo"
+                className="w-16 h-16 drop-shadow-[0_10px_35px_rgba(10,40,80,0.55)]"
+              />
+            </div>
             <div className="inline-flex items-center gap-3 rounded-full bg-white/5 px-4 py-1 border border-white/10">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
               <p className="text-xs tracking-wide text-gray-300 uppercase">
@@ -126,7 +140,10 @@ export function LoginPage() {
 
           {/* Carte de connexion */}
           <div className="w-full max-w-md mx-auto">
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl px-8 py-10">
+            <div className="bg-gradient-to-b from-white/15 via-white/10 to-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_25px_80px_rgba(3,12,32,0.45)] px-8 py-10">
+              <div className="flex justify-center mb-6">
+                <img src={colorixLogo} alt="Colorix" className="w-14 h-14" />
+              </div>
               {/* Titres */}
               <div className="text-center mb-8 space-y-2">
                 <h2 className="text-2xl font-semibold text-white">
@@ -178,7 +195,7 @@ export function LoginPage() {
                 </div>
 
                 <div className="pt-2 space-y-4">
-                  <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full">
                     Se connecter
                   </Button>
 

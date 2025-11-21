@@ -1,0 +1,12 @@
+<svg width="72" height="72" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="colorixOuter" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f2f7f" />
+      <stop offset="100%" stop-color="#1f52c6" />
+    </linearGradient>
+  </defs>
+  <circle cx="36" cy="36" r="34" fill="url(#colorixOuter)" />
+  <circle cx="36" cy="36" r="20" fill="none" stroke="#ffffff" stroke-width="8" />
+  <circle cx="36" cy="36" r="10" fill="#0f2f7f" />
+</svg>
+

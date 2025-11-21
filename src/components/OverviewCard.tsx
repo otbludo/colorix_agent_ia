@@ -26,9 +26,9 @@ export function OverviewCard({
   const colorixRed = '#b91c1c'
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
       <div
-        className={`w-12 h-12 rounded-full ${iconBgColor} flex items-center justify-center mb-4`}
+        className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${iconBgColor} flex items-center justify-center mb-4 shadow-lg`}
       >
         {icon}
       </div>
