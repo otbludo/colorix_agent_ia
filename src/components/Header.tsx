@@ -2,10 +2,9 @@
 import { useState } from 'react'
 import { Search, Bell, ChevronDown, Menu } from 'lucide-react'
 import colorixLogo from '../assets/Colo.svg'
-import { Profile } from './Profile'
+import { ProfileDropdown } from './ProfileDropdown'
 interface HeaderProps {
   onToggleSidebar: () => void
-  onProfileClick: () => void
 }
 
 export function Header({ onToggleSidebar }: HeaderProps) {
@@ -64,25 +63,31 @@ export function Header({ onToggleSidebar }: HeaderProps) {
             <Bell className="w-5 h-5 text-gray-600" />
           </button>
 
-          <button
-            onClick={handleProfileClick}
-            className="flex items-center gap-3 bg-gray-100 rounded-full pl-2 pr-4 py-2 hover:bg-gray-200 transition-colors"
-          >
-            <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
-              alt="Alex meian"
-              className="w-8 h-8 rounded-full"
+          <div className="relative">
+            <button
+              onClick={handleProfileClick}
+              className="flex items-center gap-3 bg-gray-100 rounded-full pl-2 pr-4 py-2 hover:bg-gray-200 transition-colors"
+            >
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
+                alt="Alex Meian"
+                className="w-8 h-8 rounded-full"
+              />
+              <div className="text-left">
+                <div className="text-sm font-semibold text-gray-800">Alex Meian</div>
+                <div className="text-xs text-gray-500">Product Manager</div>
+              </div>
+              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            <ProfileDropdown
+              isOpen={isProfileOpen}
+              onClose={() => setIsProfileOpen(false)}
             />
-            <div className="text-left">
-              <div className="text-sm font-semibold text-gray-800">Alex meian</div>
-              <div className="text-xs text-gray-500">Product manager</div>
-            </div>
-            <ChevronDown className="w-4 h-4 text-gray-400" />
-          </button>
+          </div>
         </div>
       </div>
     </header>
-    <Profile isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
     </>
   )
 }

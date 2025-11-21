@@ -15,7 +15,6 @@ import {
 } from 'lucide-react'
 export function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-white">
@@ -24,7 +23,6 @@ export function Dashboard() {
       <div className="flex flex-col lg:pl-[280px]">
         <Header
           onToggleSidebar={() => setIsSidebarOpen(true)}
-          onProfileClick={() => setIsProfileOpen(!isProfileOpen)}
         />
 
        
