@@ -13,3 +13,22 @@ class CustomerCreate(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CustomerUpdate(BaseModel):
+    id: int
+    name: Optional[str]
+    first_name: Optional[str]
+    number: Optional[str]
+    email: Optional[EmailStr]
+    company: Optional[str]
+    city: Optional[str]
+    country: Optional[str]
+    status: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class CustomerDelete(BaseModel):
+    id: int
