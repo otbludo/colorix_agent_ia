@@ -28,7 +28,7 @@ class AdminCRUD:
             number=admin_data.number,
             email=admin_data.email,
             post=admin_data.post,
-            role="superadmin",
+            role=admin_data.role,
             password=hash_password(admin_data.password),
             status=admin_data.status,
             devis_ids=admin_data.devis_ids

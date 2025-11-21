@@ -2,8 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.database import get_db, AsyncSession
 from services.admin_service import AdminCRUD
-from services.admin_service import AdminCreate
-from dependencies.auth import superadmin_required
+from schemas.admin_schemas import AdminCreate
+from schemas.customer_schemas import CustomerCreate
+from services.manage_customers_service import CustomerCRUD
+from dependencies.auth import superadmin_required, admin_required
 
 router = APIRouter()
 
@@ -20,3 +22,10 @@ async def add_admin(admin_data: AdminCreate, current_user: dict = Depends(supera
     admin_crud = AdminCRUD(db)
     return  await admin_crud.Creat_admin(admin_data)
    
+
+@router.post("/add-customer", status_code=status.HTTP_201_CREATED)
+async def add_customer(customer_data: CustomerCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
+    customer_crud = CustomerCRUD(db)
+    return await customer_crud.create_customer(customer_data)
+   
+

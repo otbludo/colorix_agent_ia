@@ -15,14 +15,14 @@ class Admin(Base):
     status = Column(String(15), index=True)
     devis_ids = Column(ARRAY(Integer))
 
-class Clients(Base):
+class Customer(Base):
     __tablename__ = "customers"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), index=True)
     first_name = Column(String(50), index=True)
     number = Column(String(15), unique=True, index=True)
     email = Column(String(255), unique=True, index=True)
-    company = Column(String(50), unique=True, index=True)
-    city = Column(String(50), unique=True, index=True)
-    country = Column(String(50), unique=True, index=True)
+    company = Column(String(50), index=True)  
+    city = Column(String(50), index=True)      
+    country = Column(String(50), index=True) 
     status = Column(String(15), index=True)
