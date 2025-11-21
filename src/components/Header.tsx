@@ -1,14 +1,22 @@
 // src/components/Header.tsx
-import React from 'react'
+import { useState } from 'react'
 import { Search, Bell, ChevronDown, Menu } from 'lucide-react'
 import colorixLogo from '../assets/Colo.svg'
-
+import { Profile } from './Profile'
 interface HeaderProps {
   onToggleSidebar: () => void
+  onProfileClick: () => void
 }
 
 export function Header({ onToggleSidebar }: HeaderProps) {
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const handleProfileClick = () => {
+    setIsProfileOpen(!isProfileOpen)
+  }
+
+
   return (
+    <>
     <header className="bg-white px-4 sm:px-6 lg:px-8 py-4 shadow-md sticky top-0 z-20">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-8">
         {/* Brand + Menu */}
@@ -56,7 +64,10 @@ export function Header({ onToggleSidebar }: HeaderProps) {
             <Bell className="w-5 h-5 text-gray-600" />
           </button>
 
-          <button className="flex items-center gap-3 bg-gray-100 rounded-full pl-2 pr-4 py-2 hover:bg-gray-200 transition-colors">
+          <button
+            onClick={handleProfileClick}
+            className="flex items-center gap-3 bg-gray-100 rounded-full pl-2 pr-4 py-2 hover:bg-gray-200 transition-colors"
+          >
             <img
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
               alt="Alex meian"
@@ -71,5 +82,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
         </div>
       </div>
     </header>
+    <Profile isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+    </>
   )
 }

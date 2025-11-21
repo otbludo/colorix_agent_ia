@@ -1,5 +1,4 @@
-import React from 'react'
-import { ChevronDown } from 'lucide-react'
+import { Filter } from 'lucide-react'
 interface Project {
   name: string
   manager: string
@@ -54,19 +53,29 @@ export function ProjectTable() {
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
-        <h2 className="text-xl font-bold text-[#1A1A1A]">Project summary</h2>
+        <h2 className="text-xl font-bold text-[#1A1A1A]">Client summary</h2>
         <div className="flex flex-wrap gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-sm">
-            <span className="text-sm text-gray-700">Project</span>
-            <ChevronDown className="w-4 h-4 text-gray-400" />
+          <button
+            onClick={() => {
+              // Simulation de redirection vers la page d'ajout de client
+              console.log('Redirection vers la page d\'ajout de client...');
+              alert('Redirection simulée vers la page d\'ajout de client');
+            }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors text-sm font-medium"
+          >
+            <span>Ajouter un client</span>
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-sm">
-            <span className="text-sm text-gray-700">Project manager</span>
-            <ChevronDown className="w-4 h-4 text-gray-400" />
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-sm">
-            <span className="text-sm text-gray-700">Status</span>
-            <ChevronDown className="w-4 h-4 text-gray-400" />
+        
+          <button
+            onClick={() => {
+              // Simulation du filtrage de la liste des clients
+              console.log('Ouverture du filtre des clients...');
+              alert('Filtrage simulé - ouverture du panneau de filtres');
+            }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-sm"
+          >
+            <Filter className="w-4 h-4 text-gray-400" />
+            <span className="text-sm text-gray-700">Filtrer</span>
           </button>
         </div>
       </div>
