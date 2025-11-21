@@ -1,5 +1,4 @@
-// src/pages/Dashboard.tsx
-import React from 'react'
+import { useState } from 'react'
 import { Sidebar } from '../components/Sidebar'
 import { Header } from '../components/Header'
 import { OverviewCard } from '../components/OverviewCard'
@@ -14,27 +13,28 @@ import {
   Users,
   ChevronDown,
 } from 'lucide-react'
-
 export function Dashboard() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+    <div className="min-h-screen bg-[#E8DDD3]">
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      <div className="flex-1 ml-[28px]">
-        <Header />
+      <div className="flex flex-col lg:pl-[280px]">
+        <Header onToggleSidebar={() => setIsSidebarOpen(true)} />
 
-        <main className="p-8">
+        <main className="p-4 sm:p-6 lg:p-8 space-y-8">
           {/* Overview Section */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Overview</h2>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white hover:bg-gray-100 transition-colors">
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <h2 className="text-2xl font-bold text-[#1A1A1A]">Overview</h2>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white hover:bg-gray-50 transition-colors">
               <span className="text-sm text-gray-700">Last 30 days</span>
               <ChevronDown className="w-4 h-4 text-gray-400" />
             </button>
           </div>
 
           {/* Overview Cards */}
-          <div className="grid grid-cols-4 gap-6 mb-8">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <OverviewCard
               icon={<BarChart3 className="w-6 h-6 text-white" />}
               title="Total revenue"
@@ -74,8 +74,8 @@ export function Dashboard() {
           </div>
 
           {/* Project Summary and Progress */}
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            <div className="col-span-2">
+          <div className="grid gap-6 xl:grid-cols-3">
+            <div className="xl:col-span-2">
               <ProjectTable />
             </div>
             <div>
@@ -84,8 +84,8 @@ export function Dashboard() {
           </div>
 
           {/* Today Task and Projects Workload */}
-          <div className="grid grid-cols-3 gap-6">
-            <div className="col-span-2">
+          <div className="grid gap-6 xl:grid-cols-3">
+            <div className="xl:col-span-2">
               <TaskList />
             </div>
             <div>

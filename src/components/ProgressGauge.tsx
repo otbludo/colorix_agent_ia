@@ -14,8 +14,8 @@ export function ProgressGauge() {
   const colorixGold = '#ca8a04'
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
+      <div className="flex flex-wrap gap-3 items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-800">Overall Progress</h2>
         <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
           <span className="text-sm text-gray-700">All</span>
@@ -25,7 +25,7 @@ export function ProgressGauge() {
 
       <div className="flex flex-col items-center">
         {/* Circular Gauge */}
-        <div className="relative w-64 h-64">
+        <div className="relative w-48 h-48 sm:w-64 sm:h-64">
           <svg className="w-full h-full -rotate-90" viewBox="0 0 200 200">
             {/* Background arc */}
             <circle
@@ -81,7 +81,7 @@ export function ProgressGauge() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-8 mt-8 w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-8 w-full">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-800">95</div>
             <div className="text-xs text-gray-500 mt-1">Total projects</div>

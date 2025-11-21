@@ -38,11 +38,11 @@ export function TaskList() {
     },
   ]
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
       <h2 className="text-xl font-bold text-[#1A1A1A] mb-6">Today task</h2>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200">
+      <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200">
         {tabs.map((tab) => (
           <button
             key={tab.label}
@@ -69,7 +69,7 @@ export function TaskList() {
         {tasks.map((task, index) => (
           <div
             key={index}
-            className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <div className="flex items-center gap-3">
               <div className="w-5 h-5 rounded-full border-2 border-[#FF6B6B]"></div>

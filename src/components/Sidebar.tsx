@@ -10,9 +10,15 @@ import {
   Layers,
   Settings,
   Plus,
+  X,
 } from 'lucide-react'
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean
+  onClose?: () => void
+}
+
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const menuItems = [
     {
       icon: LayoutDashboard,
@@ -62,43 +68,74 @@ export function Sidebar() {
   const colorixGold = '#ca8a04'
 
   return (
-    <aside className="w-[280px] bg-[#0f172a] text-white h-screen fixed left-0 top-0 flex flex-col p-6">
-      {/* Logo */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className={`w-10 h-10 bg-[${colorixBlue}] rounded-full flex items-center justify-center`}>
-          <div className="w-6 h-6 border-4 border-white rounded-full"></div>
+    <>
+      <div
+        className={`fixed inset-0 bg-black/40 z-30 transition-opacity lg:hidden ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={onClose}
+      ></div>
+
+      <aside
+        className={`fixed z-40 top-0 left-0 h-full w-72 bg-[#0f172a] text-white flex flex-col p-6 transition-transform duration-300 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:w-[280px] lg:translate-x-0`}
+      >
+        {/* Logo */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: colorixBlue }}
+            >
+              <div className="w-6 h-6 border-4 border-white rounded-full"></div>
+            </div>
+            <span className="text-xl font-bold">COLORIX</span>
+          </div>
+
+          <button
+            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            onClick={onClose}
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-        <span className="text-xl font-bold">COLORIX</span>
-      </div>
 
-      {/* Create New Project Button */}
-      <button className={`bg-white text-black rounded-full py-3 px-4 flex items-center gap-2 mb-8 hover:bg-gray-100 transition-colors`}>
-        <Plus className={`w-5 h-5 text-[${colorixGreen}]`} />
-        <span className="font-medium">Create new project</span>
-      </button>
+        {/* Create New Project Button */}
+        <button className="bg-white text-black rounded-full py-3 px-4 flex items-center gap-2 mb-8 hover:bg-gray-100 transition-colors">
+          <Plus
+            className="w-5 h-5"
+            style={{
+              color: colorixGreen,
+            }}
+          />
+          <span className="font-medium">Create new project</span>
+        </button>
 
-      {/* Navigation Menu */}
-      <nav className="flex-1">
-        <ul className="space-y-1">
-          {menuItems.map((item, index) => {
-            const Icon = item.icon
-            return (
-              <li key={index}>
-                <button
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-full transition-colors ${
-                    item.active
-                      ? `bg-white text-[${colorixBlue}]`
-                      : 'text-white hover:bg-gray-800'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
-                </button>
-              </li>
-            )
-          })}
-        </ul>
-      </nav>
-    </aside>
+        {/* Navigation Menu */}
+        <nav className="flex-1 overflow-y-auto">
+          <ul className="space-y-1">
+            {menuItems.map((item, index) => {
+              const Icon = item.icon
+              return (
+                <li key={index}>
+                  <button
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-full transition-colors ${
+                      item.active
+                        ? 'bg-white text-[#0f172a]'
+                        : 'text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{item.label}</span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
+      </aside>
+    </>
   )
 }

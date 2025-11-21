@@ -52,26 +52,27 @@ const statusColors = {
 }
 export function ProjectTable() {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
         <h2 className="text-xl font-bold text-[#1A1A1A]">Project summary</h2>
-        <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+        <div className="flex flex-wrap gap-3">
+          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-sm">
             <span className="text-sm text-gray-700">Project</span>
             <ChevronDown className="w-4 h-4 text-gray-400" />
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-sm">
             <span className="text-sm text-gray-700">Project manager</span>
             <ChevronDown className="w-4 h-4 text-gray-400" />
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-sm">
             <span className="text-sm text-gray-700">Status</span>
             <ChevronDown className="w-4 h-4 text-gray-400" />
           </button>
         </div>
       </div>
 
-      <table className="w-full">
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[640px]">
         <thead>
           <tr className="border-b border-gray-200">
             <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
@@ -131,7 +132,8 @@ export function ProjectTable() {
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   )
 }

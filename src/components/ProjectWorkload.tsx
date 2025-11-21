@@ -16,8 +16,8 @@ export function ProjectsWorkload() {
     },
   ]
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
+      <div className="flex flex-wrap gap-3 items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-[#1A1A1A]">Projects Workload</h2>
         <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
           <span className="text-sm text-gray-700">Last 3 months</span>
@@ -25,7 +25,7 @@ export function ProjectsWorkload() {
         </button>
       </div>
 
-      <div className="flex items-center justify-center gap-8 py-8">
+      <div className="flex flex-wrap items-center justify-center gap-6 py-4 sm:py-8">
         {workloadData.map((item, index) => (
           <div key={index} className="flex flex-col items-center">
             <div

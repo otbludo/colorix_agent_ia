@@ -14,11 +14,11 @@ export function LoginPage() {
   return (
     <div className="min-h-screen w-full bg-black relative overflow-hidden flex items-center justify-center px-4">
       {/* Pattern impression & communication sur tout le fond */}
-      <div className="absolute inset-0 opacity-[0.05]">
+      <div className="absolute inset-0 opacity-[0.12]">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern
-              id="food-pattern"
+              id="colorix-pattern"
               x="0"
               y="0"
               width="120"
@@ -28,7 +28,7 @@ export function LoginPage() {
               {/* Imprimante */}
               <g
                 transform="translate(10, 10)"
-                stroke="white"
+                stroke="#1f2937"
                 strokeWidth="1.5"
                 fill="none"
               >
@@ -41,7 +41,7 @@ export function LoginPage() {
               {/* Carte de visite / flyer */}
               <g
                 transform="translate(70, 10)"
-                stroke="white"
+                stroke="#1f2937"
                 strokeWidth="1.5"
                 fill="none"
               >
@@ -54,7 +54,7 @@ export function LoginPage() {
               {/* Bulle de discussion */}
               <g
                 transform="translate(10, 70)"
-                stroke="white"
+                stroke="#1f2937"
                 strokeWidth="1.5"
                 fill="none"
               >
@@ -68,7 +68,7 @@ export function LoginPage() {
               {/* Mégaphone */}
               <g
                 transform="translate(70, 70)"
-                stroke="white"
+                stroke="#1f2937"
                 strokeWidth="1.5"
                 fill="none"
               >
@@ -79,12 +79,12 @@ export function LoginPage() {
               </g>
             </pattern>
           </defs>
-          <rect width="100%" height="100%" fill="url(#food-pattern)" />
+          <rect width="100%" height="100%" fill="url(#colorix-pattern)" />
         </svg>
       </div>
 
-      {/* Vague bleue en bas */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none">
+      {/* Vague bleue en bas, étendue sur toute la largeur */}
+      <div className="absolute bottom-[-1px] left-0 right-0 h-80 pointer-events-none">
         <svg
           className="w-full h-full"
           viewBox="0 0 1440 320"
@@ -101,9 +101,9 @@ export function LoginPage() {
 
       {/* Contenu principal */}
       <div className="relative z-10 w-full max-w-5xl">
-        <div className="grid gap-10 md:grid-cols-[1.1fr,1fr] items-center">
-          {/* Texte / branding à gauche (desktop) */}
-          <div className="hidden md:block text-left space-y-6">
+        <div className="flex flex-col items-center gap-10 text-center">
+          {/* Texte / branding au-dessus du formulaire */}
+          <div className="space-y-6 max-w-xl">
             <div className="inline-flex items-center gap-3 rounded-full bg-white/5 px-4 py-1 border border-white/10">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
               <p className="text-xs tracking-wide text-gray-300 uppercase">
@@ -127,52 +127,6 @@ export function LoginPage() {
           {/* Carte de connexion */}
           <div className="w-full max-w-md mx-auto">
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl px-8 py-10">
-              {/* Logo */}
-              <div className="flex justify-center mb-6">
-                <svg
-                  width="56"
-                  height="56"
-                  viewBox="0 0 60 60"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* Cherry */}
-                  <circle cx="35" cy="40" r="15" fill="#FF6B9D" />
-                  <circle cx="25" cy="35" r="12" fill="#FF6B9D" />
-                  {/* Stem */}
-                  <path
-                    d="M30 25 Q28 15 25 10"
-                    stroke="#4ADE80"
-                    strokeWidth="2.5"
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M30 25 Q32 18 35 12"
-                    stroke="#4ADE80"
-                    strokeWidth="2.5"
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                  {/* Leaves */}
-                  <ellipse
-                    cx="24"
-                    cy="12"
-                    rx="6"
-                    ry="3"
-                    fill="#4ADE80"
-                    transform="rotate(-30 24 12)"
-                  />
-                  <ellipse
-                    cx="34"
-                    cy="14"
-                    rx="5"
-                    ry="2.5"
-                    fill="#4ADE80"
-                    transform="rotate(20 34 14)"
-                  />
-                </svg>
-              </div>
-
               {/* Titres */}
               <div className="text-center mb-8 space-y-2">
                 <h2 className="text-2xl font-semibold text-white">
