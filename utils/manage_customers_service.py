@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import HTTPException
 from db.models import Customer         
-from schemas.customer_schemas import CustomerCreate,CustomerUpdate, CustomerDelete
+from schemas.customer_schemas import CustomerCreate, CustomerUpdate, CustomerGet, CustomerDelete
 
 class CustomerCRUD:
     def __init__(self, db: AsyncSession):
@@ -103,5 +103,12 @@ class CustomerCRUD:
     
 
 
-    # async def select_customer():
+    async def list_customers(self, status: CustomerGet):
+        query = select(Customer)
+        if status:
+            query = query.where(Customer.status == status)
+
+        result = await self.db.execute(query)
+        return result.scalars().all()
+
     

@@ -30,5 +30,11 @@ class CustomerUpdate(BaseModel):
         orm_mode = True
 
 
+class CustomerGet(BaseModel):
+    status: Optional[str] = None
+
+
 class CustomerDelete(BaseModel):
     id: int
+
+

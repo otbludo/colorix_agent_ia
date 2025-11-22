@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from db.database import get_db, AsyncSession
 from utils.admin_service import AdminCRUD
 from schemas.admin_schemas import AdminCreate, AdminUpdateInit
-from schemas.customer_schemas import CustomerCreate, CustomerDelete, CustomerUpdate
+from schemas.customer_schemas import CustomerCreate, CustomerGet, CustomerDelete, CustomerUpdate
 from utils.manage_customers_service import CustomerCRUD
 from dependencies.auth import superadmin_required, admin_required
 
@@ -99,4 +99,11 @@ async def apply_update(token: str = Form(...), new_email: str = Form(...), new_p
 
 
 
-
+@router.post("/get-customers")
+async def get_customers(
+    data: CustomerGet,
+    current_user: dict = Depends(admin_required),
+    db: AsyncSession = Depends(get_db)
+):
+    customer_crud = CustomerCRUD(db)
+    return await customer_crud.list_customers(data.status)
