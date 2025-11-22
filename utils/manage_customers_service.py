@@ -85,6 +85,7 @@ class CustomerCRUD:
         await self.db.refresh(customer)
         return customer
     
+    
 
     async def delete_customer(self, customer_data: CustomerDelete):
         result = await self.db.execute(
@@ -102,5 +103,5 @@ class CustomerCRUD:
     
 
 
-  
+    # async def select_customer():
     

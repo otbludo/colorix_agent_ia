@@ -5,6 +5,8 @@ from api.v1.admin_router import router as admin_router
 
 
 
+
+
 app = FastAPI()
 add_cors_middleware(app)
 

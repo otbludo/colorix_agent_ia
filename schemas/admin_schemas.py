@@ -16,3 +16,5 @@ class AdminCreate(BaseModel):
         orm_mode = True
 
 
+class AdminUpdateInit(BaseModel):
+    email: EmailStr

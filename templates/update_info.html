@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mettre à jour vos informations</title>
+</head>
+<body>
+    <h1>Mettre à jour vos informations</h1>
+    <form action="/api/v1/apply-update" method="post">
+        <input type="hidden" name="token" value="{{ token }}">
+        <label>Email :</label><br>
+        <input type="email" name="new_email" value="{{ email }}"><br><br>
+        <label>Numéro de téléphone :</label><br>
+        <input type="text" name="new_phone" value="{{ phone }}"><br><br>
+        <button type="submit">Mettre à jour</button>
+    </form>
+</body>
+</html>
