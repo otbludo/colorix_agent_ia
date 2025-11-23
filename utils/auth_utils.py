@@ -4,8 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.models import Admin
 from db.security.hash import verify_password
 from db.security.jwt import create_access_token
+from messages.exceptions import InvalidEmail, InvalidPassword
 
-class AuthService:
+
+class AuthCRUD:
     def __init__(self, db: AsyncSession):
         self.db = db
 
@@ -16,12 +18,14 @@ class AuthService:
         user = result.scalars().first()
 
         if not user:
-            raise HTTPException(status_code=400, detail="Email incorrect")
+            raise InvalidEmail()
 
         if not verify_password(password, user.password):
-            raise HTTPException(status_code=400, detail="Mot de passe incorrect")
+            raise InvalidPassword()
 
         return user
+
+
 
     async def login(self, username: str, password: str):
         user = await self.authenticate_user(username, password)
@@ -34,4 +38,8 @@ class AuthService:
 
         token = create_access_token(payload)
 
-        return token, payload
+        return {
+            "access_token": token,
+            "token_type": "bearer"
+        }
+        

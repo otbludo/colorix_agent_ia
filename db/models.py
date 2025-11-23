@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import ARRAY
 from db.database import Base
@@ -16,9 +16,9 @@ class Admin(Base):
     role = Column(String(20), index=True)
     password = Column(String(255), nullable=False)
     status = Column(String(15), index=True)
-    devis_ids = Column(ARRAY(Integer))
     devis = relationship("Devis", back_populates="admin")
-
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
 
 class Customer(Base):
     __tablename__ = "customers"
@@ -33,6 +33,7 @@ class Customer(Base):
     # category = Column(String(15), index=True)
     status = Column(String(15), index=True)
     devis = relationship("Devis", back_populates="customer")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class Devis(Base):
@@ -54,3 +55,4 @@ class Devis(Base):
     # Relations (optionnel mais recommandé)
     customer = relationship("Customer", back_populates="devis")
     admin = relationship("Admin", back_populates="devis")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

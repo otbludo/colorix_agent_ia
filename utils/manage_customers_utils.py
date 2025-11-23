@@ -3,6 +3,9 @@ from sqlalchemy.future import select
 from fastapi import HTTPException
 from db.models import Customer         
 from schemas.customer_schemas import CustomerCreate, CustomerUpdate, CustomerGet, CustomerDelete
+from messages.exceptions import CustomerEmailExists, CustomerNumberExists, CustomerNotFound, CustomerEmailUsedByOther, CustomerNumberUsedByOther
+
+
 
 class CustomerCRUD:
     def __init__(self, db: AsyncSession):
@@ -16,7 +19,7 @@ class CustomerCRUD:
         )
         existing_email = result_email.scalars().first()
         if existing_email:
-            raise HTTPException(status_code=400, detail="Cet email est déjà utilisé.")
+            raise CustomerEmailExists()
 
         # Vérifier numéro existant
         result_number = await self.db.execute(
@@ -24,9 +27,8 @@ class CustomerCRUD:
         )
         existing_number = result_number.scalars().first()
         if existing_number:
-            raise HTTPException(status_code=400, detail="Ce numéro est déjà utilisé.")
+            raise CustomerNumberExists()
 
-        # Création du customer
         customer = Customer(
             name=customer_data.name,
             first_name=customer_data.first_name,
@@ -41,8 +43,16 @@ class CustomerCRUD:
         self.db.add(customer)
         await self.db.commit()
         await self.db.refresh(customer)
-
         return customer
+
+
+
+    async def list_customers(self, status: CustomerGet):
+        query = select(Customer)
+        if status:
+            query = query.where(Customer.status == status)
+        result = await self.db.execute(query)
+        return result.scalars().all()
 
 
 
@@ -52,8 +62,7 @@ class CustomerCRUD:
         customer = result.scalars().first()
 
         if not customer:
-            raise HTTPException(status_code=404, detail="Customer not found")
-
+            raise CustomerNotFound()
         # Vérifier si le nouvel email existe pour un autre client
         if customer_data.email:
             result_email = await self.db.execute(
@@ -63,7 +72,7 @@ class CustomerCRUD:
             )
             existing_email = result_email.scalars().first()
             if existing_email:
-                raise HTTPException(status_code=400, detail="Cet email est déjà utilisé par un autre client.")
+                raise CustomerEmailUsedByOther()
 
         # Vérifier si le nouveau numéro existe pour un autre client
         if customer_data.number:
@@ -74,7 +83,7 @@ class CustomerCRUD:
             )
             existing_number = result_number.scalars().first()
             if existing_number:
-                raise HTTPException(status_code=400, detail="Ce numéro est déjà utilisé par un autre client.")
+                raise CustomerNumberUsedByOther()
 
         # Mettre à jour uniquement les champs fournis
         for field, value in customer_data.dict(exclude_unset=True).items():
@@ -87,6 +96,7 @@ class CustomerCRUD:
     
     
 
+
     async def delete_customer(self, customer_data: CustomerDelete):
         result = await self.db.execute(
             select(Customer).filter(Customer.id == customer_data.id)
@@ -94,21 +104,13 @@ class CustomerCRUD:
 
         customer = result.scalars().first()
         if not customer:
-            raise HTTPException(status_code=404, detail="Customer not found")
+            raise CustomerNotFound()
 
-        # Suppression
         await self.db.delete(customer)
         await self.db.commit()
         return {"message": "Customer deleted successfully"}
     
 
 
-    async def list_customers(self, status: CustomerGet):
-        query = select(Customer)
-        if status:
-            query = query.where(Customer.status == status)
-
-        result = await self.db.execute(query)
-        return result.scalars().all()
-
+  
     

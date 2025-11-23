@@ -8,6 +8,9 @@ from fastapi import HTTPException
 from services.email.model import Model
 from services.email.send_mail import send_email
 from db.security.jwt import verify_token, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from messages.exceptions import AdminEmailExists, AdminNumberExists, AdminNotFound, AdminEmailMismatch
+
+
 
 class AdminCRUD:
     def __init__(self, db: AsyncSession):
@@ -18,13 +21,13 @@ class AdminCRUD:
         result_email = await self.db.execute(select(Admin).filter(Admin.email == admin_data.email))
         existing_email = result_email.scalars().first()
         if existing_email:
-            raise HTTPException(status_code=400, detail="Cet email est déjà utilisé.")
+            raise AdminEmailExists()
 
         # Vérifier si le numéro existe déjà
         result_number = await self.db.execute(select(Admin).filter(Admin.number == admin_data.number))
         existing_number = result_number.scalars().first()
         if existing_number:
-            raise HTTPException(status_code=400, detail="Ce numéro est déjà utilisé.")
+            raise AdminNumberExists()
 
         admin = Admin(
             name=admin_data.name,
@@ -54,16 +57,10 @@ class AdminCRUD:
         connected_admin = result.scalars().first()
 
         if not connected_admin:
-            raise HTTPException(
-                status_code=404,
-                detail="Administrateur connecté introuvable dans la base."
-            )
+            raise AdminNotFound()
 
         if admin_update.email != connected_admin.email:
-            raise HTTPException(
-                status_code=403,
-                detail="Cet email ne correspond pas à votre compte."
-            )
+            raise AdminEmailMismatch()
         
         # Créer le lien sécurisé
         payload = {
@@ -87,7 +84,6 @@ class AdminCRUD:
 
         # Envoi du mail
         await send_email(subject, html_message, connected_admin.email)
-
         return {"message": "Email envoyé pour mettre à jour vos informations."}
 
 
