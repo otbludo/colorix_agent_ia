@@ -118,42 +118,27 @@ export function LoginPage() {
                 className="w-40 h-33 drop-shadow-[0_10px_35px_rgba(10,40,80,0.55)]"
               />
             </div>
-            <div className="inline-flex items-center gap-3 rounded-full bg-white/5 px-4 py-1 border border-white/10">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              <p className="text-xs tracking-wide text-gray-300 uppercase">
-                Plateforme de suivi Colorix
-              </p>
-            </div>
-
             <h1 className="text-4xl lg:text-5xl font-semibold text-white leading-tight">
-              Bienvenue sur votre
+              Connexion
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-300">
-                espace de pilotage
+                Colorix
               </span>
             </h1>
-
-            <p className="text-sm text-gray-400 max-w-md">
-              Visualisez vos projets, suivez vos tâches et collaborez avec votre
-              équipe, le tout depuis un tableau de bord unique et fluide.
-            </p>
           </div>
 
           {/* Carte de connexion */}
           <div className="w-full max-w-md mx-auto">
-            <div className="bg-gradient-to-b from-white/15 via-white/10 to-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_25px_80px_rgba(3,12,32,0.45)] px-8 py-10">
+            <div className="bg-gradient-to-b from-white/15 via-white/10 to-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_25px_80px_rgba(3,12,32,0.45)] px-8 py-8">
              
-              {/* Titres */}
-              <div className="text-center mb-8 space-y-2">
-                <h2 className="text-2xl font-semibold text-white">
-                  Connexion à Colorix
+              {/* Titre */}
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-semibold text-white">
+                  Se connecter
                 </h2>
-                <p className="text-sm text-gray-400">
-                  Entrez vos identifiants pour accéder à votre tableau de bord.
-                </p>
               </div>
 
               {/* Formulaire */}
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <Input
                   type="email"
                   placeholder="vous@exemple.com"
@@ -174,40 +159,10 @@ export function LoginPage() {
                   label="Mot de passe"
                 />
 
-                <div className="flex items-center justify-between text-xs text-gray-400">
-                  <label className="inline-flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-600 bg-transparent text-blue-500 focus:ring-blue-500"
-                    />
-                    <span>Se souvenir de moi</span>
-                  </label>
 
-                  <button
-                    type="button"
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
-                    onClick={() => console.log('Mot de passe oublié')}
-                  >
-                    Mot de passe oublié ?
-                  </button>
-                </div>
-
-                <div className="pt-2 space-y-4">
-              <Button type="submit" className="w-full">
-                    Se connecter
-                  </Button>
-
-                  <p className="text-xs text-center text-gray-400">
-                    Pas encore de compte ?{' '}
-                    <button
-                      type="button"
-                      className="text-blue-400 hover:text-blue-300 font-medium"
-                      onClick={() => console.log('Créer un compte')}
-                    >
-                      Créer un compte
-                    </button>
-                  </p>
-                </div>
+                <Button type="submit" className="w-full mt-6">
+                  Se connecter
+                </Button>
               </form>
             </div>
           </div>
