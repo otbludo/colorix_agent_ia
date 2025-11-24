@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 import { useState } from 'react'
 import { Search, Bell, ChevronDown, Menu } from 'lucide-react'
 import colorixLogo from '../assets/Colo.svg'

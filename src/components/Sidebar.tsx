@@ -1,4 +1,3 @@
-// src/components/Sidebar.tsx
 import { useNavigate, useLocation } from 'react-router-dom'
 import colorixLogo from '../assets/colorixorigin.png'
 import {

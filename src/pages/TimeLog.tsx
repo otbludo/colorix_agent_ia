@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Sidebar } from '../components/Sidebar'
 import { Header } from '../components/Header'
-import { Clock, Play, Pause, Square, Calendar, User } from 'lucide-react'
+import { Clock, Play, Square, Calendar, User } from 'lucide-react'
 
 interface TimeEntry {
   id: string

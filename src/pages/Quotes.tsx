@@ -89,7 +89,7 @@ export function Quotes() {
 
     setQuotes(prev => [newQuote, ...prev])
 
-    // In real app, make API call here
+    // TODO: Implement quote creation API call
     console.log('Adding quote:', quoteData)
   }
 

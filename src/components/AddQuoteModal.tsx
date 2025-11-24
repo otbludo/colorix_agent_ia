@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { X, FileText, User, Mail, Phone, DollarSign, Calendar, Building } from 'lucide-react'
 
 interface AddQuoteModalProps {
@@ -29,7 +29,7 @@ export function AddQuoteModal({ isOpen, onClose, onAddQuote }: AddQuoteModalProp
   })
   const [errors, setErrors] = useState<{[key: string]: string}>({})
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
 
@@ -37,7 +37,7 @@ export function AddQuoteModal({ isOpen, onClose, onAddQuote }: AddQuoteModalProp
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }))
     }
-  }
+  }, [errors])
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {}
@@ -87,7 +87,7 @@ export function AddQuoteModal({ isOpen, onClose, onAddQuote }: AddQuoteModalProp
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
 
     if (validateForm()) {
@@ -116,7 +116,7 @@ export function AddQuoteModal({ isOpen, onClose, onAddQuote }: AddQuoteModalProp
       setErrors({})
       onClose()
     }
-  }
+  }, [formData, onAddQuote, onClose])
 
   const handleClose = () => {
     setFormData({

@@ -1,4 +1,3 @@
-// src/components/ProgressGauge.tsx
 import React from 'react'
 import { ChevronDown } from 'lucide-react'
 

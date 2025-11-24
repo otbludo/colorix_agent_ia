@@ -1,4 +1,3 @@
-// src/components/OverviewCard.tsx
 import React from 'react'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 
@@ -12,7 +11,7 @@ interface OverviewCardProps {
   iconBgColor: string
 }
 
-export function OverviewCard({
+export const OverviewCard = React.memo<OverviewCardProps>(({
   icon,
   title,
   value,
@@ -20,7 +19,7 @@ export function OverviewCard({
   trend,
   trendValue,
   iconBgColor,
-}: OverviewCardProps) {
+}) => {
   // Define Colorix brand colors (PLACEHOLDER - REPLACE WITH ACTUAL VALUES)
   const colorixGreen = '#15803d'
   const colorixRed = '#b91c1c'
@@ -51,4 +50,4 @@ export function OverviewCard({
       </div>
     </div>
   )
-}
+})

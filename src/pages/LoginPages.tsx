@@ -9,6 +9,7 @@ export function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    // TODO: Implement login API call
     console.log('Login submitted:', { email, password })
   }
 
