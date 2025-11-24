@@ -116,7 +116,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="relative z-10 flex-1 flex flex-col">
           {/* Logo */}
           <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => navigate('/dashboard')}>
               <img
                 src={colorixLogo}
                 alt="Colorix logo"
@@ -134,10 +134,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </button>
           </div>
 
-          {/* Create New Project Button */}
-          <button className="bg-[#34c759] text-[#031828] rounded-full py-3 px-4 flex items-center gap-2 mb-8 hover:bg-[#2ab34f] transition-colors shadow-lg shadow-[#34c759]/30">
+          {/* Create New Quote Button */}
+          <button
+            onClick={() => navigate('/quotes')}
+            className="bg-[#34c759] text-[#031828] rounded-full py-3 px-4 flex items-center gap-2 mb-8 hover:bg-[#2ab34f] transition-colors shadow-lg shadow-[#34c759]/30"
+          >
             <Plus className="w-5 h-5 text-[#031828]" />
-            <span className="font-medium">Create new project</span>
+            <span className="font-medium">Create new quote</span>
           </button>
 
           {/* Navigation Menu */}
