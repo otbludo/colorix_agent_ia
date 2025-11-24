@@ -1,14 +1,15 @@
 import os
+from typing import Union
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from db.models import Admin
+from db.models import Admin, AdminAudit
 from db.security.hash import hash_password
-from schemas.admin_schemas import AdminCreate, AdminUpdateInit
+from schemas.admin_schemas import AdminCreate, AdminUpdateInit, AdminStatus, AdminDelete, AdminRecovery
 from fastapi import HTTPException
 from services.email.model import Model
 from services.email.send_mail import send_email
 from db.security.jwt import verify_token, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
-from messages.exceptions import AdminEmailExists, AdminNumberExists, AdminNotFound, AdminEmailMismatch
+from messages.exceptions import AdminEmailExists, AdminNumberExists, AdminNotFound, AdminEmailMismatch, AdminStatusAlreadySet
 
 
 
@@ -44,6 +45,19 @@ class AdminCRUD:
         await self.db.commit()
         await self.db.refresh(admin)
         return admin
+    
+
+
+
+    async def get_admins_by_status(self, status: AdminStatus | None = None):
+        query = select(Admin)
+        if status:
+            query = query.filter(Admin.status == status)
+
+        result = await self.db.execute(query)
+        admins = result.scalars().all()
+        return admins
+
 
 
 
@@ -99,3 +113,49 @@ class AdminCRUD:
         if not admin:
             raise HTTPException(status_code=404, detail="Administrateur introuvable.")
         return admin
+    
+
+
+     
+    async def change_admin_status(
+        self, 
+        admin_data: Union[AdminDelete, AdminRecovery],
+        current_user: dict
+    ):
+        admin_id = int(admin_data.id)
+        performed_by = int(current_user["sub"])
+        performed_by_email = current_user.get("email")  # email du superadmin
+        new_status = admin_data.status.value 
+
+        # Vérifier si l'admin existe
+        result = await self.db.execute(select(Admin).filter(Admin.id == admin_id))
+        admin = result.scalars().first()
+        if not admin:
+            raise AdminNotFound()
+
+        old_status = admin.status
+
+        if old_status == new_status:
+            raise AdminStatusAlreadySet()
+        
+        admin.status = new_status 
+        await self.db.commit()
+        await self.db.refresh(admin)
+
+
+        action_desc = (
+            f"Statut de l'admin {admin.email} ({admin.name} {admin.first_name}) "
+            f"changé de '{old_status}' à '{new_status}'"
+        )
+
+        # Enregistrer dans AdminAudit
+        audit_entry = AdminAudit(
+            admin_id=admin.id,
+            action=action_desc,
+            performed_by=performed_by,
+            performed_by_email=performed_by_email
+        )
+        self.db.add(audit_entry)
+        await self.db.commit()
+
+        return {"message": f"Admin {admin.email} maintenant '{new_status}' et journalisé."}

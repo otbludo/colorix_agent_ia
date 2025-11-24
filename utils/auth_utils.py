@@ -5,6 +5,7 @@ from db.models import Admin
 from db.security.hash import verify_password
 from db.security.jwt import create_access_token
 from messages.exceptions import InvalidEmail, InvalidPassword
+from messages.exceptions import AdminInactive
 
 
 class AuthCRUD:
@@ -30,10 +31,14 @@ class AuthCRUD:
     async def login(self, username: str, password: str):
         user = await self.authenticate_user(username, password)
 
+        if user.status != "actif":
+            raise AdminInactive()
+        
         payload = {
             "sub": str(user.id),
             "email": user.email,
             "role": user.role,
+            "status": user.status
         }
 
         token = create_access_token(payload)

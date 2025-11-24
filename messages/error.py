@@ -14,6 +14,37 @@ def register_error_handlers(app: FastAPI):
 
 
     app.add_exception_handler(
+        InvalidToken,
+        create_exception_handler(
+            status.HTTP_401_UNAUTHORIZED,
+            {"message": "Token invalide", "code": "invalid_token"}
+        )
+    )
+
+
+    app.add_exception_handler(
+        AdminAccessDenied,
+        create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            {
+                "message": "Action réservée aux administrateurs ou superadmins.",
+                "code": "admin_access_denied"
+            }
+        )
+    )
+
+    app.add_exception_handler(
+        AdminInactive,
+        create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            {
+                "message": "Votre compte n'est pas actif.",
+                "code": "admin_inactive"
+            }
+        )
+    )
+
+    app.add_exception_handler(
         InvalidEmail,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
@@ -103,3 +134,13 @@ def register_error_handlers(app: FastAPI):
         )
     )
 
+    app.add_exception_handler(
+        AdminStatusAlreadySet,
+        create_exception_handler(
+            status.HTTP_400_BAD_REQUEST,
+            {
+                "message": "L'administrateur a déjà ce statut. Aucune modification effectuée.",
+                "code": "admin_status_already_set"
+            }
+        )
+    )

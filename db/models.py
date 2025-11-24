@@ -56,3 +56,13 @@ class Devis(Base):
     customer = relationship("Customer", back_populates="devis")
     admin = relationship("Admin", back_populates="devis")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class AdminAudit(Base):
+    __tablename__ = "admin_audit"
+    id = Column(Integer, primary_key=True)
+    admin_id = Column(Integer)
+    action = Column(String)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    performed_by = Column(Integer)  # id du superadmin
+    performed_by_email = Column(String) 

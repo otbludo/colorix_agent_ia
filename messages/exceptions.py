@@ -11,7 +11,17 @@ class InvalidPassword(AppException):
     pass
 
 
+
 # Admin errors
+class InvalidToken(AppException):
+    pass
+
+class AdminAccessDenied(AppException):
+    pass
+
+class AdminInactive(AppException):
+    pass
+
 class AdminEmailExists(AppException):
     pass
 
@@ -23,6 +33,10 @@ class AdminNotFound(AppException):
 
 class AdminEmailMismatch(AppException):
     pass
+
+class AdminStatusAlreadySet(AppException):
+    pass
+
 
 
 # Customer errors
