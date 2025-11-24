@@ -1,12 +1,12 @@
 // src/components/Sidebar.tsx
+import { useNavigate, useLocation } from 'react-router-dom'
 import colorixLogo from '../assets/colorixorigin.png'
 import {
   LayoutDashboard,
-  FolderKanban,
-  ListTodo,
+  FileText,
   Clock,
   Users,
-  Layers,
+  Building,
   Settings,
   Plus,
   X,
@@ -18,53 +18,46 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const navigate = useNavigate()
+  const location = useLocation()
+
   const menuItems = [
     {
       icon: LayoutDashboard,
       label: 'Dashboard',
-      active: true,
+      path: '/dashboard',
     },
     {
-      icon: FolderKanban,
-      label: 'Projects',
-      active: false,
-    },
-    {
-      icon: ListTodo,
-      label: 'Tasks',
-      active: false,
+      icon: FileText,
+      label: 'Devis',
+      path: '/quotes',
     },
     {
       icon: Clock,
       label: 'Time log',
-      active: false,
+      path: '/time-log',
     },
     {
       icon: Users,
-      label: 'Resource mgmt',
-      active: false,
+      label: 'Admin',
+      path: '/users',
     },
     {
-      icon: Users,
-      label: 'Users',
-      active: false,
-    },
-    {
-      icon: Layers,
-      label: 'Project template',
-      active: false,
+      icon: Building,
+      label: 'Customers',
+      path: '/customers',
     },
     {
       icon: Settings,
       label: 'Menu settings',
-      active: false,
+      path: '/settings',
     },
   ]
 
   return (
     <>
       <div
-        className={`fixed inset-0 bg-black/40 z-30 transition-opacity lg:hidden ${
+        className={`fixed inset-0 bg-white/40 z-30 transition-opacity lg:hidden ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
@@ -153,11 +146,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <ul className="space-y-1">
               {menuItems.map((item, index) => {
                 const Icon = item.icon
+                const isActive = location.pathname === item.path
                 return (
                   <li key={index}>
                     <button
+                      onClick={() => {
+                        navigate(item.path)
+                        if (onClose) onClose() // Close mobile menu after navigation
+                      }}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-full transition-colors ${
-                        item.active
+                        isActive
                           ? 'bg-white text-[#032041]'
                           : 'text-white/80 hover:bg-white/10'
                       }`}

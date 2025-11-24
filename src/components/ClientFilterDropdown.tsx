@@ -265,3 +265,6 @@ export function ClientFilterDropdown({ isOpen, onClose, onApplyFilters, currentF
     </div>
   )
 }
+
+
+

@@ -49,7 +49,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
           <input
             type="text"
             placeholder="Search for anything..."
-            className="w-full pl-12 pr-4 py-3 rounded-full bg-gray-100 border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-12 pr-4 py-3 rounded-full bg-gray-100 border-none text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 

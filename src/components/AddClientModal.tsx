@@ -75,7 +75,7 @@ export function AddClientModal({ isOpen, onClose, onAddClient }: AddClientModalP
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop with blur */}
       <div
-        className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-md"
+        className="absolute inset-0 bg-white bg-opacity-20 backdrop-blur-md"
         onClick={handleClose}
       />
 
@@ -106,7 +106,7 @@ export function AddClientModal({ isOpen, onClose, onAddClient }: AddClientModalP
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white ${
                   errors.name ? 'border-red-300 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'
                 } focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
                 placeholder="Entrez le nom du client"
@@ -129,7 +129,7 @@ export function AddClientModal({ isOpen, onClose, onAddClient }: AddClientModalP
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white ${
                   errors.email ? 'border-red-300 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'
                 } focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
                 placeholder="client@email.com"
@@ -152,7 +152,7 @@ export function AddClientModal({ isOpen, onClose, onAddClient }: AddClientModalP
                 name="company"
                 value={formData.company}
                 onChange={handleInputChange}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white ${
                   errors.company ? 'border-red-300 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'
                 } focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
                 placeholder="Nom de l'entreprise"
