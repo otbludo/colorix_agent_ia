@@ -20,6 +20,20 @@ class Admin(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
 
+class AdminDeleted(Base):
+    __tablename__ = "admin_deleted"
+    id = Column(Integer, primary_key=True)
+    original_id = Column(Integer, unique=True, index=True)  # id de l'admin dans la table principale
+    name = Column(String(50))
+    first_name = Column(String(50))
+    number = Column(String(15))
+    email = Column(String(255))
+    post = Column(String(20))
+    role = Column(String(20))
+    password = Column(String(255))
+    deleted_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class Customer(Base):
     __tablename__ = "customers"
     id = Column(Integer, primary_key=True, index=True)
@@ -61,7 +75,7 @@ class Devis(Base):
 class AdminAudit(Base):
     __tablename__ = "admin_audit"
     id = Column(Integer, primary_key=True)
-    admin_id = Column(Integer)
+    object_id = Column(Integer)
     action = Column(String)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     performed_by = Column(Integer)  # id du superadmin

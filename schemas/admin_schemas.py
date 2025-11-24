@@ -7,17 +7,11 @@ from enum import Enum
 class AdminStatus(str, Enum):
     actif = "actif"
     inactif = "inactif"
-    supprimé = "supprimé"
+    supprimé = "supprime"
 
 class AdminEditStatus(str, Enum):
     actif = "actif"
     inactif = "inactif"
-    
-class AdminDeleteStatus(str, Enum):
-    supprimé = "supprimé"
-
-class AdminRecoveryStatus(str, Enum):
-    actif = "actif"
 
 
 
@@ -43,7 +37,6 @@ class AdminUpdateInit(BaseModel):
 
 class AdminDelete(BaseModel):
     id: int
-    status: AdminDeleteStatus 
 
 
 class AdminEditStatusRequest(BaseModel):
@@ -53,4 +46,3 @@ class AdminEditStatusRequest(BaseModel):
 
 class AdminRecovery(BaseModel):
     id: int
-    status: AdminRecoveryStatus 

@@ -51,11 +51,11 @@ async def edit_statut_admin(
 @router.delete("/delete-admin")
 async def delete_admin(admin_data: AdminDelete, current_user: dict = Depends(superadmin_required), db: AsyncSession = Depends(get_db)):
     admin_crud = AdminCRUD(db)
-    return await admin_crud.change_admin_status(admin_data, current_user)
+    return await admin_crud.delete_admin(admin_data, current_user)
 
 
 @router.post("/recovery-admin")
 async def recovery_admin(admin_data: AdminRecovery, current_user: dict = Depends(superadmin_required), db: AsyncSession = Depends(get_db)):
     admin_crud = AdminCRUD(db)
-    return await admin_crud.change_admin_status(admin_data, current_user)
+    return await admin_crud.recovery_admin(admin_data, current_user)
 

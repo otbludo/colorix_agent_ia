@@ -2,7 +2,7 @@ import os
 from typing import Union
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from db.models import Admin, AdminAudit
+from db.models import Admin, AdminAudit, AdminDeleted
 from db.security.hash import hash_password
 from schemas.admin_schemas import AdminCreate, AdminUpdateInit, AdminStatus, AdminDelete, AdminRecovery
 from fastapi import HTTPException
@@ -50,13 +50,19 @@ class AdminCRUD:
 
 
     async def get_admins_by_status(self, status: AdminStatus | None = None):
-        query = select(Admin)
-        if status:
-            query = query.filter(Admin.status == status)
+        if status == "supprime":
+            query = select(AdminDeleted)
+            result = await self.db.execute(query)
+            admins = result.scalars().all()
+        else:
+            query = select(Admin)
+            if status:
+                query = query.filter(Admin.status == status)
+            result = await self.db.execute(query)
+            admins = result.scalars().all()
 
-        result = await self.db.execute(query)
-        admins = result.scalars().all()
         return admins
+
 
 
 
@@ -150,7 +156,7 @@ class AdminCRUD:
 
         # Enregistrer dans AdminAudit
         audit_entry = AdminAudit(
-            admin_id=admin.id,
+            object_id=admin.id,
             action=action_desc,
             performed_by=performed_by,
             performed_by_email=performed_by_email
@@ -159,3 +165,92 @@ class AdminCRUD:
         await self.db.commit()
 
         return {"message": f"Admin {admin.email} maintenant '{new_status}' et journalisé."}
+    
+
+
+
+    async def delete_admin(self, admin_data: AdminDelete, current_user: dict):
+        admin_id = int(admin_data.id)
+        performed_by = int(current_user["sub"])
+        performed_by_email = current_user.get("email")
+
+        # 1. Vérifier que l'admin existe
+        result = await self.db.execute(select(Admin).filter(Admin.id == admin_id))
+        admin = result.scalars().first()
+        if not admin:
+            raise AdminNotFound()
+
+        # 2. Copier dans la table AdminDeleted
+        deleted_admin = AdminDeleted(
+            original_id=admin.id,
+            name=admin.name,
+            first_name=admin.first_name,
+            number=admin.number,
+            email=admin.email,
+            post=admin.post,
+            role=admin.role,
+            password=admin.password 
+        )
+        self.db.add(deleted_admin)
+
+        # 3. Supprimer de la table principale
+        await self.db.delete(admin)
+        await self.db.commit()
+
+        # 4. Ajouter un log dans AdminAudit
+        action_desc = f"Admin {deleted_admin.email} ({deleted_admin.name} {deleted_admin.first_name}) supprimé par {performed_by_email}"
+        audit_entry = AdminAudit(
+            object_id=admin.id,
+            action=action_desc,
+            performed_by=performed_by,
+            performed_by_email=performed_by_email
+        )
+        self.db.add(audit_entry)
+        await self.db.commit()
+
+        return {"message": f"Admin {deleted_admin.email} supprimé avec succès et journalisé."}
+    
+
+
+
+    async def recovery_admin(self, admin_data: AdminRecovery, current_user: dict):
+        deleted_id = int(admin_data.id)
+        performed_by = int(current_user["sub"])
+        performed_by_email = current_user.get("email")
+
+        # 1. Vérifier que l'admin existe dans AdminDeleted
+        result = await self.db.execute(select(AdminDeleted).filter(AdminDeleted.id == deleted_id))
+        deleted_admin = result.scalars().first()
+        if not deleted_admin:
+            raise AdminNotFound()
+
+        # 2. Réinsérer dans la table principale
+        admin = Admin(
+            id=deleted_admin.original_id,
+            name=deleted_admin.name,
+            first_name=deleted_admin.first_name,
+            number=deleted_admin.number,
+            email=deleted_admin.email,
+            post=deleted_admin.post,
+            role=deleted_admin.role,
+            password=deleted_admin.password,
+            status="actif"
+        )
+        self.db.add(admin)
+
+        # 3. Supprimer de la table AdminDeleted
+        await self.db.delete(deleted_admin)
+        await self.db.commit()
+
+        # 4. Ajouter un log
+        action_desc = f"Admin {admin.email} ({admin.name} {admin.first_name}) réactivé par {performed_by_email}"
+        audit_entry = AdminAudit(
+            object_id=admin.id,
+            action=action_desc,
+            performed_by=performed_by,
+            performed_by_email=performed_by_email
+        )
+        self.db.add(audit_entry)
+        await self.db.commit()
+
+        return {"message": f"Admin {admin.email} réactivé avec succès et journalisé."}
