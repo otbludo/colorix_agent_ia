@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import HTTPException
-from db.models import Customer         
+from db.models import Customer, CustomerCategory        
 from schemas.customer_schemas import CustomerCreate, CustomerUpdate, CustomerGet, CustomerDelete
 from messages.exceptions import CustomerEmailExists, CustomerNumberExists, CustomerNotFound, CustomerEmailUsedByOther, CustomerNumberUsedByOther
 
@@ -10,6 +10,7 @@ from messages.exceptions import CustomerEmailExists, CustomerNumberExists, Custo
 class CustomerCRUD:
     def __init__(self, db: AsyncSession):
         self.db = db
+
 
     async def create_customer(self, customer_data: CustomerCreate):
 
@@ -95,7 +96,6 @@ class CustomerCRUD:
         return customer
     
     
-
 
     async def delete_customer(self, customer_data: CustomerDelete):
         result = await self.db.execute(

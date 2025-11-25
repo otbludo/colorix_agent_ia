@@ -144,3 +144,23 @@ def register_error_handlers(app: FastAPI):
             }
         )
     )
+
+# Product errors
+
+    app.add_exception_handler(
+        ProductNameExists,
+        create_exception_handler(
+            status.HTTP_400_BAD_REQUEST,
+            {"message": "Un produit avec ce nom existe déjà.", "code": "product_name_exists"}
+        )
+    )
+
+
+    app.add_exception_handler(
+        ProductNotFound,
+        create_exception_handler(
+            status.HTTP_404_NOT_FOUND,
+            {"message": "Produit introuvable.", "code": "product_not_found"}
+        )
+    )
+

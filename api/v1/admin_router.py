@@ -6,7 +6,9 @@ from db.database import get_db, AsyncSession
 from utils.admin_utils import AdminCRUD
 from schemas.admin_schemas import AdminUpdateInit
 from schemas.customer_schemas import CustomerCreate, CustomerGet, CustomerDelete, CustomerUpdate
+from schemas.product_schemas import ProductCreate, ProductUpdate
 from utils.manage_customers_utils import CustomerCRUD
+from utils.manage_product_utils import ProductCRUD
 from dependencies.auth import superadmin_required, admin_required
 from utils.stat_utils import StatsCRUD
 from fastapi.templating import Jinja2Templates
@@ -96,3 +98,21 @@ async def get_customers(
 async def get_stats(current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
     stats_service = StatsCRUD(db)
     return await stats_service.get_stats()
+
+
+
+
+# -----------------------------------------------------------------------------
+# manage product
+#------------------------------------------------------------------------------
+
+@router.post("/create_product", status_code=status.HTTP_201_CREATED)
+async def create_product(product_data: ProductCreate, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_crud = ProductCRUD(db)
+    return await customer_crud.create_product(product_data, current_user)
+
+
+@router.put("/update_product", status_code=status.HTTP_201_CREATED)
+async def update_product(product_data: ProductUpdate, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_crud = ProductCRUD(db)
+    return await customer_crud.update_product(product_data, current_user)

@@ -54,3 +54,12 @@ class CustomerEmailUsedByOther(AppException):
 
 class CustomerNumberUsedByOther(AppException):
     pass
+
+
+
+# Product errors
+class ProductNameExists(AppException):
+    pass
+
+class ProductNotFound(AppException):
+    pass

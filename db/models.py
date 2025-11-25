@@ -79,4 +79,26 @@ class AdminAudit(Base):
     action = Column(String)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     performed_by = Column(Integer)  # id du superadmin
-    performed_by_email = Column(String) 
+    performed_by_email = Column(String)
+    
+
+class ProductPrinting(Base):
+    __tablename__ = "product_printing"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), unique=True, index=True)
+    description = Column(String(255))
+    format = Column(String(255), index=True)
+    papier_grammage = Column(String(255))
+    finition = Column(String(255))
+    color = Column(String(255), index=True)
+    quantity = Column(Integer, index=True)
+    unit = Column(String(50), default="copies")
+    front_price = Column(Float)
+    back_price = Column(Float)
+
+
+class CustomerCategory(Base):
+    __tablename__ = "customer_category"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True)  
+    rate = Column(Float, default=1.0)   
