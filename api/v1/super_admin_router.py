@@ -25,7 +25,7 @@ async def add_admin(
     current_user: dict = Depends(superadmin_required), 
     db: AsyncSession = Depends(get_db)):
     admin_crud = AdminCRUD(db)
-    return  await admin_crud.Creat_admin(admin_data)
+    return  await admin_crud.create_admin(admin_data, current_user)
 
 
 @router.get("/get_admins", status_code=status.HTTP_200_OK)

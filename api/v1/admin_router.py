@@ -28,19 +28,19 @@ router = APIRouter()
 @router.post("/get-customer", status_code=status.HTTP_201_CREATED)
 async def get_customer(customer_data: CustomerCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
     customer_crud = CustomerCRUD(db)
-    return await customer_crud.select_customer(customer_data)
+    return await customer_crud.list_customers(customer_data, current_user)
 
 
 @router.post("/add-customer", status_code=status.HTTP_201_CREATED)
 async def add_customer(customer_data: CustomerCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
     customer_crud = CustomerCRUD(db)
-    return await customer_crud.create_customer(customer_data)
+    return await customer_crud.create_customer(customer_data, current_user)
    
 
 @router.put("/modify_customers", status_code=status.HTTP_200_OK)
 async def modify_customer(customer_data: CustomerUpdate, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
     customer_crud = CustomerCRUD(db)
-    return await customer_crud.update_customer(customer_data)
+    return await customer_crud.update_customer(customer_data, current_user)
 
 
 @router.delete("/remove_customers",status_code=status.HTTP_200_OK)

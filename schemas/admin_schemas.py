@@ -21,7 +21,7 @@ class AdminCreate(BaseModel):
     number: str
     email: EmailStr
     post: str
-    role: Optional[str] 
+    role: Optional[str] = "admin"
     password: str
     status: Optional[str] = "actif"
     devis_ids: Optional[List[int]] = []

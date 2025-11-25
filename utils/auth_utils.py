@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from db.models import Admin
+from db.models import Admin, AdminAudit
 from db.security.hash import verify_password
 from db.security.jwt import create_access_token
 from messages.exceptions import InvalidEmail, InvalidPassword
@@ -12,6 +12,27 @@ class AuthCRUD:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+
+#--------------------------------------------------------------------------------------
+# create audit_log
+#--------------------------------------------------------------------------------------  
+    async def create_audit_log(self, object_id: int, action: str, performed_by: int, performed_by_email: str):
+        audit_entry = AdminAudit(
+            object_id=object_id,
+            action=action,
+            performed_by=performed_by,
+            performed_by_email=performed_by_email
+        )
+        self.db.add(audit_entry)
+        await self.db.commit()
+
+
+
+
+
+#--------------------------------------------------------------------------------------
+# authenticate_user
+#--------------------------------------------------------------------------------------  
     async def authenticate_user(self, username: str, password: str):
         result = await self.db.execute(
             select(Admin).filter(Admin.email == username)
@@ -28,23 +49,46 @@ class AuthCRUD:
 
 
 
+
+
+#--------------------------------------------------------------------------------------
+# Login
+#--------------------------------------------------------------------------------------
     async def login(self, username: str, password: str):
-        user = await self.authenticate_user(username, password)
+        try:
+            async with self.db.begin():
+                # Authentifier l'utilisateur
+                user = await self.authenticate_user(username, password)
 
-        if user.status != "actif":
-            raise AdminInactive()
-        
-        payload = {
-            "sub": str(user.id),
-            "email": user.email,
-            "role": user.role,
-            "status": user.status
-        }
+                if user.status != "actif":
+                    raise AdminInactive()
 
-        token = create_access_token(payload)
+                # Générer le token
+                payload = {
+                    "sub": str(user.id),
+                    "email": user.email,
+                    "role": user.role,
+                    "status": user.status
+                }
+                token = create_access_token(payload)
 
-        return {
-            "access_token": token,
-            "token_type": "bearer"
-        }
+                # Ajouter un log d'audit pour la connexion
+                action_desc = f"Connexion réussie pour l'admin {user.email} ({user.name} {user.first_name})"
+                await self.create_audit_log(
+                    object_id=user.id,
+                    action=action_desc,
+                    performed_by=user.id,
+                    performed_by_email=user.email
+                )
+
+            # Commit automatique si tout est OK
+            return {
+                "access_token": token,
+                "token_type": "bearer"
+            }
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
+
         

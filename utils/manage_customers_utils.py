@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import HTTPException
-from db.models import Customer, CustomerCategory        
+from db.models import Customer, CustomerCategory, AdminAudit       
 from schemas.customer_schemas import CustomerCreate, CustomerUpdate, CustomerGet, CustomerDelete
 from messages.exceptions import CustomerEmailExists, CustomerNumberExists, CustomerNotFound, CustomerEmailUsedByOther, CustomerNumberUsedByOther
 
@@ -12,105 +12,176 @@ class CustomerCRUD:
         self.db = db
 
 
-    async def create_customer(self, customer_data: CustomerCreate):
-
-        # Vérifier email existant
-        result_email = await self.db.execute(
-            select(Customer).filter(Customer.email == customer_data.email)
+#--------------------------------------------------------------------------------------
+# create audit_log
+#--------------------------------------------------------------------------------------     
+    async def create_audit_log(self, object_id: int, action: str, performed_by: int, performed_by_email: str):
+        audit_entry = AdminAudit(
+            object_id=object_id,
+            action=action,
+            performed_by=performed_by,
+            performed_by_email=performed_by_email
         )
-        existing_email = result_email.scalars().first()
-        if existing_email:
-            raise CustomerEmailExists()
-
-        # Vérifier numéro existant
-        result_number = await self.db.execute(
-            select(Customer).filter(Customer.number == customer_data.number)
-        )
-        existing_number = result_number.scalars().first()
-        if existing_number:
-            raise CustomerNumberExists()
-
-        customer = Customer(
-            name=customer_data.name,
-            first_name=customer_data.first_name,
-            number=customer_data.number,
-            email=customer_data.email,
-            company=customer_data.company,
-            city=customer_data.city,
-            country=customer_data.country,
-            status=customer_data.status
-        )
-
-        self.db.add(customer)
+        self.db.add(audit_entry)
         await self.db.commit()
-        await self.db.refresh(customer)
-        return customer
 
 
 
-    async def list_customers(self, status: CustomerGet):
-        query = select(Customer)
-        if status:
-            query = query.where(Customer.status == status)
-        result = await self.db.execute(query)
-        return result.scalars().all()
+
+#--------------------------------------------------------------------------------------
+# create customer
+#--------------------------------------------------------------------------------------
+    async def create_customer(self, customer_data: CustomerCreate, current_user: dict):
+        try:
+            async with self.db.begin():
+
+                # Vérifier email existant
+                result_email = await self.db.execute(
+                    select(Customer).filter(Customer.email == customer_data.email)
+                )
+                if result_email.scalars().first():
+                    raise CustomerEmailExists()
+
+                # Vérifier numéro existant
+                result_number = await self.db.execute(
+                    select(Customer).filter(Customer.number == customer_data.number)
+                )
+                if result_number.scalars().first():
+                    raise CustomerNumberExists()
+
+                # Créer le client
+                customer = Customer(
+                    name=customer_data.name,
+                    first_name=customer_data.first_name,
+                    number=customer_data.number,
+                    email=customer_data.email,
+                    company=customer_data.company,
+                    city=customer_data.city,
+                    country=customer_data.country,
+                    status=customer_data.status
+                )
+
+                self.db.add(customer)
+                await self.db.flush()  # Générer l'ID avant audit
+
+                # Audit log obligatoire
+                await self.create_audit_log(
+                    object_id=customer.id,
+                    action=f"create customer: {customer.email}",
+                    performed_by=int(current_user["sub"]),
+                    performed_by_email=current_user["email"]
+                )
+
+            # Commit automatique si tout est OK
+            await self.db.refresh(customer)
+            return customer
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
 
 
 
-    async def update_customer(self, customer_data: CustomerUpdate):
-        # Récupérer le client à mettre à jour
-        result = await self.db.execute(select(Customer).filter(Customer.id == customer_data.id))
-        customer = result.scalars().first()
 
-        if not customer:
-            raise CustomerNotFound()
-        # Vérifier si le nouvel email existe pour un autre client
-        if customer_data.email:
-            result_email = await self.db.execute(
-                select(Customer)
-                .filter(Customer.email == customer_data.email)
-                .filter(Customer.id != customer_data.id)
-            )
-            existing_email = result_email.scalars().first()
-            if existing_email:
-                raise CustomerEmailUsedByOther()
+#--------------------------------------------------------------------------------------
+# list customers
+#--------------------------------------------------------------------------------------
+    async def list_customers(self, status: CustomerGet = None, current_user: dict = None):
+        try:
+            async with self.db.begin():  # transaction pour s'assurer que l'audit est enregistré
 
-        # Vérifier si le nouveau numéro existe pour un autre client
-        if customer_data.number:
-            result_number = await self.db.execute(
-                select(Customer)
-                .filter(Customer.number == customer_data.number)
-                .filter(Customer.id != customer_data.id)
-            )
-            existing_number = result_number.scalars().first()
-            if existing_number:
-                raise CustomerNumberUsedByOther()
+                # Construire la requête
+                query = select(Customer)
+                if status:
+                    query = query.where(Customer.status == status)
 
-        # Mettre à jour uniquement les champs fournis
-        for field, value in customer_data.dict(exclude_unset=True).items():
-            setattr(customer, field, value)
+                result = await self.db.execute(query)
+                customers = result.scalars().all()
 
-        self.db.add(customer)
-        await self.db.commit()
-        await self.db.refresh(customer)
-        return customer
-    
-    
+                # Enregistrer l'audit log
+                action_detail = f"list customers"
+                if status:
+                    action_detail += f" with status={status}"
 
-    async def delete_customer(self, customer_data: CustomerDelete):
-        result = await self.db.execute(
-            select(Customer).filter(Customer.id == customer_data.id)
-        )
+                await self.create_audit_log(
+                    object_id=0,  # 0 ou None pour indiquer que c'est une lecture globale
+                    action=action_detail,
+                    performed_by=int(current_user["sub"]) if current_user else None,
+                    performed_by_email=current_user["email"] if current_user else None
+                )
 
-        customer = result.scalars().first()
-        if not customer:
-            raise CustomerNotFound()
+                return customers
 
-        await self.db.delete(customer)
-        await self.db.commit()
-        return {"message": "Customer deleted successfully"}
-    
+        except Exception as e:
+            await self.db.rollback()
+            raise e
 
 
-  
-    
+
+
+#--------------------------------------------------------------------------------------
+# update customer
+#--------------------------------------------------------------------------------------
+    async def update_customer(self, customer_data: CustomerUpdate, current_user: dict):
+        try:
+            async with self.db.begin():
+
+                # Récupérer le client à mettre à jour
+                result = await self.db.execute(
+                    select(Customer).filter(Customer.id == customer_data.id)
+                )
+                customer = result.scalars().first()
+                if not customer:
+                    raise CustomerNotFound()
+
+                old_email = customer.email
+                old_number = customer.number
+
+                # Vérifier unicité du nouvel email
+                if customer_data.email and customer_data.email != customer.email:
+                    result_email = await self.db.execute(
+                        select(Customer)
+                        .filter(Customer.email == customer_data.email)
+                        .filter(Customer.id != customer_data.id)
+                    )
+                    if result_email.scalars().first():
+                        raise CustomerEmailUsedByOther()
+
+                # Vérifier unicité du nouveau numéro
+                if customer_data.number and customer_data.number != customer.number:
+                    result_number = await self.db.execute(
+                        select(Customer)
+                        .filter(Customer.number == customer_data.number)
+                        .filter(Customer.id != customer_data.id)
+                    )
+                    if result_number.scalars().first():
+                        raise CustomerNumberUsedByOther()
+
+                # ---- UPDATE PARTIEL ----
+                updated_fields = []
+                updates = customer_data.dict(exclude_unset=True)
+
+                for field, new_value in updates.items():
+                    old_value = getattr(customer, field)
+                    if old_value != new_value:
+                        updated_fields.append(f"{field}({old_value}→{new_value})")
+                        setattr(customer, field, new_value)
+
+                self.db.add(customer)
+                await self.db.flush()  # appliquer avant audit
+
+                # ---- Audit log obligatoire ----
+                fields_log = ", ".join(updated_fields) if updated_fields else "no change"
+                await self.create_audit_log(
+                    object_id=customer.id,
+                    action=f"update customer: {old_email} -> {customer.email} | fields: {fields_log}",
+                    performed_by=int(current_user["sub"]),
+                    performed_by_email=current_user["email"]
+                )
+
+            # Commit automatique si tout est OK
+            return customer
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
