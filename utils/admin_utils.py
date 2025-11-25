@@ -13,9 +13,21 @@ from messages.exceptions import AdminEmailExists, AdminNumberExists, AdminNotFou
 
 
 
+
 class AdminCRUD:
     def __init__(self, db: AsyncSession):
         self.db = db
+
+    async def create_audit_log(self, object_id: int, action: str, performed_by: int, performed_by_email: str):
+        audit_entry = AdminAudit(
+            object_id=object_id,
+            action=action,
+            performed_by=performed_by,
+            performed_by_email=performed_by_email
+        )
+        self.db.add(audit_entry)
+        await self.db.commit()
+
 
     async def Creat_admin(self, admin_data: AdminCreate):
         # Vérifier si un superadmin existe déjà
@@ -48,21 +60,52 @@ class AdminCRUD:
     
 
 
+    async def get_admins_by_status(self, status: AdminStatus | None = None, current_user=None):
+        # Récupération de l'admin connecté
+        performed_by = int(current_user["sub"])
+        performed_by_email = current_user["email"]
 
-    async def get_admins_by_status(self, status: AdminStatus | None = None):
+        # Sélection normale ou supprimée
         if status == "supprime":
             query = select(AdminDeleted)
             result = await self.db.execute(query)
             admins = result.scalars().all()
+
+            action_desc = (
+                f"Consultation de la liste des administrateurs SUPPRIMÉS par "
+                f"{performed_by_email}"
+            )
+
+            await self.create_audit_log(
+                object_id=0,  # aucune entité ciblée
+                action=action_desc,
+                performed_by=performed_by,
+                performed_by_email=performed_by_email
+            )
+
         else:
             query = select(Admin)
             if status:
                 query = query.filter(Admin.status == status)
+
             result = await self.db.execute(query)
             admins = result.scalars().all()
 
-        return admins
+            action_desc = (
+                f"Consultation de la liste des administrateurs avec statut '{status}' "
+                f"par {performed_by_email}"
+                if status
+                else f"Consultation de TOUS les administrateurs par {performed_by_email}"
+            )
 
+            await self.create_audit_log(
+                object_id=0,
+                action=action_desc,
+                performed_by=performed_by,
+                performed_by_email=performed_by_email
+            )
+
+        return admins
 
 
 
@@ -104,6 +147,18 @@ class AdminCRUD:
 
         # Envoi du mail
         await send_email(subject, html_message, connected_admin.email)
+        action_desc = (
+            f"Demande d'initialisation de mise à jour des informations "
+            f"par l'admin {connected_admin.email} "
+            f"({connected_admin.name} {connected_admin.first_name})"
+        )
+
+        await self.create_audit_log(
+            object_id=connected_admin.id,
+            action=action_desc,
+            performed_by=connected_admin.id,
+            performed_by_email=connected_admin.email
+        )
         return {"message": "Email envoyé pour mettre à jour vos informations."}
 
 
@@ -120,7 +175,6 @@ class AdminCRUD:
             raise HTTPException(status_code=404, detail="Administrateur introuvable.")
         return admin
     
-
 
      
     async def change_admin_status(
@@ -168,7 +222,6 @@ class AdminCRUD:
     
 
 
-
     async def delete_admin(self, admin_data: AdminDelete, current_user: dict):
         admin_id = int(admin_data.id)
         performed_by = int(current_user["sub"])
@@ -198,19 +251,12 @@ class AdminCRUD:
         await self.db.commit()
 
         # 4. Ajouter un log dans AdminAudit
-        action_desc = f"Admin {deleted_admin.email} ({deleted_admin.name} {deleted_admin.first_name}) supprimé par {performed_by_email}"
-        audit_entry = AdminAudit(
-            object_id=admin.id,
-            action=action_desc,
-            performed_by=performed_by,
-            performed_by_email=performed_by_email
-        )
-        self.db.add(audit_entry)
-        await self.db.commit()
+        action_desc = f"Admin {admin.email} ({admin.name} {admin.first_name}) réactivé par {performed_by_email}"
+        await self.create_audit_log(admin.id, action_desc, performed_by, performed_by_email)
+
 
         return {"message": f"Admin {deleted_admin.email} supprimé avec succès et journalisé."}
     
-
 
 
     async def recovery_admin(self, admin_data: AdminRecovery, current_user: dict):
@@ -223,6 +269,19 @@ class AdminCRUD:
         deleted_admin = result.scalars().first()
         if not deleted_admin:
             raise AdminNotFound()
+        
+         # Vérifier si un superadmin existe déjà
+        result_email = await self.db.execute(select(Admin).filter(Admin.email == deleted_admin.email))
+        existing_email = result_email.scalars().first()
+        if existing_email:
+            raise AdminEmailExists()
+
+        # Vérifier si le numéro existe déjà
+        result_number = await self.db.execute(select(Admin).filter(Admin.number == deleted_admin.number))
+        existing_number = result_number.scalars().first()
+        if existing_number:
+            raise AdminNumberExists()
+
 
         # 2. Réinsérer dans la table principale
         admin = Admin(
@@ -244,13 +303,7 @@ class AdminCRUD:
 
         # 4. Ajouter un log
         action_desc = f"Admin {admin.email} ({admin.name} {admin.first_name}) réactivé par {performed_by_email}"
-        audit_entry = AdminAudit(
-            object_id=admin.id,
-            action=action_desc,
-            performed_by=performed_by,
-            performed_by_email=performed_by_email
-        )
-        self.db.add(audit_entry)
-        await self.db.commit()
+        await self.create_audit_log(admin.id, action_desc, performed_by, performed_by_email)
+
 
         return {"message": f"Admin {admin.email} réactivé avec succès et journalisé."}
