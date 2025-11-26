@@ -24,7 +24,7 @@ class AdminCreate(BaseModel):
     role: Optional[str] = "admin"
     password: str
     status: Optional[str] = "actif"
-    devis_ids: Optional[List[int]] = []
+    # devis_ids: Optional[List[int]] = []
     
     class Config:
         orm_mode = True
