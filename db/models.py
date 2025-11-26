@@ -97,6 +97,23 @@ class ProductPrinting(Base):
     back_price = Column(Float)
 
 
+class ProductPrintingDeleted(Base):
+    __tablename__ = "product_printing_deleted" 
+    id = Column(Integer, primary_key=True)
+    original_id = Column(Integer, index=True) 
+    name = Column(String(255))
+    description = Column(String(255))
+    format = Column(String(255))
+    papier_grammage = Column(String(255))
+    finition = Column(String(255))
+    color = Column(String(255))
+    quantity = Column(Integer)
+    unit = Column(String(50))
+    front_price = Column(Float)
+    back_price = Column(Float)
+    deleted_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class CustomerCategory(Base):
     __tablename__ = "customer_category"
     id = Column(Integer, primary_key=True)

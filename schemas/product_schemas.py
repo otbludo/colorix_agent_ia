@@ -29,3 +29,11 @@ class ProductUpdate(BaseModel):
     quantity: int | None = None
     front_price: float | None = None
     back_price: float | None = None
+
+
+class ProductDelete(BaseModel):
+    id: int
+
+
+class ProductRecovery(BaseModel):
+    id: int

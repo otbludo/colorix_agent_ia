@@ -6,7 +6,7 @@ from db.database import get_db, AsyncSession
 from utils.admin_utils import AdminCRUD
 from schemas.admin_schemas import AdminUpdateInit
 from schemas.customer_schemas import CustomerCreate, CustomerGet, CustomerDelete, CustomerUpdate
-from schemas.product_schemas import ProductCreate, ProductUpdate
+from schemas.product_schemas import ProductCreate, ProductUpdate, ProductDelete, ProductRecovery
 from utils.manage_customers_utils import CustomerCRUD
 from utils.manage_product_utils import ProductCRUD
 from dependencies.auth import superadmin_required, admin_required
@@ -116,3 +116,15 @@ async def create_product(product_data: ProductCreate, current_user: dict = Depen
 async def update_product(product_data: ProductUpdate, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
     customer_crud = ProductCRUD(db)
     return await customer_crud.update_product(product_data, current_user)
+
+
+@router.delete("/delete_product", status_code=status.HTTP_200_OK)
+async def delete_product(product_data: ProductDelete, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    product_crud = ProductCRUD(db)
+    return await product_crud.delete_product(product_data, current_user)
+
+
+@router.post("/recovery_product", status_code=status.HTTP_200_OK)
+async def recovery_product(product_data: ProductRecovery, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
+    product_crud = ProductCRUD(db)
+    return await product_crud.recovery_product(product_data, current_user)
