@@ -16,7 +16,7 @@ async def init_superadmin(
     admin_data: AdminCreate, 
     db: AsyncSession = Depends(get_db)):
     crud = AdminCRUD(db)
-    return await crud.Creat_admin(admin_data)
+    return await crud.init_super_admin(admin_data)
    
 
 @router.post("/add-admin", status_code=status.HTTP_200_OK)
