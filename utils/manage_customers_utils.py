@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import HTTPException
-from db.models import Customer, CustomerCategory, AdminAudit       
+from db.models import Customer, CustomerCategory, AuditLog       
 from schemas.customer_schemas import CustomerCreate, CustomerUpdate, CustomerGet, CustomerDelete
 from messages.exceptions import CustomerEmailExists, CustomerNumberExists, CustomerNotFound, CustomerEmailUsedByOther, CustomerNumberUsedByOther
 
@@ -16,7 +16,7 @@ class CustomerCRUD:
 # create audit_log
 #--------------------------------------------------------------------------------------     
     async def create_audit_log(self, object_id: int, action: str, performed_by: int, performed_by_email: str):
-        audit_entry = AdminAudit(
+        audit_entry = AuditLog(
             object_id=object_id,
             action=action,
             performed_by=performed_by,

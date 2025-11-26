@@ -2,7 +2,7 @@ import os
 from typing import Union
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from db.models import Admin, AdminAudit, AdminDeleted
+from db.models import Admin, AuditLog, AdminDeleted
 from db.security.hash import hash_password
 from schemas.admin_schemas import AdminCreate, AdminUpdateInit, AdminStatus, AdminDelete, AdminRecovery
 from fastapi import HTTPException
@@ -23,7 +23,7 @@ class AdminCRUD:
 # create audit_log
 #--------------------------------------------------------------------------------------  
     async def create_audit_log(self, object_id: int, action: str, performed_by: int, performed_by_email: str):
-        audit_entry = AdminAudit(
+        audit_entry = AuditLog(
             object_id=object_id,
             action=action,
             performed_by=performed_by,
@@ -358,7 +358,7 @@ class AdminCRUD:
                 # Supprimer de la table principale
                 await self.db.delete(admin)
 
-                # Ajouter un log dans AdminAudit
+                # Ajouter un log dans AuditLog
                 action_desc = f"Suppression de l'admin {admin.email} ({admin.name} {admin.first_name})"
                 await self.create_audit_log(
                     object_id=admin.id,

@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from db.models import Admin, AdminAudit
+from db.models import Admin, AuditLog
 from db.security.hash import verify_password
 from db.security.jwt import create_access_token
 from messages.exceptions import InvalidEmail, InvalidPassword
@@ -17,7 +17,7 @@ class AuthCRUD:
 # create audit_log
 #--------------------------------------------------------------------------------------  
     async def create_audit_log(self, object_id: int, action: str, performed_by: int, performed_by_email: str):
-        audit_entry = AdminAudit(
+        audit_entry = AuditLog(
             object_id=object_id,
             action=action,
             performed_by=performed_by,

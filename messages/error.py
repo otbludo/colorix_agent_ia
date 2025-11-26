@@ -164,3 +164,21 @@ def register_error_handlers(app: FastAPI):
         )
     )
 
+
+# Customer categorie errors
+
+    app.add_exception_handler(
+        CustomerCategoryNameExists,
+        create_exception_handler(
+            status.HTTP_400_BAD_REQUEST,
+            {"message": "Une catégorie avec ce nom existe déjà.", "code": "customer_category_exists"}
+        )
+    )
+
+    app.add_exception_handler(
+        CustomerCategoryNotFound,
+        create_exception_handler(
+            status.HTTP_404_NOT_FOUND,
+            {"message": "Aucune categorie trouve.", "code": "customer_category_not_found"}
+        )
+    )

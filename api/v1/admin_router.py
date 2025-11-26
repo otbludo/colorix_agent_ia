@@ -9,6 +9,8 @@ from schemas.customer_schemas import CustomerCreate, CustomerGet, CustomerDelete
 from schemas.product_schemas import ProductCreate, ProductUpdate, ProductDelete, ProductRecovery
 from utils.manage_customers_utils import CustomerCRUD
 from utils.manage_product_utils import ProductCRUD
+from utils.customer_category_utils import CustomerCategoryCRUD
+from schemas.customer_category_schemas import CustomerCategoryCreate, CustomerCategoryUpdate, CustomerCategoryDelete, CustomerCategoryRecovery
 from dependencies.auth import superadmin_required, admin_required
 from utils.stat_utils import StatsCRUD
 from fastapi.templating import Jinja2Templates
@@ -128,3 +130,34 @@ async def delete_product(product_data: ProductDelete, current_user: dict = Depen
 async def recovery_product(product_data: ProductRecovery, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
     product_crud = ProductCRUD(db)
     return await product_crud.recovery_product(product_data, current_user)
+
+
+
+
+
+# -----------------------------------------------------------------------------
+# manage customer category
+#------------------------------------------------------------------------------
+
+@router.post("/add_category_customer", status_code=status.HTTP_201_CREATED)
+async def add_customer_category(category_data: CustomerCategoryCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
+    customer_category_crud = CustomerCategoryCRUD(db)
+    return await customer_category_crud.create_customer_category(category_data, current_user)
+
+
+@router.put("/update_customer_category", status_code=status.HTTP_200_OK)
+async def update_customer_category(category_data: CustomerCategoryUpdate, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_category_crud = CustomerCategoryCRUD(db)
+    return await customer_category_crud.update_customer_category(category_data, current_user)
+
+
+@router.delete("/delete_customer_category")
+async def delete_customer_category(category_data: CustomerCategoryDelete, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db),):
+    customer_category_crud = CustomerCategoryCRUD(db)
+    return await customer_category_crud.delete_customer_category(category_data, current_user)
+
+
+@router.post("/recovery_customer_category")
+async def recovery_customer_category(category_data: CustomerCategoryRecovery, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_category_crud = CustomerCategoryCRUD(db)
+    return await customer_category_crud.recovery_customer_category(category_data, current_user)

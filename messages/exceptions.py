@@ -63,3 +63,12 @@ class ProductNameExists(AppException):
 
 class ProductNotFound(AppException):
     pass
+
+
+
+# Customer category
+class CustomerCategoryNameExists(AppException):
+    pass
+
+class CustomerCategoryNotFound(AppException):
+    pass

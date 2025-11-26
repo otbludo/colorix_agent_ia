@@ -2,7 +2,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import HTTPException
-from db.models import ProductPrinting, AdminAudit, ProductPrintingDeleted    
+from db.models import ProductPrinting, AuditLog, ProductPrintingDeleted    
 from schemas.product_schemas import ProductCreate, ProductUpdate, ProductDelete, ProductRecovery
 from messages.exceptions import ProductNameExists, ProductNotFound
 
@@ -15,7 +15,7 @@ class ProductCRUD:
 # create audit_log
 #--------------------------------------------------------------------------------------     
     async def create_audit_log(self, object_id: int, action: str, performed_by: int, performed_by_email: str):
-        audit_entry = AdminAudit(
+        audit_entry = AuditLog(
             object_id=object_id,
             action=action,
             performed_by=performed_by,
@@ -134,7 +134,7 @@ class ProductCRUD:
                 # Construire le message de champs mis à jour
                 fields_log = ", ".join(updated_fields) if updated_fields else "no change"
 
-                # Ajouter un log dans AdminAudit
+                # Ajouter un log dans AuditLog
                 await self.create_audit_log(
                     object_id=product.id,
                     action=f"update product: {old_name} -> fields: {fields_log}",
@@ -184,7 +184,7 @@ class ProductCRUD:
                 # Supprimer le produit de la table principale
                 await self.db.delete(product)
 
-                # Ajouter un log dans AdminAudit
+                # Ajouter un log dans AuditLog
                 action_desc = (
                     f"Suppression du produit {product.name} "
                 )
@@ -201,6 +201,7 @@ class ProductCRUD:
         except Exception as e:
             await self.db.rollback()
             raise e
+
 
 
 
@@ -246,7 +247,7 @@ class ProductCRUD:
                 # Supprimer le produit de la table supprimée
                 await self.db.delete(deleted_product)
 
-                # Ajouter un log dans AdminAudit
+                # Ajouter un log dans AuditLog
                 action_desc =(f"Restauration du produit: {restored_product.name}")
                 
                 await self.create_audit_log(

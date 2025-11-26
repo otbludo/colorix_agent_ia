@@ -34,6 +34,21 @@ class AdminDeleted(Base):
     deleted_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class CustomerCategory(Base):
+    __tablename__ = "customer_category"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True)  
+    rate = Column(Float, default=1.0)   
+
+
+class CustomerCategoryDeleted(Base):
+    __tablename__ = "customer_category_deleted"
+    id = Column(Integer, primary_key=True)
+    original_id =  Column(Integer, unique=True, index=True) 
+    name = Column(String(50))  
+    rate = Column(Float, default=1.0)   
+
+
 class Customer(Base):
     __tablename__ = "customers"
     id = Column(Integer, primary_key=True, index=True)
@@ -44,7 +59,7 @@ class Customer(Base):
     company = Column(String(50), index=True)  
     city = Column(String(50), index=True)      
     country = Column(String(50), index=True)
-    # category = Column(String(15), index=True)
+    category = Column(String(15), index=True)
     status = Column(String(15), index=True)
     devis = relationship("Devis", back_populates="customer")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -70,16 +85,6 @@ class Devis(Base):
     customer = relationship("Customer", back_populates="devis")
     admin = relationship("Admin", back_populates="devis")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-
-class AdminAudit(Base):
-    __tablename__ = "admin_audit"
-    id = Column(Integer, primary_key=True)
-    object_id = Column(Integer)
-    action = Column(String)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
-    performed_by = Column(Integer)  # id du superadmin
-    performed_by_email = Column(String)
     
 
 class ProductPrinting(Base):
@@ -114,8 +119,11 @@ class ProductPrintingDeleted(Base):
     deleted_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
-class CustomerCategory(Base):
-    __tablename__ = "customer_category"
+class AuditLog(Base):
+    __tablename__ = "audit_log"
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), unique=True)  
-    rate = Column(Float, default=1.0)   
+    object_id = Column(Integer)
+    action = Column(String)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    performed_by = Column(Integer)  # id du superadmin
+    performed_by_email = Column(String)
