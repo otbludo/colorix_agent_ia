@@ -1,7 +1,11 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "postgresql+asyncpg://postgres:Entreprise@localhost:5432/db_colorix"
+
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Crée le moteur asynchrone
 engine = create_async_engine(DATABASE_URL, echo=True)
