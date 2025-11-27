@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import HTTPException
 from db.models import ProductPrinting, AuditLog, ProductPrintingDeleted    
-from schemas.product_schemas import ProductCreate, ProductUpdate, ProductDelete, ProductRecovery
+from schemas.product_schemas import ProductCreate, ProductUpdate, ProductDelete, ProductRecovery, ProductStatus
 from messages.exceptions import ProductNameExists, ProductNotFound
 
 
@@ -34,6 +34,9 @@ class ProductCRUD:
             # Démarrer une transaction
             async with self.db.begin():
 
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+            
                 # Vérifier si le produit existe déjà
                 query = await self.db.execute(
                     select(ProductPrinting).where(ProductPrinting.name == product_data.name)
@@ -58,11 +61,14 @@ class ProductCRUD:
                 await self.db.flush()   # Pour générer new_product.id sans commit
 
                 # Créer le log d’audit (si ça échoue → rollback)
+                action_desc = (
+                   f"create product: {product_data.name}"
+                )
                 await self.create_audit_log(
                     object_id=new_product.id,
-                    action=f"create product: {product_data.name}",
-                    performed_by=int(current_user["sub"]),
-                    performed_by_email=current_user["email"]
+                    action=action_desc,
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
                 )
 
             # Si tout est OK → COMMIT automatique
@@ -84,6 +90,9 @@ class ProductCRUD:
     async def update_product(self, product_data: ProductUpdate, current_user: dict):
         try:
             async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
 
                 # Vérifier si le produit existe
                 result = await self.db.execute(
@@ -128,18 +137,18 @@ class ProductCRUD:
                 self.db.add(product)
                 await self.db.flush()
 
-                # Nouveau nom final
-                new_name = product.name
-
                 # Construire le message de champs mis à jour
                 fields_log = ", ".join(updated_fields) if updated_fields else "no change"
 
                 # Ajouter un log dans AuditLog
+                action_desc = (
+                    f"update product: {old_name} -> fields: {fields_log}"
+                )
                 await self.create_audit_log(
                     object_id=product.id,
-                    action=f"update product: {old_name} -> fields: {fields_log}",
-                    performed_by=int(current_user["sub"]),
-                    performed_by_email=current_user["email"]
+                    action=action_desc,
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
                 )
 
             return product
@@ -159,6 +168,10 @@ class ProductCRUD:
     async def delete_product(self, product_data: ProductDelete, current_user: dict):
         try:
             async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+            
                 # Vérifier que le produit existe
                 result = await self.db.execute(
                     select(ProductPrinting).where(ProductPrinting.id == product_data.id)
@@ -191,8 +204,8 @@ class ProductCRUD:
                 await self.create_audit_log(
                     object_id=product.id,
                     action=action_desc,
-                    performed_by=int(current_user["sub"]),
-                    performed_by_email=current_user["email"]
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
                 )
 
             # Commit automatique si tout est OK
@@ -212,6 +225,9 @@ class ProductCRUD:
     async def recovery_product(self, product_data: ProductRecovery, current_user: dict):
         try:
             async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
 
                 # Récupérer le produit supprimé
                 result = await self.db.execute(
@@ -253,11 +269,58 @@ class ProductCRUD:
                 await self.create_audit_log(
                     object_id=restored_product.id,
                     action=action_desc,
-                    performed_by=int(current_user["sub"]),
-                    performed_by_email=current_user["email"]
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
                 )
 
             return {"message": f"Produit ({deleted_product.name}) restauré avec succès."}
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
+
+
+
+
+
+#--------------------------------------------------------------------------------------
+# get product by status 
+#--------------------------------------------------------------------------------------
+    async def get_product(self, status: ProductStatus | None = None, current_user: dict | None = None):
+        try:
+            async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+
+                # Cas : statut = supprime → table ProductPrintingDeleted
+                if status == ProductStatus.supprime:
+                    result = await self.db.execute(select(ProductPrintingDeleted))
+                    products = result.scalars().all()
+
+                    action_desc = (
+                        "Consultation de la liste des produits SUPPRIMÉS "
+                        f"par {performed_by_email}"
+                    )
+
+                else:
+                    result = await self.db.execute(select(ProductPrinting))
+                    products = result.scalars().all()
+
+                    action_desc = (
+                        "Consultation de la liste des produits "
+                        f"par {performed_by_email}"
+                    )
+
+                # Ajouter un log dans AuditLog
+                await self.create_audit_log(
+                    object_id=0,
+                    action=action_desc,
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
+                )
+
+            return products
 
         except Exception as e:
             await self.db.rollback()

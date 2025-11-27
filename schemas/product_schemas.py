@@ -1,8 +1,12 @@
 
 from pydantic import BaseModel, Field
 from typing import Optional
-from sqlalchemy import Enum
+from enum import Enum
 
+
+
+class ProductStatus(str, Enum):
+    supprime = "supprime"
 
 
 class ProductCreate(BaseModel):

@@ -1,5 +1,10 @@
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
+from enum import Enum
+
+
+class CustomerStatus(str, Enum):
+    supprime = "supprime"
 
 class CustomerCreate(BaseModel):
     name: str
@@ -35,6 +40,9 @@ class CustomerGet(BaseModel):
 
 
 class CustomerDelete(BaseModel):
+    id: int
+
+class CustomerRecovery(BaseModel):
     id: int
 
 

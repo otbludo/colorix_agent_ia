@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from db.models import CustomerCategory, AuditLog, CustomerCategoryDeleted
 from messages.exceptions import CustomerCategoryNameExists, CustomerCategoryNotFound
-from schemas.customer_category_schemas import CustomerCategoryCreate, CustomerCategoryUpdate, CustomerCategoryDelete, CustomerCategoryRecovery
+from schemas.customer_category_schemas import CustomerCategoryCreate, CustomerCategoryUpdate, CustomerCategoryDelete, CustomerCategoryRecovery, CustomerCategoryStatus
 
 class CustomerCategoryCRUD:
     def __init__(self, db: AsyncSession):
@@ -239,6 +239,53 @@ class CustomerCategoryCRUD:
                 )
 
             return {"message": f"Catégorie '{deleted_category.name}' restaurée avec succès."}
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
+
+
+
+
+
+#--------------------------------------------------------------------------------------
+# get customer by status 
+#--------------------------------------------------------------------------------------
+    async def get_customer_category(self, status: CustomerCategoryStatus | None = None, current_user: dict | None = None):
+        try:
+            async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+
+                
+                if status == CustomerCategoryStatus.supprime:
+                    result = await self.db.execute(select(CustomerCategoryDeleted))
+                    customer_category = result.scalars().all()
+
+                    action_desc = (
+                        "Consultation de la liste des produits SUPPRIMÉS "
+                        f"par {performed_by_email}"
+                    )
+
+                else:
+                    result = await self.db.execute(select(CustomerCategory))
+                    customer_category = result.scalars().all()
+
+                    action_desc = (
+                        "Consultation de la liste des produits "
+                        f"par {performed_by_email}"
+                    )
+
+                # Ajouter un log dans AuditLog
+                await self.create_audit_log(
+                    object_id=0,
+                    action=action_desc,
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
+                )
+
+            return customer_category
 
         except Exception as e:
             await self.db.rollback()

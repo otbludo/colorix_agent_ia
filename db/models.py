@@ -23,7 +23,7 @@ class Admin(Base):
 class AdminDeleted(Base):
     __tablename__ = "admin_deleted"
     id = Column(Integer, primary_key=True)
-    original_id = Column(Integer, unique=True, index=True)  # id de l'admin dans la table principale
+    original_id = Column(Integer, unique=True, index=True)  
     name = Column(String(50))
     first_name = Column(String(50))
     number = Column(String(15))
@@ -63,6 +63,23 @@ class Customer(Base):
     status = Column(String(15), index=True)
     devis = relationship("Devis", back_populates="customer")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class CustomerDeleted(Base):
+    __tablename__ = "customers_deleted"
+    id = Column(Integer, primary_key=True, index=True)
+    original_id = Column(Integer, unique=True, index=True)
+    name = Column(String(50))
+    first_name = Column(String(50))
+    number = Column(String(15))
+    email = Column(String(255))
+    company = Column(String(50))  
+    city = Column(String(50))      
+    country = Column(String(50))
+    category = Column(String(15))
+    status = Column(String(15))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
 
 
 class Devis(Base):

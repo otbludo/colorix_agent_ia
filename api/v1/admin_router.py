@@ -5,12 +5,12 @@ from sqlalchemy.orm import Session
 from db.database import get_db, AsyncSession
 from utils.admin_utils import AdminCRUD
 from schemas.admin_schemas import AdminUpdateInit
-from schemas.customer_schemas import CustomerCreate, CustomerGet, CustomerDelete, CustomerUpdate
-from schemas.product_schemas import ProductCreate, ProductUpdate, ProductDelete, ProductRecovery
+from schemas.customer_schemas import CustomerCreate, CustomerGet, CustomerDelete, CustomerUpdate, CustomerRecovery, CustomerStatus
+from schemas.product_schemas import ProductCreate, ProductUpdate, ProductDelete, ProductRecovery, ProductStatus
 from utils.manage_customers_utils import CustomerCRUD
 from utils.manage_product_utils import ProductCRUD
 from utils.customer_category_utils import CustomerCategoryCRUD
-from schemas.customer_category_schemas import CustomerCategoryCreate, CustomerCategoryUpdate, CustomerCategoryDelete, CustomerCategoryRecovery
+from schemas.customer_category_schemas import CustomerCategoryCreate, CustomerCategoryUpdate, CustomerCategoryDelete, CustomerCategoryRecovery, CustomerCategoryStatus
 from dependencies.auth import superadmin_required, admin_required
 from utils.stat_utils import StatsCRUD
 from fastapi.templating import Jinja2Templates
@@ -27,11 +27,9 @@ router = APIRouter()
 
 
 
-@router.post("/get-customer", status_code=status.HTTP_201_CREATED)
-async def get_customer(customer_data: CustomerCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
-    customer_crud = CustomerCRUD(db)
-    return await customer_crud.list_customers(customer_data, current_user)
-
+# -----------------------------------------------------------------------------
+# manage customer
+#------------------------------------------------------------------------------
 
 @router.post("/add-customer", status_code=status.HTTP_201_CREATED)
 async def add_customer(customer_data: CustomerCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
@@ -39,16 +37,30 @@ async def add_customer(customer_data: CustomerCreate, current_user: dict = Depen
     return await customer_crud.create_customer(customer_data, current_user)
    
 
-@router.put("/modify_customers", status_code=status.HTTP_200_OK)
+@router.put("/modify_customer", status_code=status.HTTP_200_OK)
 async def modify_customer(customer_data: CustomerUpdate, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
     customer_crud = CustomerCRUD(db)
     return await customer_crud.update_customer(customer_data, current_user)
 
 
-@router.delete("/remove_customers",status_code=status.HTTP_200_OK)
-async def remove_customer(customer_data: CustomerDelete, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+@router.delete("/delete_customer",status_code=status.HTTP_200_OK)
+async def delete_customer(customer_data: CustomerDelete, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
     customer_crud = CustomerCRUD(db)
-    return await customer_crud.delete_customer(customer_data)
+    return await customer_crud.delete_customer(customer_data, current_user)
+
+
+@router.post("/recovery_customer",status_code=status.HTTP_200_OK)
+async def recovery_customer(customer_data: CustomerRecovery, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_crud = CustomerCRUD(db)
+    return await customer_crud.recovery_customer(customer_data, current_user)
+
+
+@router.get("/get_customer", status_code=status.HTTP_200_OK)
+async def get_customer(customer_data: CustomerStatus | None = Query(None), current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_crud = CustomerCRUD(db)
+    return await customer_crud.get_customer(customer_data, current_user)
+
+
 
 
 @router.post("/request-update-info", status_code=status.HTTP_200_OK)
@@ -86,14 +98,7 @@ async def apply_update(token: str = Form(...), new_email: str = Form(...), new_p
     return HTMLResponse(content="<h3>Vos informations ont été mises à jour avec succès !</h3>")
 
 
-@router.post("/get-customers", status_code=status.HTTP_200_OK)
-async def get_customers(
-    data: CustomerGet,
-    current_user: dict = Depends(admin_required),
-    db: AsyncSession = Depends(get_db)
-):
-    customer_crud = CustomerCRUD(db)
-    return await customer_crud.list_customers(data.status)
+
 
 
 @router.get("/stats", status_code=status.HTTP_200_OK)
@@ -132,6 +137,11 @@ async def recovery_product(product_data: ProductRecovery, current_user: dict = D
     return await product_crud.recovery_product(product_data, current_user)
 
 
+@router.get("/get_product", status_code=status.HTTP_200_OK)
+async def get_product(product_data: ProductStatus | None = Query(None), current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    product_crud = ProductCRUD(db)
+    return await product_crud.get_product(product_data, current_user)
+
 
 
 
@@ -161,3 +171,10 @@ async def delete_customer_category(category_data: CustomerCategoryDelete, curren
 async def recovery_customer_category(category_data: CustomerCategoryRecovery, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
     customer_category_crud = CustomerCategoryCRUD(db)
     return await customer_category_crud.recovery_customer_category(category_data, current_user)
+
+
+@router.get("/get_customer_category", status_code=status.HTTP_200_OK)
+async def get_customer_category(category_data: CustomerCategoryStatus | None = Query(None), current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_category_crud = CustomerCategoryCRUD(db)
+    return await customer_category_crud.get_customer_category(category_data, current_user)
+
