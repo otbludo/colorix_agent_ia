@@ -36,6 +36,9 @@ class CustomerCategoryCRUD:
         try:
             async with self.db.begin():
 
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+
                 # Vérifier si la catégorie existe déjà
                 result = await self.db.execute(
                     select(CustomerCategory).where(CustomerCategory.name == category_data.name)
@@ -57,8 +60,8 @@ class CustomerCategoryCRUD:
                 await self.create_audit_log(
                     object_id=new_category.id,
                     action=action_desc,
-                    performed_by=int(current_user["sub"]),
-                    performed_by_email=current_user["email"]
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
                 )
 
                 # si tout OK, la transaction (begin) fera le commit automatiquement
@@ -79,6 +82,9 @@ class CustomerCategoryCRUD:
     async def update_customer_category(self, category_data: CustomerCategoryUpdate, current_user: dict):
         try:
             async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
 
                 # Vérifier si la catégorie existe
                 result = await self.db.execute(
@@ -132,8 +138,8 @@ class CustomerCategoryCRUD:
                 await self.create_audit_log(
                     object_id=category.id,
                     action=action_desc,
-                    performed_by=int(current_user["sub"]),
-                    performed_by_email=current_user["email"]
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
                 )
 
                 return {"message": f"Catégorie '{category.name}' mise à jour avec succès."}
@@ -153,6 +159,10 @@ class CustomerCategoryCRUD:
     async def delete_customer_category(self, category_data: CustomerCategoryDelete, current_user: dict):
         try:
             async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+                
                 # Vérifier que la catégorie existe
                 result = await self.db.execute(select(CustomerCategory).filter(CustomerCategory.id == category_data.id))
                 category = result.scalars().first()
@@ -177,8 +187,8 @@ class CustomerCategoryCRUD:
                 await self.create_audit_log(
                     object_id=category.id,
                     action=action_desc,
-                    performed_by=int(current_user["sub"]),
-                    performed_by_email=current_user.get("email")
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
                 )
 
             # Commit automatique si tout est OK
@@ -200,6 +210,9 @@ class CustomerCategoryCRUD:
     async def recovery_customer_category(self, category_data: CustomerCategoryRecovery, current_user: dict):
         try:
             async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
 
                 # Récupérer la catégorie supprimée
                 result = await self.db.execute(
@@ -230,12 +243,14 @@ class CustomerCategoryCRUD:
                 await self.db.delete(deleted_category)
 
                 # Ajouter un log dans AuditLog
-                action_desc = (f"Restauration de la catégorie: {restored_category.name}")
+                action_desc = (
+                    f"Restauration de la catégorie: {restored_category.name}"
+                )
                 await self.create_audit_log(
                     object_id=restored_category.id,
                     action=action_desc,
-                    performed_by=int(current_user["sub"]),
-                    performed_by_email=current_user["email"]
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
                 )
 
             return {"message": f"Catégorie '{deleted_category.name}' restaurée avec succès."}
