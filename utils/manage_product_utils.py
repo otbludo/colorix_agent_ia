@@ -56,7 +56,7 @@ class ProductCRUD:
                     quantity=product_data.quantity,
                     category = product_data.category,
                     front_price=product_data.front_price,
-                    back_price=product_data.back_price
+                    front_back_price=product_data.front_back_price
                     
                 )
 
@@ -194,7 +194,7 @@ class ProductCRUD:
                     color=product.color,
                     quantity=product.quantity,
                     front_price=product.front_price,
-                    back_price=product.back_price
+                    front_back_price=product.front_back_price
                 )
                 self.db.add(deleted_product)
 
@@ -260,7 +260,7 @@ class ProductCRUD:
                     color=deleted_product.color,
                     quantity=deleted_product.quantity,
                     front_price=deleted_product.front_price,
-                    back_price=deleted_product.back_price
+                    front_back_price=deleted_product.front_back_price
                 )
                 self.db.add(restored_product)
                 await self.db.flush()  

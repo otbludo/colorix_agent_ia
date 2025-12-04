@@ -19,7 +19,7 @@ class ProductCreate(BaseModel):
     quantity: Optional[int] = Field(1, ge=1)          # quantité minimale = 1
     category: str = Field(..., max_length=255)
     front_price: float = Field(..., ge=0)             # prix >= 0
-    back_price: Optional[float] = Field(0, ge=0)      # prix >= 0, par défaut 0 
+    front_back_price: Optional[float] = Field(0, ge=0)      # prix >= 0, par défaut 0 
 
     class Config:
         orm_mode = True
@@ -30,11 +30,12 @@ class ProductUpdate(BaseModel):
     name: str | None = None
     description: str | None = None
     format: str | None = None
-    papier_grammage: str | None = None
+    papier_grammage: List[str] | None = None
+    peliculage: List[str] | None = None
     color: str | None = None
     quantity: int | None = None
     front_price: float | None = None
-    back_price: float | None = None
+    front_back_price: float | None = None
 
 
 class ProductDelete(BaseModel):

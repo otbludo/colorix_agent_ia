@@ -118,8 +118,9 @@ class ProductPrinting(Base):
     quantity = Column(Integer, index=True)
     category = Column(String(50))
     front_price = Column(Float)
-    back_price = Column(Float)
-
+    front_back_price = Column(Float)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
 
 class ProductPrintingDeleted(Base):
     __tablename__ = "product_printing_deleted" 
@@ -135,7 +136,7 @@ class ProductPrintingDeleted(Base):
     quantity = Column(Integer)
     category = Column(String(50))
     front_price = Column(Float)
-    back_price = Column(Float)
+    front_back_price = Column(Float)
     deleted_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
