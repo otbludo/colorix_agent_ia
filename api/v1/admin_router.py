@@ -31,6 +31,8 @@ router = APIRouter()
 # manage customer
 #------------------------------------------------------------------------------
 
+tags=["customer"]
+
 @router.post("/add-customer", status_code=status.HTTP_201_CREATED)
 async def add_customer(customer_data: CustomerCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
     customer_crud = CustomerCRUD(db)

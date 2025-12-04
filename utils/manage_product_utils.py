@@ -51,10 +51,13 @@ class ProductCRUD:
                     description=product_data.description,
                     format=product_data.format,
                     papier_grammage=product_data.papier_grammage,
+                    peliculage=product_data.peliculage,
                     color=product_data.color,
                     quantity=product_data.quantity,
+                    category = product_data.category,
                     front_price=product_data.front_price,
                     back_price=product_data.back_price
+                    
                 )
 
                 self.db.add(new_product)
@@ -187,6 +190,7 @@ class ProductCRUD:
                     description=product.description,
                     format=product.format,
                     papier_grammage=product.papier_grammage,
+                    peliculage=product.peliculage,
                     color=product.color,
                     quantity=product.quantity,
                     front_price=product.front_price,
@@ -252,6 +256,7 @@ class ProductCRUD:
                     description=deleted_product.description,
                     format=deleted_product.format,
                     papier_grammage=deleted_product.papier_grammage,
+                    peliculage=deleted_product.peliculage,
                     color=deleted_product.color,
                     quantity=deleted_product.quantity,
                     front_price=deleted_product.front_price,

@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, JSON
 from db.database import Base
+
 
 
 
@@ -110,11 +111,12 @@ class ProductPrinting(Base):
     name = Column(String(255), unique=True, index=True)
     description = Column(String(255))
     format = Column(String(255), index=True)
-    papier_grammage = Column(String(255))
+    papier_grammage =  Column(JSON) 
+    peliculage =  Column(JSON) 
     finition = Column(String(255))
     color = Column(String(255), index=True)
     quantity = Column(Integer, index=True)
-    unit = Column(String(50), default="copies")
+    category = Column(String(50))
     front_price = Column(Float)
     back_price = Column(Float)
 
@@ -126,11 +128,12 @@ class ProductPrintingDeleted(Base):
     name = Column(String(255))
     description = Column(String(255))
     format = Column(String(255))
-    papier_grammage = Column(String(255))
+    papier_grammage =  Column(JSON) 
+    peliculage =  Column(JSON) 
     finition = Column(String(255))
     color = Column(String(255))
     quantity = Column(Integer)
-    unit = Column(String(50))
+    category = Column(String(50))
     front_price = Column(Float)
     back_price = Column(Float)
     deleted_at = Column(DateTime(timezone=True), server_default=func.now())
