@@ -17,3 +17,4 @@ app.include_router(super_admin_router, prefix="/api/v1", tags=["super_admin_rout
 app.include_router(admin_router, prefix="/api/v1", tags=["admin_router"])
 
 
+

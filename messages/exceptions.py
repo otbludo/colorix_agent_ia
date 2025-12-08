@@ -3,6 +3,15 @@ class AppException(Exception):
     pass
 
 
+# Token
+class ExpiredSignatureErrorToken(AppException):
+    pass
+
+class InvalidTokenErrorToken(AppException):
+    pass
+
+
+
 # Auth errors
 class InvalidEmail(AppException):
     pass

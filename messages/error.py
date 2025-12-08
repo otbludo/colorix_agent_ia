@@ -182,3 +182,21 @@ def register_error_handlers(app: FastAPI):
             {"message": "Aucune categorie trouve.", "code": "customer_category_not_found"}
         )
     )
+
+    app.add_exception_handler(
+        ExpiredSignatureErrorToken,
+        create_exception_handler(
+            status.HTTP_401_UNAUTHORIZED,
+            {"message": "Token expiré"}
+        )
+    )
+
+    app.add_exception_handler(
+        InvalidTokenErrorToken,
+        create_exception_handler(
+            status.HTTP_401_UNAUTHORIZED,
+            {"message": "Token invalide"}
+        )
+    )
+
+

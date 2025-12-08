@@ -57,8 +57,7 @@ class AdminCRUD:
             post=admin_data.post,
             role=admin_data.role,
             password=hash_password(admin_data.password),
-            status=admin_data.status,
-            devis_ids=admin_data.devis_ids
+            status=admin_data.status
         )
         self.db.add(admin)
         await self.db.commit()
