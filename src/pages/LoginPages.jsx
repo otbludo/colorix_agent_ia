@@ -1,17 +1,45 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import {LoginUser} from '../api/post/login'
 import { Input } from '../components/global/Input'
 import { Button } from '../components/global/Button'
 import colorixLogo from '../assets/colorixorigin.png'
 
 export function LoginPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  // --- React Query mutation ---
+  const {mutate, isPending, isSuccess, isError, error, data} = LoginUser()
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    // TODO: Implement login API call
-    console.log('Login submitted:', { email, password })
+    mutate({ email, password })
   }
+
+
+  // Gestion du succès
+  useEffect(() => {
+    if (isSuccess) {
+      if (data.message) {
+        toast.error(data.message);
+      } else if (data.access_token) {
+        toast.success('Connexion réussie !');
+        localStorage.setItem('colorix_token', data.access_token);
+        navigate('/dashboard');
+      }
+    }
+  }, [isSuccess]);
+
+  // Gestion des erreurs réseau
+  useEffect(() => {
+    if (isError) {
+      toast.error(error || 'Erreur réseau !');
+    }
+  }, [isError]);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#020c1f] via-[#051937] to-[#073061] relative overflow-hidden flex items-center justify-center px-4">
@@ -169,6 +197,7 @@ export function LoginPage() {
           </div>
         </div>
       </div>
+      <ToastContainer position="bottom-center" />
     </div>
   )
 }

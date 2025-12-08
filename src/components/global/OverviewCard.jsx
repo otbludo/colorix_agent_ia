@@ -8,8 +8,8 @@ export const OverviewCard = (({
   title,
   value,
   subtitle,
-  trend,
-  trendValue,
+  // trend,
+  // trendValue,
   iconBgColor,
 }) => {
   // Define Colorix brand colors (PLACEHOLDER - REPLACE WITH ACTUAL VALUES)
@@ -28,7 +28,7 @@ export const OverviewCard = (({
         {value}
         <span className="text-lg text-gray-400 ml-1">{subtitle}</span>
       </div>
-      <div
+      {/* <div
         className={`flex items-center gap-1 text-sm ${
           trend === 'up' ? 'text-green-600' : 'text-red-600'
         }`}
@@ -39,7 +39,7 @@ export const OverviewCard = (({
           <TrendingDown className="w-4 h-4" style={{ color: colorixRed }} />
         )}
         <span>{trendValue}</span>
-      </div>
+      </div> */}
     </div>
   )
 })
