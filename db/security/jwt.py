@@ -2,6 +2,7 @@ from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta, datetime
 import jwt
+from messages.exceptions import ExpiredSignatureErrorToken, InvalidTokenErrorToken
 
 SECRET_KEY = "SUPER_SECRET_123"
 ALGORITHM = "HS256"
@@ -31,7 +32,7 @@ def verify_token(token: str = Depends(oauth2_scheme)):
         return payload  # Contient: id, email, role, name, exp
 
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expiré")
+        raise ExpiredSignatureErrorToken()
 
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Token invalide")
+        raise InvalidTokenErrorToken()
