@@ -17,7 +17,7 @@ def register_error_handlers(app: FastAPI):
         InvalidToken,
         create_exception_handler(
             status.HTTP_401_UNAUTHORIZED,
-            {"message": "Token invalide", "code": "invalid_token"}
+            {"detail": "Token invalide", "code": "invalid_token"}
         )
     )
 
@@ -27,7 +27,7 @@ def register_error_handlers(app: FastAPI):
         create_exception_handler(
             status.HTTP_403_FORBIDDEN,
             {
-                "message": "Action réservée aux administrateurs ou superadmins.",
+                "detail": "Action réservée aux administrateurs ou superadmins.",
                 "code": "admin_access_denied"
             }
         )
@@ -38,7 +38,7 @@ def register_error_handlers(app: FastAPI):
         create_exception_handler(
             status.HTTP_403_FORBIDDEN,
             {
-                "message": "Votre compte n'est pas actif.",
+                "detail": "Votre compte n'est pas actif.",
                 "code": "admin_inactive"
             }
         )
@@ -48,7 +48,7 @@ def register_error_handlers(app: FastAPI):
         InvalidEmail,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Email incorrect", "code": "invalid_email"}
+            {"detail": "Email incorrect", "code": "invalid_email"}
         )
     )
 
@@ -56,7 +56,7 @@ def register_error_handlers(app: FastAPI):
         InvalidPassword,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Mot de passe incorrect", "code": "invalid_password"}
+            {"detail": "Mot de passe incorrect", "code": "invalid_password"}
         )
     )
 
@@ -64,7 +64,7 @@ def register_error_handlers(app: FastAPI):
         AdminEmailExists,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Cet email admin est déjà utilisé.", "code": "admin_email_exists"}
+            {"detail": "Cet email admin est déjà utilisé.", "code": "admin_email_exists"}
         )
     )
 
@@ -72,7 +72,7 @@ def register_error_handlers(app: FastAPI):
         AdminNumberExists,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Ce numéro admin est déjà utilisé.", "code": "admin_number_exists"}
+            {"detail": "Ce numéro admin est déjà utilisé.", "code": "admin_number_exists"}
         )
     )
 
@@ -80,7 +80,7 @@ def register_error_handlers(app: FastAPI):
         AdminNotFound,
         create_exception_handler(
             status.HTTP_404_NOT_FOUND,
-            {"message": "Administrateur introuvable.", "code": "admin_not_found"}
+            {"detail": "Administrateur introuvable.", "code": "admin_not_found"}
         )
     )
 
@@ -88,7 +88,7 @@ def register_error_handlers(app: FastAPI):
         AdminEmailMismatch,
         create_exception_handler(
             status.HTTP_403_FORBIDDEN,
-            {"message": "Cet email ne correspond pas au compte connecté.", "code": "email_mismatch"}
+            {"detail": "Cet email ne correspond pas au compte connecté.", "code": "email_mismatch"}
         )
     )
 
@@ -98,7 +98,7 @@ def register_error_handlers(app: FastAPI):
         CustomerEmailExists,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Cet email client est déjà utilisé.", "code": "customer_email_exists"}
+            {"detail": "Cet email client est déjà utilisé.", "code": "customer_email_exists"}
         )
     )
 
@@ -106,7 +106,7 @@ def register_error_handlers(app: FastAPI):
         CustomerNumberExists,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Ce numéro client est déjà utilisé.", "code": "customer_number_exists"}
+            {"detail": "Ce numéro client est déjà utilisé.", "code": "customer_number_exists"}
         )
     )
 
@@ -114,7 +114,7 @@ def register_error_handlers(app: FastAPI):
         CustomerNotFound,
         create_exception_handler(
             status.HTTP_404_NOT_FOUND,
-            {"message": "Client introuvable.", "code": "customer_not_found"}
+            {"detail": "Client introuvable.", "code": "customer_not_found"}
         )
     )
 
@@ -122,7 +122,7 @@ def register_error_handlers(app: FastAPI):
         CustomerEmailUsedByOther,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Cet email est déjà utilisé par un autre client.", "code": "email_used_by_other"}
+            {"detail": "Cet email est déjà utilisé par un autre client.", "code": "email_used_by_other"}
         )
     )
 
@@ -130,7 +130,7 @@ def register_error_handlers(app: FastAPI):
         CustomerNumberUsedByOther,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Ce numéro est déjà utilisé par un autre client.", "code": "number_used_by_other"}
+            {"detail": "Ce numéro est déjà utilisé par un autre client.", "code": "number_used_by_other"}
         )
     )
 
@@ -139,7 +139,7 @@ def register_error_handlers(app: FastAPI):
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
             {
-                "message": "L'administrateur a déjà ce statut. Aucune modification effectuée.",
+                "detail": "L'administrateur a déjà ce statut. Aucune modification effectuée.",
                 "code": "admin_status_already_set"
             }
         )
@@ -151,7 +151,7 @@ def register_error_handlers(app: FastAPI):
         ProductNameExists,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Un produit avec ce nom existe déjà.", "code": "product_name_exists"}
+            {"detail": "Un produit avec ce nom existe déjà.", "code": "product_name_exists"}
         )
     )
 
@@ -160,7 +160,7 @@ def register_error_handlers(app: FastAPI):
         ProductNotFound,
         create_exception_handler(
             status.HTTP_404_NOT_FOUND,
-            {"message": "Produit introuvable.", "code": "product_not_found"}
+            {"detail": "Produit introuvable.", "code": "product_not_found"}
         )
     )
 
@@ -171,7 +171,7 @@ def register_error_handlers(app: FastAPI):
         CustomerCategoryNameExists,
         create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
-            {"message": "Une catégorie avec ce nom existe déjà.", "code": "customer_category_exists"}
+            {"detail": "Une catégorie avec ce nom existe déjà.", "code": "customer_category_exists"}
         )
     )
 
@@ -179,7 +179,7 @@ def register_error_handlers(app: FastAPI):
         CustomerCategoryNotFound,
         create_exception_handler(
             status.HTTP_404_NOT_FOUND,
-            {"message": "Aucune categorie trouve.", "code": "customer_category_not_found"}
+            {"detail": "Aucune categorie trouve.", "code": "customer_category_not_found"}
         )
     )
 
@@ -187,7 +187,7 @@ def register_error_handlers(app: FastAPI):
         ExpiredSignatureErrorToken,
         create_exception_handler(
             status.HTTP_401_UNAUTHORIZED,
-            {"message": "Token expiré"}
+            {"detail": "Token expiré"}
         )
     )
 
@@ -195,7 +195,7 @@ def register_error_handlers(app: FastAPI):
         InvalidTokenErrorToken,
         create_exception_handler(
             status.HTTP_401_UNAUTHORIZED,
-            {"message": "Token invalide"}
+            {"detail": "Token invalide"}
         )
     )
 

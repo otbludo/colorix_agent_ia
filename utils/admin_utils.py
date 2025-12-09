@@ -114,7 +114,7 @@ class AdminCRUD:
 
             # Commit automatique si tout est OK
             await self.db.refresh(admin)
-            return admin
+            return {"message": f"Admin {admin.email} cree avec succes"}
 
         except Exception as e:
             await self.db.rollback()
@@ -278,24 +278,23 @@ class AdminCRUD:
         admin_data: Union[AdminDelete, AdminRecovery],
         current_user: dict
     ):
-        admin_id = int(admin_data.id)
-        performed_by = int(current_user["sub"])
-        performed_by_email = current_user.get("email")  # email du superadmin
-        new_status = admin_data.status.value
-
-        # Vérifier si l'admin existe
-        result = await self.db.execute(select(Admin).filter(Admin.id == admin_id))
-        admin = result.scalars().first()
-        if not admin:
-            raise AdminNotFound()
-
-        old_status = admin.status
-        if old_status == new_status:
-            raise AdminStatusAlreadySet()
-
         try:
             # Transaction pour le changement + audit log
             async with self.db.begin():
+                admin_id = int(admin_data.id)
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user.get("email")  # email du superadmin
+                new_status = admin_data.status.value
+
+                # Vérifier si l'admin existe
+                result = await self.db.execute(select(Admin).filter(Admin.id == admin_id))
+                admin = result.scalars().first()
+                if not admin:
+                    raise AdminNotFound()
+
+                old_status = admin.status
+                if old_status == new_status:
+                    raise AdminStatusAlreadySet()
 
                 # Modifier le statut
                 admin.status = new_status
@@ -327,18 +326,17 @@ class AdminCRUD:
 # Delete admin
 #--------------------------------------------------------------------------------------
     async def delete_admin(self, admin_data: AdminDelete, current_user: dict):
-        admin_id = int(admin_data.id)
-        performed_by = int(current_user["sub"])
-        performed_by_email = current_user.get("email")
-
-        # Vérifier que l'admin existe
-        result = await self.db.execute(select(Admin).filter(Admin.id == admin_id))
-        admin = result.scalars().first()
-        if not admin:
-            raise AdminNotFound()
-
         try:
             async with self.db.begin():
+                admin_id = int(admin_data.id)
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user.get("email")
+
+                # Vérifier que l'admin existe
+                result = await self.db.execute(select(Admin).filter(Admin.id == admin_id))
+                admin = result.scalars().first()
+                if not admin:
+                    raise AdminNotFound()
 
                 # Copier dans la table AdminDeleted
                 deleted_admin = AdminDeleted(
@@ -382,18 +380,17 @@ class AdminCRUD:
 # Recovery admin
 #--------------------------------------------------------------------------------------
     async def recovery_admin(self, admin_data: AdminRecovery, current_user: dict):
-        deleted_id = int(admin_data.id)
-        performed_by = int(current_user["sub"])
-        performed_by_email = current_user.get("email")
-
-        # Vérifier que l'admin existe dans AdminDeleted
-        result = await self.db.execute(select(AdminDeleted).filter(AdminDeleted.id == deleted_id))
-        deleted_admin = result.scalars().first()
-        if not deleted_admin:
-            raise AdminNotFound()
-
         try:
             async with self.db.begin():
+                deleted_id = int(admin_data.id)
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user.get("email")
+
+                # Vérifier que l'admin existe dans AdminDeleted
+                result = await self.db.execute(select(AdminDeleted).filter(AdminDeleted.id == deleted_id))
+                deleted_admin = result.scalars().first()
+                if not deleted_admin:
+                    raise AdminNotFound()
 
                 # Vérifier si un admin avec le même email existe déjà
                 result_email = await self.db.execute(select(Admin).filter(Admin.email == deleted_admin.email))

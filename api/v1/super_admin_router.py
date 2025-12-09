@@ -35,7 +35,7 @@ async def get_admins(status: AdminStatus | None = Query(None), current_user: dic
 
 
 
-@router.patch("/edit-statuts-admin", status_code=status.HTTP_200_OK)
+@router.put("/edit-statuts-admin", status_code=status.HTTP_200_OK)
 async def edit_statut_admin(
     admin_data: AdminEditStatusRequest,
     current_user: dict = Depends(superadmin_required),

@@ -13,6 +13,7 @@ from utils.customer_category_utils import CustomerCategoryCRUD
 from schemas.customer_category_schemas import CustomerCategoryCreate, CustomerCategoryUpdate, CustomerCategoryDelete, CustomerCategoryRecovery, CustomerCategoryStatus
 from dependencies.auth import superadmin_required, admin_required
 from utils.stat_utils import StatsCRUD
+from utils.audit_logs_utils import auditLogsCRUD
 from fastapi.templating import Jinja2Templates
 
 
@@ -108,6 +109,11 @@ async def get_stats(current_user: dict = Depends(admin_required), db: AsyncSessi
     stats_service = StatsCRUD(db)
     return await stats_service.get_stats()
 
+
+@router.get("/audit_logs", status_code=status.HTTP_200_OK)
+async def get_audit_logs(current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    logs_service = auditLogsCRUD(db)
+    return await logs_service.get_audit_logs()
 
 
 
