@@ -1,166 +1,113 @@
-import { useState } from 'react'
-import { X, User, Mail, Lock, Shield } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { AddAdmin } from '../../api/post/AddAdmin';
+import { EditAdmin } from '../../api/put/EditAddmin';
+import { X, User, Mail, Lock, Shield, Phone } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { InputField, SelectField } from '../../components/global/Input';
+import { ButtonForm } from '../../components/global/Button';
 
+export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = false }) {
+  const token = localStorage.getItem('colorix_token');
+  const { mutate: mutateAdd, isPending: isPendingAdd, isSuccess: isSuccessAdd, data: dataAdd, isError: isErrorAdd, error: errorAdd } = AddAdmin(token);
+  const { mutate: mutateEdit, isPending: isPendingEdit, isSuccess: isSuccessEdit, data: dataEdit, isError: isErrorEdit, error: errorEdit } = EditAdmin(token);
 
-export function FormAdmins({ isOpen, onClose }) {
- const [errors, seterrors] = useState(false)
+  const emptyForm = {
+    name: "",
+    first_name: "",
+    number: "",
+    email: "",
+    post: "",
+    role: "admin",
+    status: "actif",
+    password: "",
+  };
 
-  const handleClose = () => {
-    onClose()
-  }
- if (!isOpen) return null
+  const [formData, setFormData] = useState(emptyForm);
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(isEditing && adminToEdit ? { ...adminToEdit, password: "" } : emptyForm);
+    }
+  }, [isOpen, isEditing, adminToEdit]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isEditing) {
+      mutateEdit({ id: adminToEdit.id, status: formData.status });
+    } else {
+      mutateAdd(formData);
+    }
+  };
+
+  // Gestion des succès et erreurs
+  useEffect(() => {
+    if (isSuccessAdd && dataAdd?.message) toast.success(dataAdd.message);
+    if (isSuccessAdd && dataAdd?.detail) toast.error(dataAdd.detail);
+  }, [isSuccessAdd]);
+
+  useEffect(() => {
+    if (isSuccessEdit && dataEdit?.message) toast.success(dataEdit.message);
+    if (isSuccessEdit && dataEdit?.detail) toast.error(dataEdit.detail);
+  }, [isSuccessEdit]);
+
+  useEffect(() => {
+    if (isErrorAdd || isErrorEdit) toast.error((errorAdd || errorEdit) || 'Erreur réseau !');
+  }, [isErrorAdd, isErrorEdit, errorAdd, errorEdit]);
+
+  const handleClose = () => onClose();
+  if (!isOpen) return null;
+
+  const formTitle = isEditing ? "Modifier le statut de l'utilisateur" : "Ajouter un utilisateur";
+  const submitButtonText = isEditing ? "Mettre à jour" : "Ajouter l'utilisateur";
+  const isLoading = isPendingAdd || isPendingEdit;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop with blur */}
-      <div
-        className="absolute inset-0 bg-opacity-10 backdrop-blur-sm"
-        onClick={handleClose}
-      />
+      <div className="absolute inset-0 bg-opacity-10 backdrop-blur-sm" onClick={handleClose} />
 
-      {/* Modal Content */}
       <div className="relative bg-white rounded-xl shadow-2xl border border-gray-200 p-6 w-full max-w-md mx-4 animate-in fade-in-0 zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Ajouter un utilisateur</h3>
-          <button
-            onClick={handleClose}
-            className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-          >
+          <h3 className="text-xl font-bold text-gray-900">{formTitle}</h3>
+          <button onClick={handleClose} className="p-1 rounded-full hover:bg-gray-100 transition-colors">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
-        {/* Form */}
-        <form className="space-y-4">
-          {/* Name Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nom complet
-            </label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                name="name"
-                value={""}
-                onChange={""}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white ${
-                  errors.name ? 'border-red-300 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'
-                } focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
-                placeholder="Entrez le nom de l'utilisateur"
-              />
-            </div>
-          </div>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <InputField label="Nom complet" name="name" value={formData.name} onChange={handleChange} disabled={isEditing} placeholder="Entrez le nom" icon={User} />
+          <InputField label="Prénom" name="first_name" value={formData.first_name} onChange={handleChange} disabled={isEditing} placeholder="Entrez le prénom" icon={User} />
+          <InputField label="Numéro" name="number" value={formData.number} onChange={handleChange} disabled={isEditing} placeholder="690200000" icon={Phone} type="number" />
+          <InputField label="Email" name="email" value={formData.email} onChange={handleChange} disabled={isEditing} placeholder="utilisateur@email.com" icon={Mail} type="email" />
+          {!isEditing && <InputField label="Mot de passe" name="password" value={formData.password} onChange={handleChange} placeholder="Mot de passe" icon={Lock} type="password" />}
 
-          {/* Email Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="email"
-                name="email"
-                value={""}
-                onChange={""}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white ${
-                  errors.email ? 'border-red-300 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'
-                } focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
-                placeholder="utilisateur@email.com"
-              />
-            </div>
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-            )}
-          </div>
+          <SelectField
+            label="Post" name="post" value={formData.post} onChange={handleChange} disabled={isEditing} icon={Shield}
+            options={[{ value: 'admin', label: 'Manager' }, { value: 'superadmin', label: 'Contable' }]}
+          />
 
-          {/* Password Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Mot de passe
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="password"
-                name="password"
-                value={""}
-                onChange={""}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white ${
-                  errors.password ? 'border-red-300 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'
-                } focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
-                placeholder="Mot de passe (min. 8 caractères)"
-              />
-            </div>
-          </div>
+          <SelectField
+            label="Rôle" name="role" value={formData.role} onChange={handleChange} disabled={isEditing} icon={Shield}
+            options={[{ value: 'admin', label: 'Admin' }, { value: 'superadmin', label: 'Superadmin' }]}
+          />
 
-          {/* Confirm Password Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Confirmer le mot de passe
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="password"
-                name="confirmPassword"
-                value={""}
-                onChange={""}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white ${
-                  errors.confirmPassword ? 'border-red-300 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'
-                } focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
-                placeholder="Confirmer le mot de passe"
-              />
-            </div>
-          </div>
-
-          {/* Role Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rôle
-            </label>
-            <div className="relative">
-              <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <select
-                name="role"
-                value={""}
-                onChange={""}
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors appearance-none bg-white"
-              >
-                <option value="user">Utilisateur</option>
-                <option value="manager">Manager</option>
-                <option value="admin">Administrateur</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Status Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Statut
-            </label>
-          </div>
+          <SelectField
+            label="Statut" name="status" value={formData.status} onChange={handleChange}
+            options={[{ value: 'actif', label: 'Actif' }, { value: 'inactif', label: 'Inactif' }]}
+          />
 
           {/* Actions */}
           <div className="flex gap-3 mt-6">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-            >
-              Annuler
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
-              Ajouter l'utilisateur
-            </button>
+            <ButtonForm onClick={handleClose} variant="secondary">Annuler</ButtonForm>
+            <ButtonForm type="submit" disabled={isLoading} variant="primary">{isLoading ? 'Chargement...' : submitButtonText}</ButtonForm>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

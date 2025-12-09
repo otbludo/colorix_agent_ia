@@ -3,47 +3,39 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'
 import { useStats} from '../../api/get/stats';
 import { OverviewCard } from '../global/OverviewCard';
-import {BarChart3, FolderKanban, Clock,Users, ChevronDown} from 'lucide-react';
+import {BarChart3, FolderKanban, Clock,Users, ChevronDown, Shield} from 'lucide-react';
 
 export function Stats() {
-  const navigate = useNavigate();
   const token = localStorage.getItem('colorix_token');
   const { data, isPending, isError, error } = useStats(token);
 
   // Gestion des erreurs réseau
   useEffect(() => {
     if (isError) {
-      // Si l'API retourne une erreur 401 ou message "Token expiré"
-      if (error?.message?.toLowerCase().includes('unauthorized') || error?.message?.toLowerCase().includes('token')) {
-        toast.error('Votre session a expiré. Veuillez vous reconnecter.');
-        localStorage.removeItem('colorix_token'); // Supprimer le token expiré
-        navigate('/login'); 
-      } else {
-        toast.error(error?.message || 'Erreur réseau !');
-      }
+      toast.error(error || 'Erreur réseau !');
     }
-  }, [isError, error, navigate]);
+  }, [isError]);
 
 
     return(
          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <OverviewCard
-                icon={<BarChart3 className="w-6 h-6 text-white" />}
+                icon={<Users className="w-6 h-6 text-white" />}
                 title="Total customer"
-                value={`$${data?.total_customers}`}
+                value={`${data?.total_customers}`}
                 subtitle=""
                 // trend="up"
                 // trendValue="0% increase from last month"
                 iconBgColor="from-[#4361ee] to-[#5ab9ff]"
               />
               <OverviewCard
-                icon={<FolderKanban className="w-6 h-6 text-white" />}
+                icon={<Shield className="w-6 h-6 text-white" />}
                 title="Total admins"
-                value={`$${data?.total_admins}`}
+                value={`${data?.total_admins}`}
                 subtitle=""
                 // trend="down"
                 // trendValue="10% decrease from last month"
-                iconBgColor="from-[#f97316] to-[#fbbf24]"
+                iconBgColor="from-[#10b981] to-[#34d399]"
               />
               <OverviewCard
                 icon={<Clock className="w-6 h-6 text-white" />}
@@ -61,7 +53,7 @@ export function Stats() {
                 subtitle="/120"
                 // trend="up"
                 // trendValue="2% increase from last month"
-                iconBgColor="from-[#10b981] to-[#34d399]"
+                iconBgColor="from-[#f97316] to-[#fbbf24]"
               />
             </div>
     )

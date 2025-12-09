@@ -23,3 +23,29 @@ export function Button({
     </button>
   )
 }
+
+
+export function ButtonForm({ children, onClick, type = "button", variant = "primary", disabled = false, className = "" }) {
+  let baseClasses = "flex-1 px-4 py-2 rounded-lg font-medium transition-colors text-center";
+
+  const variants = {
+    primary: disabled
+      ? "bg-blue-400 text-white cursor-not-allowed"
+      : "bg-blue-600 text-white hover:bg-blue-700",
+    secondary: disabled
+      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+      : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+  };
+
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`${baseClasses} ${variants[variant]} ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+

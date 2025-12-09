@@ -1,56 +1,118 @@
-import { useState } from 'react'
-import { Sidebar } from '../components/global/Sidebar'
-import { Header } from '../components/global/Header'
-import { FormAdmins} from '../components/Admin/FormAdmin'
-import {Admins} from '../components/Admin/Admin'
-import {StatsAdmins} from '../components/Admin/Stats'
-import { UserPlus, User as UserIcon } from 'lucide-react'
+import { useState } from 'react';
+import { ToastContainer } from 'react-toastify';
+import { Sidebar } from '../components/global/Sidebar';
+import { Header } from '../components/global/Header';
+import { FormAdmins } from '../components/Admin/FormAdmin';
+import { Admins } from '../components/Admin/Admin';
+import { StatsAdmins } from '../components/Admin/Stats';
+import { UserPlus, Filter } from 'lucide-react';
+import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal';
+import { AdminFilter } from '../components/Admin/AdminFilter';
+import { useDeleteAdmin } from '../api/delete/Admin';
 
 export function AdminsScreen() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false)
+  const token = localStorage.getItem('colorix_token');
+  const { mutate, isPending, data, isSuccess, isError, error } = useDeleteAdmin(token);
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const [adminToEdit, setAdminToEdit] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [adminToDelete, setAdminToDelete] = useState(null);
+
+  // Gestion des filtres
+  const [filters, setFilters] = useState({
+    status: { actif: false, inactif: false, supprime: false },
+    dateRange: { start: '', end: '' }
+  });
+
+  const getSelectedStatus = () => {
+    if (filters.status.actif) return 'actif';
+    if (filters.status.inactif) return 'inactif';
+    if (filters.status.supprime) return 'supprime';
+    return null;
+  };
+
+  const statusFilter = getSelectedStatus();
+
+  const openAddModal = () => { setAdminToEdit(null); setIsEditing(false); setIsAdminModalOpen(true); };
+  const openEditModal = (admin) => { setAdminToEdit(admin); setIsEditing(true); setIsAdminModalOpen(true); };
+  const openDeleteModal = (admin) => setAdminToDelete(admin);
 
   return (
     <div className="min-h-screen bg-white">
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-
       <div className="flex flex-col lg:pl-[280px]">
-        <Header
-          onToggleSidebar={() => setIsSidebarOpen(true)}
-        />
-
+        <Header onToggleSidebar={() => setIsSidebarOpen(true)} />
         <main className="p-4 sm:p-6 lg:p-10">
-          <div className="space-y-8 bg-white rounded-3xl shadow-[0_15px_45px_rgba(15,23,42,0.06)] p-6 sm:p-8 lg:p-10 border border-gray-100">
-            {/* Header Section */}
+          <div className="space-y-8 bg-white rounded-3xl shadow-lg p-6 border border-gray-100">
+
             <div className="flex flex-wrap gap-4 items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-[#102040]">Gestion des Administrateurs</h2>
                 <p className="text-gray-600 mt-1">Gérer les comptes utilisateurs et leurs permissions</p>
               </div>
-              <button
-                onClick={() => setIsAdminModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-              >
-                <UserPlus className="w-4 h-4" />
-                Ajouter un utilisateur
-              </button>
+
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <button onClick={() => setIsFilterOpen(prev => !prev)} className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg hover:shadow-md text-sm transition-shadow">
+                    <Filter className="w-4 h-4 text-sky-600" />
+                    <span className="text-sm text-slate-700">Filtrer</span>
+                  </button>
+                  <AdminFilter
+                    isOpen={isFilterOpen}
+                    onClose={() => setIsFilterOpen(false)}
+                    onApplyFilters={setFilters}
+                    currentFilters={filters}
+                  />
+                </div>
+
+                <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  <UserPlus className="w-4 h-4" />
+                  Ajouter un utilisateur
+                </button>
+              </div>
             </div>
 
-            {/* Users Table */}
-            <Admins/>
+            <Admins
+              token={token}
+              statusFilter={statusFilter}
+              dateRange={filters.dateRange}
+              onEditAdmin={openEditModal}
+              onDeleteAdmin={openDeleteModal}
+            />
 
-            {/* Summary Stats */}
-            <StatsAdmins/>
+            <StatsAdmins />
           </div>
         </main>
       </div>
 
-      {/* Add User Modal */}
       <FormAdmins
         isOpen={isAdminModalOpen}
         onClose={() => setIsAdminModalOpen(false)}
+        adminToEdit={adminToEdit}
+        isEditing={isEditing}
       />
+
+      {adminToDelete && (
+        <DeleteConfirmModal
+          isOpen={!!adminToDelete}
+          onClose={() => setAdminToDelete(null)}
+          entityName={adminToDelete.name}
+          entityId={adminToDelete.id}
+          deleteApi={mutate}
+          isPending={isPending}
+          isSuccess={isSuccess}
+          isError={isError}
+          data={data}
+          error={error}
+        />
+      )}
+
+      <ToastContainer position="bottom-center" />
     </div>
-  )
+  );
 }

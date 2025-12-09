@@ -12,7 +12,6 @@ export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  // --- React Query mutation ---
   const {mutate, isPending, isSuccess, isError, error, data} = LoginUser()
 
   const handleSubmit = (e) => {
@@ -27,7 +26,6 @@ export function LoginPage() {
       if (data.message) {
         toast.error(data.message);
       } else if (data.access_token) {
-        toast.success('Connexion réussie !');
         localStorage.setItem('colorix_token', data.access_token);
         navigate('/dashboard');
       }
