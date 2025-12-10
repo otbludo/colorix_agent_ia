@@ -1,156 +1,108 @@
-import {CustomersActionsDropdown} from './CustomerActionsDropdown'
-import {  Shield, Crown, User as UserIcon } from 'lucide-react'
+import React, { useEffect } from 'react';
+import { CustomersActionsDropdown } from './CustomerActionsDropdown';
+import { RotateCcw } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { GetCustomer } from '../../api/get/GetCustomers';
+import { RecoveryCustomer } from '../../api/post/RecoveryCustomer';
+
+export function Customers({ token, statusFilter, onEditcustomer, onDeletecustomer }) {
+
+  const { data, isPending, isError, error } = GetCustomer(token, statusFilter);
+  const { mutate: recovercustomer, isPending: isRecovering, isSuccess: isSuccesRecoveryCustomer, data: dataRecoveryCustomer } = RecoveryCustomer(token);
+
+  useEffect(() => {
+    if (isError) toast.error(error.message || 'Erreur réseau !');
+  }, [isError]);
+
+  const getStatusBadge = (status) => (
+    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${status === 'client'
+      ? 'bg-green-100 text-green-800'
+      : 'bg-yellow-100 text-yellow-800'
+      }`}>
+      {status}
+    </span>
+  );
+
+  const formatDate = (dateString) => {
+    const d = new Date(dateString);
+    return d.toLocaleDateString("fr-FR") + " " + d.toLocaleTimeString("fr-FR");
+  };
+
+  useEffect(() => {
+    if (isSuccesRecoveryCustomer && dataRecoveryCustomer?.message) {
+      toast.success(dataRecoveryCustomer.message);
+    }
+    if (isSuccesRecoveryCustomer && dataRecoveryCustomer?.detail) toast.error(dataRecoveryCustomer.detail);
+  }, [isSuccesRecoveryCustomer]);
 
 
+  return (
+    <div className="overflow-hidden border border-gray-200 rounded-xl">
 
-export function Customers(){
+      {/* Conteneur scrollable */}
+      <div className="overflow-y-auto max-h-[600px]">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Numéro</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ville</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pays</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Entreprise</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Créé le</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
 
-      const users = [
-        {
-          id: '1',
-          name: 'Super Admin',
-          email: 'admin@colorix.com',
-          role: 'admin',
-          status: 'active',
-          createdAt: 'Jan 1, 2024',
-          lastLogin: 'Aujourd\'hui'
-        },
-        {
-          id: '2',
-          name: 'Marie Dupont',
-          email: 'marie.dupont@colorix.com',
-          role: 'manager',
-          status: 'active',
-          createdAt: 'Jan 15, 2024',
-          lastLogin: 'Hier'
-        },
-        {
-          id: '3',
-          name: 'Jean Martin',
-          email: 'jean.martin@colorix.com',
-          role: 'user',
-          status: 'active',
-          createdAt: 'Feb 1, 2024',
-          lastLogin: 'Il y a 3 jours'
-        },
-        {
-          id: '4',
-          name: 'Sophie Bernard',
-          email: 'sophie.bernard@colorix.com',
-          role: 'user',
-          status: 'inactive',
-          createdAt: 'Feb 15, 2024'
-        }
-      ]
-    
-      const getRoleIcon = (role) => {
-        switch (role) {
-          case 'admin':
-            return <Crown className="w-4 h-4 text-purple-600" />
-          case 'manager':
-            return <Shield className="w-4 h-4 text-blue-600" />
-          default:
-            return <UserIcon className="w-4 h-4 text-gray-600" />
-        }
-      }
-    
-      const getRoleLabel = (role) => {
-        switch (role) {
-          case 'admin':
-            return 'Administrateur'
-          case 'manager':
-            return 'Manager'
-          default:
-            return 'Utilisateur'
-        }
-      }
-    
-      const getStatusBadge = (status) => {
-        return (
-          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-            status === 'active'
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-          }`}>
-            {status === 'active' ? 'Actif' : 'Inactif'}
-          </span>
-        )
-      }
+          <tbody className="bg-white divide-y divide-gray-200">
+            {data?.map((customer) => (
+              <tr key={customer.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                      <span className="text-sm font-medium text-blue-600">
+                        {customer.first_name?.[0]}{customer.name?.[0]}
+                      </span>
+                    </div>
+                    <div className="ml-4">
+                      <div className="text-sm font-medium text-gray-900">
+                        {customer.first_name} {customer.name}
+                      </div>
+                      <div className="text-sm text-gray-500">{customer.email}</div>
+                    </div>
+                  </div>
+                </td>
 
-    return(
-        <div className="overflow-hidden border border-gray-200 rounded-xl">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Utilisateur
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Rôle
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Statut
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Créé le
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Dernière connexion
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                              <span className="text-sm font-medium text-blue-600">
-                                {user.name.split(' ').map(n => n[0]).join('')}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {user.name}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {user.email}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          {getRoleIcon(user.role)}
-                          <span className="ml-2 text-sm text-gray-900">
-                            {getRoleLabel(user.role)}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {getStatusBadge(user.status)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {user.createdAt}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {user.lastLogin || 'Jamais'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                      <CustomersActionsDropdown
-                                        onEdit={() => openEditModal(client, `client-${index}`)}
-                                        onDelete={() => openDeleteModal(client, `client-${index}`)}
-                                      />
-                                    </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-    )
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.number}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.city}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.country}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.company}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.category ?? "—"}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(customer.status)}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(customer.created_at)}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  {statusFilter === "supprime" ? (
+                    <button
+                      onClick={() => recovercustomer(customer.id)}
+                      className="p-1 rounded-full hover:bg-gray-100"
+                      title="Restaurer"
+                    >
+                      <RotateCcw className="w-5 h-5 text-green-600" />
+                    </button>
+                  ) : (
+                    <CustomersActionsDropdown
+                      onEdit={() => onEditcustomer(customer)}
+                      onDelete={() => onDeletecustomer(customer)}
+                    />
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }

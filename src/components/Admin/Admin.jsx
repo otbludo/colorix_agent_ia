@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import { AdminsActionsDropdown } from './AdminActionsDropdown';
 import { Shield, Crown, RotateCcw } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { GetAdmin } from '../../api/get/admin';
+import { GetAdmin } from '../../api/get/GetAdmin';
 import { useRecoveryAdmin } from '../../api/post/RecoveryAdmin';
 
 export function Admins({ token, statusFilter, dateRange, onEditAdmin, onDeleteAdmin }) {
 
   const { data, isPending, isError, error } = GetAdmin(token, statusFilter, dateRange);
-  const { mutate: recoverAdmin, isPending: isRecovering } = useRecoveryAdmin(token);
+  const { mutate: recoverAdmin, isPending: isRecovering, isSuccess: isSuccesRecoveryAdmin, data: dataRecoveryAdmin } = useRecoveryAdmin(token);
 
   useEffect(() => {
     if (isError) toast.error(error.message || 'Erreur réseau !');
@@ -30,6 +30,11 @@ export function Admins({ token, statusFilter, dateRange, onEditAdmin, onDeleteAd
       {status}
     </span>
   );
+
+  useEffect(() => {
+    if (isSuccesRecoveryAdmin && dataRecoveryAdmin?.message) toast.success(dataRecoveryAdmin.message);
+    if (isSuccesRecoveryAdmin && dataRecoveryAdmin?.detail) toast.error(dataRecoveryAdmin.detail);
+  }, [isSuccesRecoveryAdmin]);
 
   return (
     <div className="overflow-hidden border border-gray-200 rounded-xl">

@@ -8,7 +8,7 @@ import { StatsAdmins } from '../components/Admin/Stats';
 import { UserPlus, Filter } from 'lucide-react';
 import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal';
 import { AdminFilter } from '../components/Admin/AdminFilter';
-import { useDeleteAdmin } from '../api/delete/Admin';
+import { useDeleteAdmin } from '../api/delete/DeleteAdmin';
 
 export function AdminsScreen() {
   const token = localStorage.getItem('colorix_token');

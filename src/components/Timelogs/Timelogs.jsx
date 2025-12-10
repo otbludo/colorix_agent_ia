@@ -1,5 +1,5 @@
 import { Play, Square, Calendar, User } from 'lucide-react'
-import {auditLogs} from '../../api/get/auditLogs'
+import {auditLogs} from '../../api/get/GetAuditLogs'
 
 export function Timelogs(){
   const token = localStorage.getItem('colorix_token');

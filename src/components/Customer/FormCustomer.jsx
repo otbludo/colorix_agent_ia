@@ -1,122 +1,211 @@
-import { useState } from 'react'
-import { X, User, Mail, Building } from 'lucide-react'
+import { useState, useEffect } from "react";
+import { AddCustomer } from "../../api/post/AddCustomers";
+import { EditCustomer } from "../../api/put/EditCustomer";
+import { X, User, Mail, Building, Globe, Phone, Tag } from "lucide-react";
+import { toast } from "react-toastify";
+import { InputField, SelectField } from "../../components/global/Input";
+import { ButtonForm } from "../../components/global/Button";
 
+export function FormCustomer({
+  isOpen,
+  onClose,
+  customerToEdit = null,
+  isEditing = false,
+}) {
+  const token = localStorage.getItem("colorix_token");
 
-export function FormCustomer({ isOpen, onClose }) {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: ''
-  })
-  const [errors, setErrors] = useState({})
+  const {
+    mutate: mutateAdd,
+    isPending: isPendingAdd,
+    isSuccess: isSuccessAdd,
+    data: dataAdd,
+    isError: isErrorAdd,
+    error: errorAdd,
+  } = AddCustomer(token);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+  const {
+    mutate: mutateEdit,
+    isPending: isPendingEdit,
+    isSuccess: isSuccessEdit,
+    data: dataEdit,
+    isError: isErrorEdit,
+    error: errorEdit,
+  } = EditCustomer(token);
 
+  const emptyForm = {
+    id: "",
+    name: "",
+    first_name: "",
+    email: "",
+    number: "",
+    company: "",
+    city: "",
+    country: "",
+    category: "",
+    status: "potentiel",
+  };
 
-  const handleClose = () => {
-    onClose()
-  }
+  const [formData, setFormData] = useState(emptyForm);
 
-  if (!isOpen) return null
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(isEditing && customerToEdit ? { ...customerToEdit } : emptyForm);
+    }
+  }, [isOpen, isEditing, customerToEdit]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isEditing) {
+      mutateEdit(formData);
+    } else {
+      mutateAdd(formData);
+    }
+  };
+
+  useEffect(() => {
+    if (isSuccessAdd && dataAdd?.message) {
+      toast.success(dataAdd.message);
+      onClose();
+    }
+    if (isSuccessAdd && dataAdd?.detail) toast.error(dataAdd.detail);
+  }, [isSuccessAdd]);
+
+  useEffect(() => {
+    if (isSuccessEdit && dataEdit?.message) {
+      toast.success(dataEdit.message);
+      onClose();
+    }
+    if (isSuccessEdit && dataEdit?.detail) toast.error(dataEdit.detail);
+  }, [isSuccessEdit]);
+
+  useEffect(() => {
+    if (isErrorAdd || isErrorEdit)
+      toast.error((errorAdd || errorEdit) || "Erreur réseau !");
+  }, [isErrorAdd, isErrorEdit, errorAdd, errorEdit]);
+
+  const handleClose = () => onClose();
+
+  if (!isOpen) return null;
+
+  const formTitle = isEditing ? "Modifier le client" : "Ajouter un client";
+  const submitButtonText = isEditing ? "Mettre à jour" : "Ajouter le client";
+  const isLoading = isPendingAdd || isPendingEdit;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop with blur */}
-      <div
-        className="absolute inset-0 -opacity-20 backdrop-blur-md"
-        onClick={handleClose}
-      />
+      <div className="absolute inset-0 bg-opacity-10 backdrop-blur-sm" onClick={handleClose} />
 
-      {/* Modal Content */}
-      <div className="relative bg-white rounded-xl shadow-2xl border border-gray-200 p-6 w-full max-w-md mx-4 animate-in fade-in-0 zoom-in-95 duration-200">
+      <div className="relative bg-white rounded-xl shadow-2xl border border-gray-200 p-6 w-full max-w-md mx-4 animate-in fade-in-0 zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Ajouter un client</h3>
-          <button
-            onClick={handleClose}
-            className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-          >
+          <h3 className="text-xl font-bold text-gray-900">{formTitle}</h3>
+          <button onClick={handleClose} className="p-1 rounded-full hover:bg-gray-100 transition-colors">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
-        {/* Form */}
-        <form className="space-y-4">
-          {/* Name Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nom complet
-            </label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
-                placeholder="Entrez le nom du client"
-              />
-            </div>
-          </div>
+        {/* FORM */}
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <InputField
+            label="Nom"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Nom"
+            icon={User}
+          />
+          <InputField
+            label="Prénom"
+            name="first_name"
+            value={formData.first_name}
+            onChange={handleChange}
+            placeholder="Prénom"
+            icon={User}
+          />
+          <InputField
+            label="Email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="client@email.com"
+            icon={Mail}
+            type="email"
+          />
+          <InputField
+            label="Numéro"
+            name="number"
+            value={formData.number}
+            onChange={handleChange}
+            placeholder="690200000"
+            icon={Phone}
+          />
+          <InputField
+            label="Entreprise"
+            name="company"
+            value={formData.company}
+            onChange={handleChange}
+            placeholder="Nom de l'entreprise"
+            icon={Building}
+          />
+          <InputField
+            label="Ville"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            placeholder="Ville"
+            icon={Globe}
+          />
+          <InputField
+            label="Pays"
+            name="country"
+            value={formData.country}
+            onChange={handleChange}
+            placeholder="Pays"
+            icon={Globe}
+          />
 
-          {/* Email Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
-                placeholder="client@email.com"
-              />
-            </div>
-          </div>
+          <SelectField
+            label="Catégorie"
+            name="category"
+            value={formData.status}
+            onChange={handleChange}
+            options={[
+              { value: "particulier", label: "Prticulier" },
+              { value: "entreprise", label: "Entreprise" },
+              { value: "ONG", label: "ONG" },
+              { value: "etat", label: "Etat" },
+            ]}
+          />
 
-          {/* Company Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Entreprise
-            </label>
-            <div className="relative">
-              <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                name="company"
-                value={formData.company}
-                onChange={handleInputChange}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors`}
-                placeholder="Nom de l'entreprise"
-              />
-            </div>
-          </div>
+          <SelectField
+            label="Statut"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            options={[
+              { value: "potentiel", label: "Potentiel" },
+              { value: "client", label: "Client" },
+            ]}
+          />
 
           {/* Actions */}
           <div className="flex gap-3 mt-6">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-            >
+            <ButtonForm onClick={handleClose} variant="secondary">
               Annuler
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
-              Ajouter le client
-            </button>
+            </ButtonForm>
+
+            <ButtonForm type="submit" disabled={isLoading} variant="primary">
+              {isLoading ? "Chargement..." : submitButtonText}
+            </ButtonForm>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

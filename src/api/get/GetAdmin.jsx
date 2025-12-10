@@ -2,14 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const GetAdmin = (token, statusFilter, dateRange) => {
+export const GetAdmin = (token, statusFilter) => {
   return useQuery(
-    ['GetAdmin', statusFilter, dateRange],
+    ['GetAdmin', statusFilter],
     async () => {
       let query = '';
-      if (statusFilter) query += `status=${statusFilter}`;
-      if (dateRange?.start) query += query ? `&start=${dateRange.start}` : `start=${dateRange.start}`;
-      if (dateRange?.end) query += query ? `&end=${dateRange.end}` : `end=${dateRange.end}`;
+      if (statusFilter) query += `admin_data=${statusFilter}`;
 
       const response = await fetch(`${API_URL}/api/v1/get_admins${query ? `?${query}` : ''}`, {
         method: 'GET',
