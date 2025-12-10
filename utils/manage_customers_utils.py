@@ -74,7 +74,7 @@ class CustomerCRUD:
 
             # Commit automatique si tout est OK
             await self.db.refresh(customer)
-            return customer
+            return {"message": f"Client {customer.email} cree avec succes"}
 
         except Exception as e:
             await self.db.rollback()
@@ -150,7 +150,7 @@ class CustomerCRUD:
                 )
 
             # Commit automatique si tout est OK
-            return customer
+            return {"message": f"Client {customer.email} mis a jour avec succes"}
 
         except Exception as e:
             await self.db.rollback()

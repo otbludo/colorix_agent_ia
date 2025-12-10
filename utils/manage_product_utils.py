@@ -74,8 +74,8 @@ class ProductCRUD:
                     performed_by_email=performed_by_email
                 )
 
-            # Si tout est OK → COMMIT automatique
-            return new_product
+            # Commit automatique si tout est OK
+            return {"message": f"Client {new_product.name} cree avec succes"}
 
         except Exception as e:
             # Rollback garanti en cas d’échec
@@ -154,7 +154,7 @@ class ProductCRUD:
                     performed_by_email=performed_by_email
                 )
 
-            return product
+            return {"message": f"Produit {product.name} mis a jour avec succes"}
 
         except Exception as e:
             await self.db.rollback()

@@ -29,9 +29,9 @@ async def add_admin(
 
 
 @router.get("/get_admins", status_code=status.HTTP_200_OK)
-async def get_admins(status: AdminStatus | None = Query(None), current_user: dict = Depends(superadmin_required), db: AsyncSession = Depends(get_db)):
+async def get_admins(admin_data: AdminStatus | None = Query(None), current_user: dict = Depends(superadmin_required), db: AsyncSession = Depends(get_db)):
     admin_crud = AdminCRUD(db)
-    return await admin_crud.get_admins_by_status(status, current_user)
+    return await admin_crud.get_admins_by_status(admin_data, current_user)
 
 
 
