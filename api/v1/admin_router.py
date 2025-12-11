@@ -11,6 +11,8 @@ from utils.manage_customers_utils import CustomerCRUD
 from utils.manage_product_utils import ProductCRUD
 from utils.customer_category_utils import CustomerCategoryCRUD
 from schemas.customer_category_schemas import CustomerCategoryCreate, CustomerCategoryUpdate, CustomerCategoryDelete, CustomerCategoryRecovery, CustomerCategoryStatus
+from utils.manage_devis_utils import DevisCRUD
+from schemas.devis_schemas import DevisCreate, DevisUpdate
 from dependencies.auth import superadmin_required, admin_required
 from utils.stat_utils import StatsCRUD
 from utils.audit_logs_utils import auditLogsCRUD
@@ -186,3 +188,20 @@ async def get_customer_category(category_data: CustomerCategoryStatus | None = Q
     customer_category_crud = CustomerCategoryCRUD(db)
     return await customer_category_crud.get_customer_category(category_data, current_user)
 
+
+
+
+# -----------------------------------------------------------------------------
+# manage devis
+#------------------------------------------------------------------------------
+
+@router.post("/add_devis", status_code=status.HTTP_201_CREATED)
+async def add_devis(devis_data: DevisCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
+    devis_crud = DevisCRUD(db)
+    return await devis_crud.create_devis(devis_data, current_user)
+
+
+@router.post("/update_devis", status_code=status.HTTP_201_CREATED)
+async def update_devis(devis_data: DevisUpdate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
+    devis_crud = DevisCRUD(db)
+    return await devis_crud.update_devis(devis_data, current_user)
