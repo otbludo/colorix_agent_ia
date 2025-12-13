@@ -26,7 +26,6 @@ export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }
 
   return (
     <div className="overflow-hidden border border-gray-200 rounded-xl">
-
       <div className="overflow-y-auto max-h-[600px]">
         <table className="w-full">
           <thead className="bg-gray-50">
@@ -41,12 +40,9 @@ export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
-
           <tbody className="bg-white divide-y divide-gray-200">
             {data?.map((product) => (
               <tr key={product.id} className="hover:bg-gray-50">
-                
-                {/* Nom */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -62,42 +58,28 @@ export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }
                     </div>
                   </div>
                 </td>
-
-                {/* Format */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   {product.format}
                 </td>
-
-                {/* Pelliculage */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   {Array.isArray(product.peliculage)
                     ? product.peliculage.join(', ')
                     : "—"}
                 </td>
-
-                {/* Papier Grammage */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   {Array.isArray(product.papier_grammage)
                     ? product.papier_grammage.join(', ')
                     : "—"}
                 </td>
-
-                {/* Quantité */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   {product.quantity}
                 </td>
-
-                {/* Prix */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   {product.front_price} FCFA
                 </td>
-
-                {/* Date */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {formatDate(product.created_at)}
                 </td>
-
-                {/* Actions */}
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   {statusFilter === "supprime" ? (
                     <button
@@ -114,11 +96,9 @@ export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }
                     />
                   )}
                 </td>
-
               </tr>
             ))}
           </tbody>
-
         </table>
       </div>
     </div>

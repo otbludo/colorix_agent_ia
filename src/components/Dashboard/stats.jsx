@@ -22,7 +22,7 @@ export function Stats() {
       <OverviewCard
         icon={<Shield className="w-6 h-6 text-white" />}
         title="Total admins"
-        value={`${data?.total_admins}`}
+        value={`${data?.total_admins || 0}`}
         subtitle=""
         // trend="down"
         // trendValue="10% decrease from last month"
@@ -31,7 +31,7 @@ export function Stats() {
       <OverviewCard
         icon={<Users className="w-6 h-6 text-white" />}
         title="Total customer"
-        value={`${data?.total_customers}`}
+        value={`${data?.total_customers || 0}`}
         subtitle=""
         // trend="up"
         // trendValue="0% increase from last month"

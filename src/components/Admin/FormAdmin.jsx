@@ -44,7 +44,6 @@ export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = fa
     }
   };
 
-  // Gestion des succès et erreurs
   useEffect(() => {
     if (isSuccessAdd && dataAdd?.message) toast.success(dataAdd.message);
     if (isSuccessAdd && dataAdd?.detail) toast.error(dataAdd.detail);
@@ -69,39 +68,31 @@ export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = fa
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-opacity-10 backdrop-blur-sm" onClick={handleClose} />
-
       <div className="relative bg-white rounded-xl shadow-2xl border border-gray-200 p-6 w-full max-w-md mx-4 animate-in fade-in-0 zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-gray-900">{formTitle}</h3>
           <button onClick={handleClose} className="p-1 rounded-full hover:bg-gray-100 transition-colors">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
-
         <form className="space-y-4" onSubmit={handleSubmit}>
           <InputField label="Nom complet" name="name" value={formData.name} onChange={handleChange} disabled={isEditing} placeholder="Entrez le nom" icon={User} />
           <InputField label="Prénom" name="first_name" value={formData.first_name} onChange={handleChange} disabled={isEditing} placeholder="Entrez le prénom" icon={User} />
           <InputField label="Numéro" name="number" value={formData.number} onChange={handleChange} disabled={isEditing} placeholder="690200000" icon={Phone} type="number" />
           <InputField label="Email" name="email" value={formData.email} onChange={handleChange} disabled={isEditing} placeholder="utilisateur@email.com" icon={Mail} type="email" />
           {!isEditing && <InputField label="Mot de passe" name="password" value={formData.password} onChange={handleChange} placeholder="Mot de passe" icon={Lock} type="password" />}
-
           <SelectField
             label="Post" name="post" value={formData.post} onChange={handleChange} disabled={isEditing} icon={Shield}
             options={[{ value: 'admin', label: 'Manager' }, { value: 'superadmin', label: 'Contable' }]}
           />
-
           <SelectField
             label="Rôle" name="role" value={formData.role} onChange={handleChange} disabled={isEditing} icon={Shield}
             options={[{ value: 'admin', label: 'Admin' }, { value: 'superadmin', label: 'Superadmin' }]}
           />
-
           <SelectField
             label="Statut" name="status" value={formData.status} onChange={handleChange}
             options={[{ value: 'actif', label: 'Actif' }, { value: 'inactif', label: 'Inactif' }]}
           />
-
-          {/* Actions */}
           <div className="flex gap-3 mt-6">
             <ButtonForm onClick={handleClose} variant="secondary">Annuler</ButtonForm>
             <ButtonForm type="submit" disabled={isLoading} variant="primary">{isLoading ? 'Chargement...' : submitButtonText}</ButtonForm>

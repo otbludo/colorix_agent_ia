@@ -58,9 +58,25 @@ export function AdminsScreen() {
 
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <button onClick={() => setIsFilterOpen(prev => !prev)} className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg hover:shadow-md text-sm transition-shadow">
-                    <Filter className="w-4 h-4 text-sky-600" />
-                    <span className="text-sm text-slate-700">Filtrer</span>
+                  <button
+                    onClick={() => setIsFilterOpen(prev => !prev)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors text-sm ${statusFilter
+                      ? 'border-blue-300 bg-blue-50 text-blue-700'
+                      : 'border-gray-200 hover:bg-gray-50 text-gray-700'
+                      }`}
+                  >
+                    <div className="relative">
+                      <Filter className="w-4 h-4" />
+                      {statusFilter && (
+                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full"></div>
+                      )}
+                    </div>
+                    <span>Filtrer</span>
+                    {/* {statusFilter && (
+                      <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                        {/* {filteredClients.length} *
+                      </span>
+                    )} */}
                   </button>
                   <AdminFilter
                     isOpen={isFilterOpen}

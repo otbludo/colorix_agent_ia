@@ -38,8 +38,6 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
 
   return (
     <div className="overflow-hidden border border-gray-200 rounded-xl">
-
-      {/* Conteneur scrollable */}
       <div className="overflow-y-auto max-h-[600px]">
         <table className="w-full">
           <thead className="bg-gray-50">
@@ -55,7 +53,6 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
-
           <tbody className="bg-white divide-y divide-gray-200">
             {data?.map((customer) => (
               <tr key={customer.id} className="hover:bg-gray-50">
@@ -74,7 +71,6 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
                     </div>
                   </div>
                 </td>
-
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.number}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.city}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.country}</td>

@@ -41,22 +41,20 @@ export function AdminFilter({ isOpen, onClose, onApplyFilters, currentFilters })
         <div className="flex items-center gap-2"><Filter className="w-5 h-5 text-blue-600" /><h3 className="text-lg font-semibold text-gray-900">Filtrer les administrateurs</h3></div>
         <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 transition-colors"><X className="w-4 h-4 text-gray-500" /></button>
       </div>
-
       <div className="px-4 py-3 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Statut</label>
           <div className="flex flex-wrap gap-2">
-            {['actif','inactif','supprime'].map(s => (
+            {['actif', 'inactif', 'supprime'].map(s => (
               <button key={s} onClick={() => toggleStatus(s)}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-colors
                 ${filters.status[s] ? 'ring-2 ring-blue-500 ring-offset-1' : ''}
-                ${s==='actif'?'bg-green-100 text-green-700 hover:bg-green-200':s==='inactif'?'bg-gray-100 text-gray-700 hover:bg-gray-200':'bg-red-100 text-red-700 hover:bg-red-200'}`}
-              >{s.charAt(0).toUpperCase()+s.slice(1)}</button>
+                ${s === 'actif' ? 'bg-green-100 text-green-700 hover:bg-green-200' : s === 'inactif' ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}
+              >{s.charAt(0).toUpperCase() + s.slice(1)}</button>
             ))}
           </div>
         </div>
       </div>
-
       <div className="flex gap-2 px-4 pt-3 border-t border-gray-100">
         <button onClick={resetFilters} className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Réinitialiser</button>
         <button onClick={applyFilters} className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">Appliquer</button>
