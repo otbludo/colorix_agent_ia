@@ -86,26 +86,59 @@ class CustomerDeleted(Base):
 class Devis(Base):
     __tablename__ = "devis"
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), index=True)
+    name_product = Column(String(50), index=True)
     description = Column(String(255), index=True)
     format = Column(String(50), index=True)
     quantity = Column(Integer, index=True)
     impression = Column(String(50), index=True)
     printing_time = Column(String(50), index=True)
+    description_devis= Column(String(255), index=True)
     tva = Column(Float, index=True)
     prix_base = Column(Float, index=True)
     price_taux = Column(Float, index=True)
     montant_tva = Column(Float, index=True)
     montant_ttc = Column(Float, index=True)
     taux_applique = Column(Float, index=True)
+    name_customer = Column(String(50), index=True)
+    first_name_customer = Column(String(50), index=True)
+    email_customer = Column(String(255))
     id_product = Column(Integer, index=True)
     id_customer = Column(Integer, ForeignKey("customers.id"))
     id_admin = Column(Integer, ForeignKey("admin.id"))
-    # Relations (optionnel mais recommandé)
+    status = Column(String(15))
     customer = relationship("Customer", back_populates="devis")
     admin = relationship("Admin", back_populates="devis")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
+
+class DevisDeleted(Base):
+    __tablename__ = "devis_deleted"
+    id = Column(Integer, primary_key=True, index=True)
+    original_id = Column(Integer, unique=True, index=True)
+    name = Column(String(50), index=True)
+    description = Column(String(255), index=True)
+    format = Column(String(50), index=True)
+    quantity = Column(Integer, index=True)
+    impression = Column(String(50), index=True)
+    printing_time = Column(String(50), index=True)
+    description_devis = Column(String(255), index=True)
+    tva = Column(Float, index=True)
+    prix_base = Column(Float, index=True)
+    price_taux = Column(Float, index=True)
+    montant_tva = Column(Float, index=True)
+    montant_ttc = Column(Float, index=True)
+    taux_applique = Column(Float, index=True)
+    name_customer = Column(String(50), index=True)
+    first_name_customer = Column(String(50), index=True)
+    email_customer = Column(String(255))
+    id_product = Column(Integer, index=True)
+    id_customer = Column(Integer, index=True)
+    id_admin = Column(Integer, index=True)
+    status = Column(String(15))
+    created_at = Column(DateTime(timezone=True))
+    deleted_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 
 class ProductPrinting(Base):
     __tablename__ = "product_printing"

@@ -1,6 +1,6 @@
 import os
 from fastapi.responses import HTMLResponse
-from fastapi import APIRouter, Depends, status, Request, Query, Form
+from fastapi import APIRouter, Depends, status, Request, Query, Form, WebSocket
 from sqlalchemy.orm import Session
 from db.database import get_db, AsyncSession
 from utils.admin_utils import AdminCRUD
@@ -12,7 +12,7 @@ from utils.manage_product_utils import ProductCRUD
 from utils.customer_category_utils import CustomerCategoryCRUD
 from schemas.customer_category_schemas import CustomerCategoryCreate, CustomerCategoryUpdate, CustomerCategoryDelete, CustomerCategoryRecovery, CustomerCategoryStatus
 from utils.manage_devis_utils import DevisCRUD
-from schemas.devis_schemas import DevisCreate, DevisUpdate
+from schemas.devis_schemas import DevisCreate, DevisUpdate, DevisStatus, DevisValidate
 from dependencies.auth import superadmin_required, admin_required
 from utils.stat_utils import StatsCRUD
 from utils.audit_logs_utils import auditLogsCRUD
@@ -195,13 +195,32 @@ async def get_customer_category(category_data: CustomerCategoryStatus | None = Q
 # manage devis
 #------------------------------------------------------------------------------
 
+@router.websocket("/ws/simulate_devis")
+async def ws_simulate_devis(websocket: WebSocket, db: AsyncSession = Depends(get_db)):
+    await websocket.accept()
+    devis_crud = DevisCRUD(db)
+    await devis_crud.websocket_simulate_devis(websocket)
+
+
 @router.post("/add_devis", status_code=status.HTTP_201_CREATED)
 async def add_devis(devis_data: DevisCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
     devis_crud = DevisCRUD(db)
     return await devis_crud.create_devis(devis_data, current_user)
 
 
-@router.post("/update_devis", status_code=status.HTTP_201_CREATED)
+@router.put("/update_devis", status_code=status.HTTP_201_CREATED)
 async def update_devis(devis_data: DevisUpdate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
     devis_crud = DevisCRUD(db)
     return await devis_crud.update_devis(devis_data, current_user)
+
+
+@router.put("/validate_devis", status_code=status.HTTP_201_CREATED)
+async def validate_devis(devis_data: DevisValidate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
+    devis_crud = DevisCRUD(db)
+    return await devis_crud.validate_devis(devis_data, current_user)
+
+
+@router.get("/get_devis", status_code=status.HTTP_200_OK)
+async def get_devis(devis_data: DevisStatus | None = Query(None), current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    devis_crud = DevisCRUD(db)
+    return await devis_crud.get_devis(devis_data, current_user)
