@@ -8,7 +8,6 @@ import { Estimates } from '../components/Estimate/Estimates'
 import { StatEstimate } from '../components/Estimate/Stats'
 
 
-
 export function EstimateScreen() {
   const token = localStorage.getItem('colorix_token');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -32,7 +31,7 @@ export function EstimateScreen() {
           <div className="space-y-8 bg-white rounded-3xl shadow-[0_15px_45px_rgba(15,23,42,0.06)] p-6 sm:p-8 lg:p-10 border border-gray-100">
             <div className="flex flex-wrap gap-4 items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-[#102040]">Devis</h2>
+                <h2 className="text-2xl font-bold text-[#102040]">Gestion des devis</h2>
                 <p className="text-gray-600 mt-1">Gérer vos devis et propositions commerciales</p>
               </div>
               <button
@@ -46,7 +45,7 @@ export function EstimateScreen() {
             <Estimates
               onEditDevis={openEditModal}
               token={token} />
-            <StatEstimate />
+            <StatEstimate token={token} />
           </div>
         </main>
       </div>

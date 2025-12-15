@@ -1,14 +1,8 @@
 import { useEffect } from 'react'
-import {
-  FileText,
-  Eye,
-  Edit,
-  Download,
-  Calendar,
-  User,
-} from 'lucide-react'
+import { FileText, Eye, Edit, Download, Calendar, User2 } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { GetDevis } from '../../api/get/GetDevis'
+
 
 export function Estimates({ token, onEditDevis }) {
   const { data, isPending, isError, error } = GetDevis(token, null)
@@ -49,7 +43,7 @@ export function Estimates({ token, onEditDevis }) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <User className="w-4 h-4" />
+                  <User2 className="w-4 h-4" />
                   <span>
                     {devis.name_customer} {devis.first_name_customer}
                   </span>

@@ -2,25 +2,23 @@ import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { ToastContainer } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
-import {LoginUser} from '../api/post/login'
+import { LoginUser } from '../api/post/login'
 import { Input } from '../components/global/Input'
 import { Button } from '../components/global/Button'
 import colorixLogo from '../assets/colorixorigin.png'
 
+
 export function LoginPage() {
   const navigate = useNavigate();
+  const { mutate, isPending, isSuccess, isError, error, data } = LoginUser()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
-  const {mutate, isPending, isSuccess, isError, error, data} = LoginUser()
 
   const handleSubmit = (e) => {
     e.preventDefault()
     mutate({ email, password })
   }
 
-
-  // Gestion du succès
   useEffect(() => {
     if (isSuccess) {
       if (data.message) {
@@ -32,7 +30,6 @@ export function LoginPage() {
     }
   }, [isSuccess]);
 
-  // Gestion des erreurs réseau
   useEffect(() => {
     if (isError) {
       toast.error(error || 'Erreur réseau !');
@@ -41,7 +38,6 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#020c1f] via-[#051937] to-[#073061] relative overflow-hidden flex items-center justify-center px-4">
-      {/* Pattern impression & communication sur tout le fond */}
       <div className="absolute inset-0 opacity-[0.2]">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -53,7 +49,6 @@ export function LoginPage() {
               height="120"
               patternUnits="userSpaceOnUse"
             >
-              {/* Imprimante */}
               <g
                 transform="translate(10, 10)"
                 stroke="#2e5483ff"
@@ -65,8 +60,6 @@ export function LoginPage() {
                 <rect x="8" y="18" width="14" height="4" rx="1" />
                 <line x1="10" y1="10" x2="18" y2="10" />
               </g>
-
-              {/* Carte de visite / flyer */}
               <g
                 transform="translate(70, 10)"
                 stroke="#2e5483ff"
@@ -78,8 +71,6 @@ export function LoginPage() {
                 <line x1="9" y1="13" x2="19" y2="13" />
                 <line x1="9" y1="17" x2="17" y2="17" />
               </g>
-
-              {/* Bulle de discussion */}
               <g
                 transform="translate(10, 70)"
                 stroke="#2e5483ff"
@@ -92,8 +83,6 @@ export function LoginPage() {
                 <circle cx="16" cy="12" r="1" />
                 <circle cx="21" cy="12" r="1" />
               </g>
-
-              {/* Mégaphone */}
               <g
                 transform="translate(70, 70)"
                 stroke="#2e5483ff"
@@ -110,8 +99,6 @@ export function LoginPage() {
           <rect width="100%" height="100%" fill="url(#colorix-pattern)" />
         </svg>
       </div>
-
-      {/* Vague bleue en bas, étendue sur toute la largeur */}
       <div className="absolute bottom-[-1px] left-0 right-0 h-80 pointer-events-none">
         <svg
           className="w-full h-full"
@@ -132,11 +119,8 @@ export function LoginPage() {
           </defs>
         </svg>
       </div>
-
-      {/* Contenu principal */}
       <div className="relative z-10 w-full max-w-5xl">
         <div className="flex flex-col items-center gap-10 text-center">
-          {/* Texte / branding au-dessus du formulaire */}
           <div className="space-y-6 max-w-xl">
             <div className="flex justify-center">
               <img
@@ -152,19 +136,13 @@ export function LoginPage() {
               </span>
             </h1>
           </div>
-
-          {/* Carte de connexion */}
           <div className="w-full max-w-md mx-auto">
             <div className="bg-gradient-to-b from-white/15 via-white/10 to-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_25px_80px_rgba(3,12,32,0.45)] px-8 py-8">
-             
-              {/* Titre */}
               <div className="text-center mb-6">
                 <h2 className="text-xl font-semibold text-white">
                   Se connecter
                 </h2>
               </div>
-
-              {/* Formulaire */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <Input
                   type="email"
@@ -175,7 +153,6 @@ export function LoginPage() {
                   aria-label="Adresse e-mail"
                   label="Adresse e-mail"
                 />
-
                 <Input
                   type="password"
                   placeholder="••••••••"
@@ -185,8 +162,6 @@ export function LoginPage() {
                   aria-label="Mot de passe"
                   label="Mot de passe"
                 />
-
-
                 <Button type="submit" className="w-full mt-6">
                   Se connecter
                 </Button>

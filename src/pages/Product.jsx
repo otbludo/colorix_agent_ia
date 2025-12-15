@@ -5,10 +5,11 @@ import { Header } from '../components/global/Header';
 import { FormProduct } from '../components/Product/FormProduct';
 import { Products } from '../components/Product/Product';
 import { StatsProducts } from '../components/Product/Stats';
-import { UserPlus, Filter } from 'lucide-react';
+import { Plus, Filter } from 'lucide-react';
 import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal';
 import { ProductFilter } from '../components/Product/ProductFilter';
 import { DeleteProduct } from '../api/delete/DeleteProduct';
+
 
 export function ProductScreen() {
   const token = localStorage.getItem('colorix_token');
@@ -23,7 +24,6 @@ export function ProductScreen() {
 
   const [productToDelete, setproductToDelete] = useState(null);
 
-  // Gestion des filtres
   const [filters, setFilters] = useState({
     status: { supprime: false },
   });
@@ -49,8 +49,8 @@ export function ProductScreen() {
 
             <div className="flex flex-wrap gap-4 items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-[#102040]">Gestion des product</h2>
-                <p className="text-gray-600 mt-1">Gérer les cproducts</p>
+                <h2 className="text-2xl font-bold text-[#102040]">Gestion des produits</h2>
+                <p className="text-gray-600 mt-1">Gérer les produits</p>
               </div>
 
               <div className="flex items-center gap-3">
@@ -76,7 +76,6 @@ export function ProductScreen() {
                       </span>
                     )} */}
                   </button>
-
                   <ProductFilter
                     isOpen={isFilterOpen}
                     onClose={() => setIsFilterOpen(false)}
@@ -84,35 +83,28 @@ export function ProductScreen() {
                     currentFilters={filters}
                   />
                 </div>
-
                 <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  <UserPlus className="w-4 h-4" />
-                  Ajouter un utilisateur
+                  <Plus className="w-4 h-4" />
+                  Nouveau produit
                 </button>
               </div>
             </div>
-
             <Products
               token={token}
               statusFilter={statusFilter}
               onEditproduct={openEditModal}
               onDeleteproduct={openDeleteModal}
             />
-
-            <StatsProducts />
+            <StatsProducts token={token} />
           </div>
         </main>
       </div>
-
       <FormProduct
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
-        productToEdit={productToEdit}  // <-- correction
+        productToEdit={productToEdit}
         isEditing={isEditing}
       />
-
-
-
       {productToDelete && (
         <DeleteConfirmModal
           isOpen={!!productToDelete}
@@ -127,7 +119,6 @@ export function ProductScreen() {
           error={error}
         />
       )}
-
       <ToastContainer position="bottom-center" />
     </div>
   );

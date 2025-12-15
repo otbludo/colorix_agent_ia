@@ -51,12 +51,13 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
     }))
   }
 
-  const handleCompanyChange = (company) => {
+  const handleCompanyChange = (value) => {
     setFilters(prev => ({
       ...prev,
-      company: company === prev.company ? '' : company
+      customer: value
     }))
   }
+
 
   const handleDateChange = (field, value) => {
     setFilters(prev => ({
@@ -76,11 +77,10 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
   const handleResetFilters = () => {
     const resetFilters = {
       status: {
-        active: false,
-        inactive: false,
-        pending: false
+        valide: false,
+        attente: false
       },
-      company: '',
+      client: '',
       dateRange: {
         start: '',
         end: ''
@@ -92,10 +92,9 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
 
   const hasActiveFilters = () => {
     return (
-      filters.status.active ||
-      filters.status.inactive ||
-      filters.status.pending ||
-      filters.company ||
+      filters.status.valide ||
+      filters.status.attente ||
+      filters.client ||
       filters.dateRange.start ||
       filters.dateRange.end
     )
@@ -131,18 +130,16 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
           </label>
           <div className="flex flex-wrap gap-2">
             {[
-              { key: 'active', label: 'Actif', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-              { key: 'inactive', label: 'Inactif', color: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
-              { key: 'pending', label: 'En attente', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' }
+              { key: 'valide', label: 'Valide', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
+              { key: 'attente', label: 'Attente', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' }
             ].map(({ key, label, color }) => (
               <button
                 key={key}
                 onClick={() => handleStatusChange(key)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  filters.status[key]
-                    ? 'ring-2 ring-blue-500 ring-offset-1'
-                    : ''
-                } ${color}`}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${filters.status[key]
+                  ? 'ring-2 ring-blue-500 ring-offset-1'
+                  : ''
+                  } ${color}`}
               >
                 {label}
               </button>
@@ -151,51 +148,61 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
         </div>
 
         {/* Company Filter */}
+        {/* Client Filter */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Entreprise
+            Client
           </label>
           <div className="relative">
             <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <select
-              value={filters.company}
+            <input
+              type="text"
+              value={filters.customer || ''}
               onChange={(e) => handleCompanyChange(e.target.value)}
+              placeholder="Saisir le nom du client"
               className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors bg-white text-sm"
-            >
-              <option value="">Toutes les entreprises</option>
-              {companies.map(company => (
-                <option key={company} value={company}>{company}</option>
-              ))}
-            </select>
+            />
           </div>
         </div>
 
+
         {/* Date Range Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Date d'inscription
-          </label>
+
           <div className="grid grid-cols-2 gap-2">
-            <div className="relative">
-              <Calendar className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
-              <input
-                type="date"
-                value={filters.dateRange.start}
-                onChange={(e) => handleDateChange('start', e.target.value)}
-                className="w-full pl-6 pr-2 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors text-xs"
-                placeholder="Du"
-              />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Date d'Impresion
+              </label>
+              <div className="relative">
+                <Calendar className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
+                <input
+                  type="date"
+                  value={filters.dateRange.end}
+                  onChange={(e) => handleDateChange('end', e.target.value)}
+                  className="w-full pl-6 pr-2 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors text-xs"
+                  placeholder="Au"
+                />
+              </div>
             </div>
-            <div className="relative">
-              <Calendar className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
-              <input
-                type="date"
-                value={filters.dateRange.end}
-                onChange={(e) => handleDateChange('end', e.target.value)}
-                className="w-full pl-6 pr-2 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors text-xs"
-                placeholder="Au"
-              />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Date de creation
+              </label>
+
+              <div className="relative">
+                <Calendar className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
+                <input
+                  type="date"
+                  value={filters.dateRange.start}
+                  onChange={(e) => handleDateChange('start', e.target.value)}
+                  className="w-full pl-6 pr-2 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors text-xs"
+                  placeholder="Du"
+                />
+              </div>
             </div>
+
+
           </div>
         </div>
       </div>
@@ -222,18 +229,15 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
         <div className="mx-4 mt-3 p-2 bg-blue-50 rounded-lg">
           <p className="text-xs text-blue-700 font-medium mb-1">Filtres actifs :</p>
           <div className="flex flex-wrap gap-1">
-            {filters.status.active && (
+            {filters.status.valide && (
               <span className="px-1.5 py-0.5 bg-green-100 text-green-700 rounded text-xs">Actif</span>
             )}
-            {filters.status.inactive && (
-              <span className="px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">Inactif</span>
+            {filters.status.attente && (
+              <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded text-xs">Attente</span>
             )}
-            {filters.status.pending && (
-              <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded text-xs">En attente</span>
-            )}
-            {filters.company && (
-              <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-xs max-w-20 truncate" title={filters.company}>
-                {filters.company}
+            {filters.customer && (
+              <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-xs max-w-20 truncate" title={filters.customer}>
+                {filters.customer}
               </span>
             )}
             {(filters.dateRange.start || filters.dateRange.end) && (

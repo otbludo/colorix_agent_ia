@@ -1,16 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import colorixLogo from '../../assets/colorixorigin.png'
-import {
-  LayoutDashboard,
-  FileText,
-  Clock,
-  Users,
-  Building,
-  Settings,
-  Plus,
-  X,
-  ShoppingBag
-} from 'lucide-react'
+import { LayoutDashboard, FileText, Clock, Users2, Building, Settings, Plus, X, ShoppingBag } from 'lucide-react'
 
 
 export function Sidebar({ isOpen, onClose }) {
@@ -30,17 +20,17 @@ export function Sidebar({ isOpen, onClose }) {
     },
     {
       icon: ShoppingBag,
-      label: 'Products',
+      label: 'Produits',
       path: '/products',
     },
      {
       icon: Building,
-      label: 'Customers',
+      label: 'Clients',
       path: '/customer',
     },
     {
-      icon: Users,
-      label: 'Admin',
+      icon: Users2,
+      label: 'Administrateurs',
       path: '/Admins',
     },
     {
@@ -48,8 +38,6 @@ export function Sidebar({ isOpen, onClose }) {
       label: 'Time log',
       path: '/time-log',
     },
-   
-
   ]
 
   return (
@@ -123,7 +111,6 @@ export function Sidebar({ isOpen, onClose }) {
                 style={{ filter: 'drop-shadow(0 6px 12px rgba(5,25,62,0.45))' }}
               />
             </div>
-
             <button
               className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
               onClick={onClose}
@@ -132,7 +119,6 @@ export function Sidebar({ isOpen, onClose }) {
               <X className="w-5 h-5" />
             </button>
           </div>
-
           {/* Create New Quote Button */}
           <button
             onClick={() => navigate('/quotes')}
@@ -141,7 +127,6 @@ export function Sidebar({ isOpen, onClose }) {
             <Plus className="w-5 h-5 text-[#031828]" />
             <span className="font-medium">Create new quote</span>
           </button>
-
           {/* Navigation Menu */}
           <nav className="flex-1 overflow-y-auto">
             <ul className="space-y-1">

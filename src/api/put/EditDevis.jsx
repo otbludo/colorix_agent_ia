@@ -16,9 +16,6 @@ export const EditDevis = (token) => {
                 body: JSON.stringify(formData.playLoad),
 
             });
-
-            console.log("formData dans EditDevis:", formData.playLoad);
-
             return response.json();
         },
     });

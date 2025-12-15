@@ -10,6 +10,7 @@ import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal';
 import { AdminFilter } from '../components/Admin/AdminFilter';
 import { useDeleteAdmin } from '../api/delete/DeleteAdmin';
 
+
 export function AdminsScreen() {
   const token = localStorage.getItem('colorix_token');
   const { mutate, isPending, data, isSuccess, isError, error } = useDeleteAdmin(token);
@@ -20,10 +21,8 @@ export function AdminsScreen() {
 
   const [adminToEdit, setAdminToEdit] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-
   const [adminToDelete, setAdminToDelete] = useState(null);
 
-  // Gestion des filtres
   const [filters, setFilters] = useState({
     status: { actif: false, inactif: false, supprime: false },
     dateRange: { start: '', end: '' }
@@ -49,13 +48,11 @@ export function AdminsScreen() {
         <Header onToggleSidebar={() => setIsSidebarOpen(true)} />
         <main className="p-4 sm:p-6 lg:p-10">
           <div className="space-y-8 bg-white rounded-3xl shadow-lg p-6 border border-gray-100">
-
             <div className="flex flex-wrap gap-4 items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-[#102040]">Gestion des Administrateurs</h2>
                 <p className="text-gray-600 mt-1">Gérer les comptes utilisateurs et leurs permissions</p>
               </div>
-
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <button
@@ -85,14 +82,12 @@ export function AdminsScreen() {
                     currentFilters={filters}
                   />
                 </div>
-
                 <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   <UserPlus className="w-4 h-4" />
-                  Ajouter un utilisateur
+                  Nouveau administrateur
                 </button>
               </div>
             </div>
-
             <Admins
               token={token}
               statusFilter={statusFilter}
@@ -100,19 +95,16 @@ export function AdminsScreen() {
               onEditAdmin={openEditModal}
               onDeleteAdmin={openDeleteModal}
             />
-
-            <StatsAdmins />
+            <StatsAdmins token={token} />
           </div>
         </main>
       </div>
-
       <FormAdmins
         isOpen={isAdminModalOpen}
         onClose={() => setIsAdminModalOpen(false)}
         adminToEdit={adminToEdit}
         isEditing={isEditing}
       />
-
       {adminToDelete && (
         <DeleteConfirmModal
           isOpen={!!adminToDelete}
@@ -127,7 +119,6 @@ export function AdminsScreen() {
           error={error}
         />
       )}
-
       <ToastContainer position="bottom-center" />
     </div>
   );

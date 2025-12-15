@@ -14,7 +14,6 @@ export function DeleteConfirmModal({
   data,
   error
 }) {
-  console.log('Type de deleteApi:', typeof deleteApi);
   const token = localStorage.getItem('colorix_token')
 
   const handleConfirm = async () => {

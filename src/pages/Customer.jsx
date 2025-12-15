@@ -10,6 +10,7 @@ import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal';
 import { CustomerFilter } from '../components/Customer/CustomerFilter';
 import { DeleteCustomer } from '../api/delete/DeleteCustomer';
 
+
 export function CustomerScreen() {
   const token = localStorage.getItem('colorix_token');
   const { mutate, isPending, data, isSuccess, isError, error } = DeleteCustomer(token);
@@ -20,10 +21,8 @@ export function CustomerScreen() {
 
   const [customerToEdit, setcustomerToEdit] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-
   const [customerToDelete, setcustomerToDelete] = useState(null);
 
-  // Gestion des filtres
   const [filters, setFilters] = useState({
     status: { supprime: false },
   });
@@ -46,13 +45,11 @@ export function CustomerScreen() {
         <Header onToggleSidebar={() => setIsSidebarOpen(true)} />
         <main className="p-4 sm:p-6 lg:p-10">
           <div className="space-y-8 bg-white rounded-3xl shadow-lg p-6 border border-gray-100">
-
             <div className="flex flex-wrap gap-4 items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-[#102040]">Gestion des customer</h2>
-                <p className="text-gray-600 mt-1">Gérer les ccustomers</p>
+                <h2 className="text-2xl font-bold text-[#102040]">Gestion des clients</h2>
+                <p className="text-gray-600 mt-1">Gérer les clients</p>
               </div>
-
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <button
@@ -75,7 +72,6 @@ export function CustomerScreen() {
                       </span>
                     )} */}
                   </button>
-
                   <CustomerFilter
                     isOpen={isFilterOpen}
                     onClose={() => setIsFilterOpen(false)}
@@ -83,35 +79,28 @@ export function CustomerScreen() {
                     currentFilters={filters}
                   />
                 </div>
-
                 <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   <UserPlus className="w-4 h-4" />
-                  Ajouter un utilisateur
+                  Nouveau client
                 </button>
               </div>
             </div>
-
             <Customers
               token={token}
               statusFilter={statusFilter}
               onEditcustomer={openEditModal}
               onDeletecustomer={openDeleteModal}
             />
-
-
-
-            <StatsCustomers />
+            <StatsCustomers token={token} />
           </div>
         </main>
       </div>
-
       <FormCustomer
         isOpen={iscustomerModalOpen}
         onClose={() => setIscustomerModalOpen(false)}
         customerToEdit={customerToEdit}
         isEditing={isEditing}
       />
-
       {customerToDelete && (
         <DeleteConfirmModal
           isOpen={!!customerToDelete}
@@ -126,7 +115,6 @@ export function CustomerScreen() {
           error={error}
         />
       )}
-
       <ToastContainer position="bottom-center" />
     </div>
   );
