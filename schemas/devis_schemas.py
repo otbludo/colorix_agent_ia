@@ -6,6 +6,11 @@ from enum import Enum
 class DevisStatus(str, Enum):
     supprime = "supprime"
 
+class DevisValidationStatus(str, Enum):
+    valide = "valide"
+    rejeter = "rejeter"
+    revoquer = "revoquer"
+
 class DevisCreate(BaseModel):
     id_customer: int
     id_product: int
@@ -23,6 +28,7 @@ class DevisUpdate(BaseModel):
 
 class DevisValidate(BaseModel):
     id: int
+    status: DevisValidationStatus
     
     
 class DevisGet(BaseModel):
