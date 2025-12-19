@@ -13,6 +13,11 @@ export function Button({
       'bg-[#2ec866] hover:bg-[#29b159] text-white shadow-lg shadow-[#29b159]/30 hover:shadow-xl active:scale-95',
     secondary:
       'bg-white/15 text-white border border-white/30 hover:bg-white/25 active:scale-95',
+    secondaryred:
+      'bg-red-100 text-white hover:bg-red-200 active:scale-95',
+    tertiery:
+      'bg-purple-100 text-purple-700 hover:bg-purple-200 active:scale-95',
+
   }
   return (
     <button
@@ -35,6 +40,12 @@ export function ButtonForm({ children, onClick, type = "button", variant = "prim
     secondary: disabled
       ? "bg-gray-200 text-gray-500 cursor-not-allowed"
       : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+    secondaryred: disabled
+      ? "bg-red-200 text-white cursor-not-allowed"
+      : "bg-red-600 text-white hover:bg-red-700",
+    tertiery: disabled
+      ? "bg-purple-200 text-purple-500 cursor-not-allowed"
+      : "bg-purple-600 text-white hover:bg-purple-700",
   };
 
   return (

@@ -6,19 +6,23 @@ import { AddEstimateModal } from '../components/Estimate/FormEstimate'
 import { Plus } from 'lucide-react'
 import { Estimates } from '../components/Estimate/Estimates'
 import { StatEstimate } from '../components/Estimate/Stats'
+import { ShowInfosEstimate } from '../components/Estimate/ShowInfosEstimate'
 
 
 export function EstimateScreen() {
   const token = localStorage.getItem('colorix_token');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isAddQuoteModalOpen, setIsAddQuoteModalOpen] = useState(false)
+  const [isDevisInfoModalOpen, setIsDevisInfoModalOpen] = useState(false);
 
   const [devisToEdit, setDevisToEdit] = useState(null);
+  const [devisInfo, setDevisInfo] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [devisToDelete, setDevisToDelete] = useState(null);
 
   const openAddModal = () => { setDevisToEdit(null); setIsEditing(false); setIsAddQuoteModalOpen(true); };
   const openEditModal = (devis) => { setDevisToEdit(devis); setIsEditing(true); setIsAddQuoteModalOpen(true); };
+  const openShowInfosDevis = (devis) => { setDevisInfo(devis); setIsDevisInfoModalOpen(true); };
 
   return (
     <div className="min-h-screen bg-white">
@@ -44,6 +48,7 @@ export function EstimateScreen() {
             </div>
             <Estimates
               onEditDevis={openEditModal}
+              onShowInfosDevis={openShowInfosDevis}
               token={token} />
             <StatEstimate token={token} />
           </div>
@@ -55,6 +60,11 @@ export function EstimateScreen() {
         devisToEdit={devisToEdit}
         isEditing={isEditing}
         token={token}
+      />
+      <ShowInfosEstimate token={token}
+        isOpen={isDevisInfoModalOpen}
+        estimate={devisInfo}
+        onClose={() => setIsDevisInfoModalOpen(false)}
       />
       <ToastContainer position="bottom-center" />
     </div>

@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import { GetDevis } from '../../api/get/GetDevis'
 
 
-export function Estimates({ token, onEditDevis }) {
+export function Estimates({ token, onEditDevis, onShowInfosDevis }) {
   const { data, isPending, isError, error } = GetDevis(token, null)
 
   useEffect(() => {
@@ -21,7 +21,9 @@ export function Estimates({ token, onEditDevis }) {
         ? 'bg-green-100 text-green-800'
         : status === 'rejeter'
           ? 'bg-red-100 text-red-800'
-          : 'bg-gray-100 text-gray-800'
+          : status === 'revoquer'
+            ? 'bg-purple-100 text-purple-700'
+            : 'bg-gray-100 text-gray-800'
   );
 
   const getStatusLabel = () => 'Devis'
@@ -82,7 +84,9 @@ export function Estimates({ token, onEditDevis }) {
                   <div className="text-sm text-gray-500">TTC</div>
                 </div>
                 <div className="flex gap-2">
-                  <button className="p-2 hover:bg-blue-50 rounded-lg">
+                  <button
+                    onClick={() => onShowInfosDevis(devis)}
+                    className="p-2 hover:bg-blue-50 rounded-lg">
                     <Eye className="w-4 h-4 text-blue-600" />
                   </button>
                   <button
