@@ -4,15 +4,24 @@ import { RotateCcw } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { GetCustomer } from '../../api/get/GetCustomers';
 import { RecoveryCustomer } from '../../api/post/RecoveryCustomer';
+import { CustomerDetailsModal } from './CustomerDetailsModal';
 
 export function Customers({ token, statusFilter, onEditcustomer, onDeletecustomer }) {
 
   const { data, isPending, isError, error } = GetCustomer(token, statusFilter);
   const { mutate: recovercustomer, isPending: isRecovering, isSuccess: isSuccesRecoveryCustomer, data: dataRecoveryCustomer } = RecoveryCustomer(token);
+  const [selectedCustomer, setSelectedCustomer] = React.useState(null);
+  const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   useEffect(() => {
     if (isError) toast.error(error.message || 'Erreur réseau !');
   }, [isError]);
+
+
+  const handleRowClick = (customer) => {
+    setSelectedCustomer(customer);
+    setIsDetailsOpen(true);
+  };
 
   const getStatusBadge = (status) => (
     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${status === 'client'
@@ -36,7 +45,7 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
   }, [isSuccesRecoveryCustomer]);
 
 
-  return (
+return (
     <div className="overflow-hidden border border-gray-200 rounded-xl">
       <div className="overflow-y-auto max-h-[600px]">
         <table className="w-full">
@@ -55,7 +64,14 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {data?.map((customer) => (
-              <tr key={customer.id} className="hover:bg-gray-50">
+              <tr 
+                key={customer.id} 
+                onClick={() => {
+                  setSelectedCustomer(customer);
+                  setIsDetailsOpen(true);
+                }}
+                className="hover:bg-gray-50 cursor-pointer transition-colors"
+              >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -78,7 +94,10 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.category ?? "—"}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(customer.status)}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(customer.created_at)}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td 
+                  className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                  onClick={(e) => e.stopPropagation()} 
+                >
                   {statusFilter === "supprime" ? (
                     <button
                       onClick={() => recovercustomer(customer.id)}
@@ -99,6 +118,13 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
           </tbody>
         </table>
       </div>
+
+      {/* Modal de détails du client */}
+      <CustomerDetailsModal 
+        isOpen={isDetailsOpen} 
+        onClose={() => setIsDetailsOpen(false)} 
+        customer={selectedCustomer} 
+      />
     </div>
   );
 }

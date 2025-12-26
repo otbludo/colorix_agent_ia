@@ -52,8 +52,17 @@ export function FormProduct({ isOpen, onClose, productToEdit = null, isEditing =
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isEditing) mutateEdit(formData);
-    else mutateAdd(formData);
+
+    // Convertir les champs numériques avant l'envoi
+    const payload = {
+      ...formData,
+      quantity: parseInt(formData.quantity),
+      front_price: parseFloat(formData.front_price),
+      front_back_price: formData.front_back_price ? parseFloat(formData.front_back_price) : 0,
+    };
+
+    if (isEditing) mutateEdit(payload);
+    else mutateAdd(payload);
   };
 
   useEffect(() => {

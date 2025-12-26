@@ -45,17 +45,25 @@ export function AddEstimateModal({ token, isOpen, onClose, isEditing, devisToEdi
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Convertir les champs numériques avant l'envoi
+    const payload = {
+      id_customer: parseInt(formData.id_customer),
+      id_product: parseInt(formData.id_product),
+      description_devis: formData.description_devis,
+      impression: formData.impression,
+      quantity: parseInt(formData.quantity),
+      printing_time: formData.printing_time
+    };
+
     if (isEditing) {
-      const playLoad = {
+      const editPayload = {
         id: devisToEdit.id,
-        description_devis: formData.description_devis,
-        quantity: formData.quantity,
-        impression: formData.impression,
-        printing_time: formData.printing_time
+        ...payload
       };
-      mutateEditDevis({ playLoad });
+      mutateEditDevis({ playLoad: editPayload });
     } else {
-      mutateAddDevis(formData);
+      mutateAddDevis(payload);
     }
   };
 
