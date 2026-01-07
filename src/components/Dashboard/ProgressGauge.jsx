@@ -62,7 +62,7 @@ export function ProgressGauge({ token }) {
               className="drop-shadow-lg"
             />
           </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center relative z-20">
+          <div className="absolute -top-[7px] inset-0 flex flex-col items-center justify-center  z-20">
             <div className="text-5xl font-bold text-white glow-text mb-1">{percentage}%</div>
             <div className="text-sm text-slate-400 -mt-1">Validé</div>
           </div>
