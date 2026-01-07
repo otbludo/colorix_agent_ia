@@ -9,7 +9,7 @@ export const LoginUser = () => {
     mutationFn: async ({ email, password }) => {
       const body = new URLSearchParams();
       body.append("grant_type", "password");
-      body.append("username", email); 
+      body.append("username", email);
       body.append("password", password);
 
       const response = await fetch(`${API_URL}/api/v1/token`, {

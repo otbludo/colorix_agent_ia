@@ -8,6 +8,7 @@ import { StatsCustomers } from '../components/Customer/Stats';
 import { UserPlus, Filter } from 'lucide-react';
 import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal';
 import { CustomerFilter } from '../components/Customer/CustomerFilter';
+import { CustomerDetailsModal } from '../components/Customer/CustomerDetailModal';
 import { DeleteCustomer } from '../api/delete/DeleteCustomer';
 
 
@@ -22,6 +23,8 @@ export function CustomerScreen() {
   const [customerToEdit, setcustomerToEdit] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [customerToDelete, setcustomerToDelete] = useState(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   const [filters, setFilters] = useState({
     status: { supprime: false },
@@ -36,6 +39,7 @@ export function CustomerScreen() {
 
   const openAddModal = () => { setcustomerToEdit(null); setIsEditing(false); setIscustomerModalOpen(true); };
   const openEditModal = (customer) => { setcustomerToEdit(customer); setIsEditing(true); setIscustomerModalOpen(true); };
+  const openDetailsModal = (customer) => { setSelectedCustomer(customer); setIsDetailsOpen(true); }
   const openDeleteModal = (customer) => setcustomerToDelete(customer);
 
   return (
@@ -90,6 +94,7 @@ export function CustomerScreen() {
               statusFilter={statusFilter}
               onEditcustomer={openEditModal}
               onDeletecustomer={openDeleteModal}
+              onViewDetails={openDetailsModal}
             />
             <StatsCustomers token={token} />
           </div>
@@ -100,6 +105,12 @@ export function CustomerScreen() {
         onClose={() => setIscustomerModalOpen(false)}
         customerToEdit={customerToEdit}
         isEditing={isEditing}
+      />
+      <CustomerDetailsModal
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        token={token}
+        customer={selectedCustomer}
       />
       {customerToDelete && (
         <DeleteConfirmModal

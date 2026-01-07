@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { GetCustomer } from '../../api/get/GetCustomers';
 import { RecoveryCustomer } from '../../api/post/RecoveryCustomer';
 
-export function Customers({ token, statusFilter, onEditcustomer, onDeletecustomer }) {
+export function Customers({ token, statusFilter, onEditcustomer, onDeletecustomer, onViewDetails }) {
 
   const { data, isPending, isError, error } = GetCustomer(token, statusFilter);
   const { mutate: recovercustomer, isPending: isRecovering, isSuccess: isSuccesRecoveryCustomer, data: dataRecoveryCustomer } = RecoveryCustomer(token);
@@ -55,7 +55,9 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {data?.map((customer) => (
-              <tr key={customer.id} className="hover:bg-gray-50">
+              <tr
+                onClick={() => { onViewDetails(customer); }}
+                key={customer.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -78,7 +80,10 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.category ?? "—"}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(customer.status)}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(customer.created_at)}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td
+                  className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {statusFilter === "supprime" ? (
                     <button
                       onClick={() => recovercustomer(customer.id)}

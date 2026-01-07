@@ -36,7 +36,7 @@ export function Timelogs() {
             </div> */}
 
       {/* Time Entries */}
-      <div className="space-y-4">
+      <div className=" flex flex-col-reverse gap-4">
         {data?.all?.map((log) => (
           <div key={log.id} className="bg-white border border-gray-200 rounded-xl p-6">
             <div className="flex items-center justify-between">
