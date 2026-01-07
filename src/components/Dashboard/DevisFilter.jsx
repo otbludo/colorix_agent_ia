@@ -105,41 +105,48 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200 z-50 max-h-[80vh] overflow-y-auto"
+      className="absolute right-0 top-full mt-2 w-80 futuristic-card rounded-2xl shadow-2xl py-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-300 z-50 max-h-[80vh] overflow-y-auto"
     >
+      {/* Effet de grille en arrière-plan */}
+      <div className="absolute inset-0 opacity-10 rounded-2xl">
+        <div className="grid-pattern w-full h-full"></div>
+      </div>
+
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pb-3 border-b border-gray-100">
+      <div className="relative z-10 flex items-center justify-between px-4 pb-3 border-b border-slate-600/50">
         <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Filtrer les clients</h3>
+          <div className="p-2 bg-indigo-500/20 rounded-lg">
+            <Filter className="w-5 h-5 text-indigo-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-white">Filtrer les devis</h3>
         </div>
         <button
           onClick={onClose}
-          className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-2xl hover:bg-slate-700/50 transition-all duration-300 group"
         >
-          <X className="w-4 h-4 text-gray-500" />
+          <X className="w-4 h-4 text-slate-400 group-hover:text-slate-300" />
         </button>
       </div>
 
       {/* Filters Content */}
-      <div className="px-4 py-3 space-y-4">
+      <div className="relative z-10 px-4 py-3 space-y-4">
         {/* Status Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-slate-300 mb-2">
             Statut
           </label>
           <div className="flex flex-wrap gap-2">
             {[
-              { key: 'valide', label: 'Valide', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-              { key: 'attente', label: 'Attente', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' }
-            ].map(({ key, label, color }) => (
+              { key: 'valide', label: 'Valide', color: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30', activeColor: 'bg-emerald-500/30 text-emerald-200 border-emerald-400/50' },
+              { key: 'attente', label: 'Attente', color: 'bg-amber-500/20 text-amber-300 border border-amber-500/30', activeColor: 'bg-amber-500/30 text-amber-200 border-amber-400/50' }
+            ].map(({ key, label, color, activeColor }) => (
               <button
                 key={key}
                 onClick={() => handleStatusChange(key)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${filters.status[key]
-                  ? 'ring-2 ring-blue-500 ring-offset-1'
-                  : ''
-                  } ${color}`}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 backdrop-blur-sm hover:scale-105 ${filters.status[key]
+                    ? `ring-2 ring-indigo-400/50 ${activeColor}`
+                    : `${color}`
+                  }`}
               >
                 {label}
               </button>
@@ -150,17 +157,17 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
         {/* Company Filter */}
         {/* Client Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-slate-300 mb-2">
             Client
           </label>
           <div className="relative">
-            <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
             <input
               type="text"
               value={filters.customer || ''}
               onChange={(e) => handleCompanyChange(e.target.value)}
               placeholder="Saisir le nom du client"
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors bg-white text-sm"
+              className="w-full pl-10 pr-4 py-2 rounded-2xl border border-slate-600/50 bg-slate-800/50 backdrop-blur-sm focus:outline-none focus:border-indigo-500/50 focus:bg-slate-700/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 text-white placeholder-slate-400 text-sm"
             />
           </div>
         </div>
@@ -168,57 +175,53 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
 
         {/* Date Range Filter */}
         <div>
-
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date d'Impresion
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Date d'Impression
               </label>
               <div className="relative">
-                <Calendar className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
                 <input
                   type="date"
                   value={filters.dateRange.end}
                   onChange={(e) => handleDateChange('end', e.target.value)}
-                  className="w-full pl-6 pr-2 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors text-xs"
+                  className="w-full pl-10 pr-4 py-2 rounded-2xl border border-slate-600/50 bg-slate-800/50 backdrop-blur-sm focus:outline-none focus:border-indigo-500/50 focus:bg-slate-700/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 text-white text-sm"
                   placeholder="Au"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date de creation
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Date de création
               </label>
-
               <div className="relative">
-                <Calendar className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
                 <input
                   type="date"
                   value={filters.dateRange.start}
                   onChange={(e) => handleDateChange('start', e.target.value)}
-                  className="w-full pl-6 pr-2 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors text-xs"
+                  className="w-full pl-10 pr-4 py-2 rounded-2xl border border-slate-600/50 bg-slate-800/50 backdrop-blur-sm focus:outline-none focus:border-indigo-500/50 focus:bg-slate-700/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 text-white text-sm"
                   placeholder="Du"
                 />
               </div>
             </div>
-
-
           </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 px-4 pt-3 border-t border-gray-100">
+      <div className="relative z-10 flex gap-2 px-4 pt-3 border-t border-slate-600/50">
         <button
           onClick={handleResetFilters}
           disabled={!hasActiveFilters()}
-          className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+          className="flex-1 px-3 py-2 bg-slate-800/50 text-slate-300 rounded-2xl border border-slate-600/50 hover:bg-slate-700/50 hover:border-slate-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 text-sm font-medium backdrop-blur-sm"
         >
           Réinitialiser
         </button>
         <button
           onClick={handleApplyFilters}
-          className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+          className="flex-1 px-3 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-400/50 border border-indigo-400/30 text-sm font-medium"
         >
           Appliquer
         </button>
@@ -226,22 +229,22 @@ export function CustomerFilterDropdown({ isOpen, onClose, onApplyFilters, curren
 
       {/* Active Filters Summary */}
       {hasActiveFilters() && (
-        <div className="mx-4 mt-3 p-2 bg-blue-50 rounded-lg">
-          <p className="text-xs text-blue-700 font-medium mb-1">Filtres actifs :</p>
-          <div className="flex flex-wrap gap-1">
+        <div className="relative z-10 mx-4 mt-3 p-3 bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-600/50">
+          <p className="text-xs text-slate-300 font-medium mb-2">Filtres actifs :</p>
+          <div className="flex flex-wrap gap-2">
             {filters.status.valide && (
-              <span className="px-1.5 py-0.5 bg-green-100 text-green-700 rounded text-xs">Actif</span>
+              <span className="px-2 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs backdrop-blur-sm">Valide</span>
             )}
             {filters.status.attente && (
-              <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded text-xs">Attente</span>
+              <span className="px-2 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs backdrop-blur-sm">Attente</span>
             )}
             {filters.customer && (
-              <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-xs max-w-20 truncate" title={filters.customer}>
+              <span className="px-2 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-xs max-w-20 truncate backdrop-blur-sm" title={filters.customer}>
                 {filters.customer}
               </span>
             )}
             {(filters.dateRange.start || filters.dateRange.end) && (
-              <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded text-xs">
+              <span className="px-2 py-1 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-lg text-xs backdrop-blur-sm">
                 {filters.dateRange.start && `Du ${filters.dateRange.start}`}
                 {filters.dateRange.start && filters.dateRange.end && ' '}
                 {filters.dateRange.end && `Au ${filters.dateRange.end}`}

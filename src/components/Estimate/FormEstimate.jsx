@@ -90,18 +90,23 @@ export function AddEstimateModal({ token, isOpen, onClose, isEditing, devisToEdi
   const isLoading = isPendingAddDevis || isPendingEditDevis;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl animate-in fade-in zoom-in duration-200">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto">
+      <div className="futuristic-card rounded-2xl w-full max-w-3xl shadow-2xl animate-in fade-in zoom-in duration-300">
+        {/* Effet de grille en arrière-plan */}
+        <div className="absolute inset-0 opacity-5 rounded-2xl">
+          <div className="grid-pattern w-full h-full"></div>
+        </div>
+
+        <div className="relative z-10 flex items-center justify-between p-6 border-b border-slate-600/50">
           <div>
-            <h2 className="text-xl font-bold text-[#102040]">{formTitle}</h2>
-            <p className="text-sm text-gray-500">{formSubTitle}</p>
+            <h2 className="text-xl font-bold glow-text">{formTitle}</h2>
+            <p className="text-sm text-slate-400">{formSubTitle}</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <X className="w-5 h-5 text-gray-500" />
+          <button onClick={onClose} className="p-2 hover:bg-slate-700/50 rounded-2xl transition-all duration-300 group">
+            <X className="w-5 h-5 text-slate-400 group-hover:text-slate-300" />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="relative z-10 p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <SelectField
               label="Nom du Produit"
@@ -134,17 +139,17 @@ export function AddEstimateModal({ token, isOpen, onClose, isEditing, devisToEdi
 
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Description</label>
+            <label className="text-sm font-medium text-slate-300">Description</label>
             <textarea
               name="description_devis"
               rows="2"
               value={formData.description_devis}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+              className="w-full px-4 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-600/50 rounded-2xl focus:outline-none focus:border-indigo-500/50 focus:bg-slate-700/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 text-white placeholder-slate-400 resize-none"
               placeholder="Détails techniques..."
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-800/50 backdrop-blur-sm p-4 rounded-2xl border border-slate-600/50">
             <InputField label="Quantité" name="quantity" value={formData.quantity} onChange={handleChange} placeholder=" " type="number" />
             <SelectField
               label="Impression" name="impression" value={formData.impression} onChange={handleChange} icon={Printer}
@@ -153,53 +158,61 @@ export function AddEstimateModal({ token, isOpen, onClose, isEditing, devisToEdi
             <InputField label="Date Impression" name="printing_time" value={formData.printing_time} onChange={handleChange} placeholder="Entrez le nom" icon={Calendar} type="date" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-            <InputField
-              label="Prix de Base"
-              value={pricing?.prix_base ?? 0}
-              disabled
-              type="number"
-            />
-            <InputField
-              label="Taux appliqué (%)"
-              value={pricing?.taux_applique ?? 0}
-              disabled
-              type="number"
-            />
-            <InputField
-              label="Montant TVA"
-              value={pricing?.montant_tva ?? 0}
-              disabled
-              type="number"
-            />
-            <InputField
-              label="Prix après Taux"
-              value={pricing?.price_taux ?? 0}
-              disabled
-              type="number"
-            />
+            <div className="futuristic-card p-4 rounded-2xl">
+              <InputField
+                label="Prix de Base"
+                value={pricing?.prix_base ?? 0}
+                disabled
+                type="number"
+              />
+            </div>
+            <div className="futuristic-card p-4 rounded-2xl">
+              <InputField
+                label="Taux appliqué (%)"
+                value={pricing?.taux_applique ?? 0}
+                disabled
+                type="number"
+              />
+            </div>
+            <div className="futuristic-card p-4 rounded-2xl">
+              <InputField
+                label="Montant TVA"
+                value={pricing?.montant_tva ?? 0}
+                disabled
+                type="number"
+              />
+            </div>
+            <div className="futuristic-card p-4 rounded-2xl">
+              <InputField
+                label="Prix après Taux"
+                value={pricing?.price_taux ?? 0}
+                disabled
+                type="number"
+              />
+            </div>
           </div>
-          <div className="bg-blue-50 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3 text-blue-900">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Calculator className="w-5 h-5 text-blue-600" />
+          <div className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm p-4 rounded-2xl border border-indigo-500/30 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3 text-white">
+              <div className="p-2 bg-indigo-500/20 rounded-lg border border-indigo-400/30">
+                <Calculator className="w-5 h-5 text-indigo-400" />
               </div>
-              <div className="text-sm">
+              <div className="text-sm text-slate-300">
                 <p>
-                  TVA (19.25%): <span className="font-semibold">{pricing?.montant_tva?.toFixed(2) ?? "0"} FCFA</span>
+                  TVA (19.25%): <span className="font-semibold text-emerald-400">{pricing?.montant_tva?.toFixed(2) ?? "0"} FCFA</span>
                 </p>
                 <p>
-                  Prix unitaire majoré: <span className="font-semibold">{pricing?.price_taux?.toFixed(2) ?? "0"} FCFA</span>
+                  Prix unitaire majoré: <span className="font-semibold text-blue-400">{pricing?.price_taux?.toFixed(2) ?? "0"} FCFA</span>
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-blue-600 mb-1">Montant Total TTC</p>
-              <p className="text-2xl font-bold text-blue-900">
-                {pricing?.montant_ttc?.toFixed(2) ?? "0"} <span className="text-sm font-normal">FCFA</span>
+              <p className="text-sm text-slate-400 mb-1">Montant Total TTC</p>
+              <p className="text-3xl font-bold glow-text">
+                {pricing?.montant_ttc?.toFixed(2) ?? "0"} <span className="text-sm font-normal text-slate-400">FCFA</span>
               </p>
             </div>
           </div>
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+          <div className="flex justify-end gap-3 pt-4 border-t border-slate-600/50">
             <ButtonForm onClick={onClose} variant="secondary">
               Annuler
             </ButtonForm>

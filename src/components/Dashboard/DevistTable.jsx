@@ -6,10 +6,10 @@ import { CustomerFilterDropdown } from './DevisFilter'
 import { CustomersActionsDropdown } from '../Customer/CustomerActionsDropdown'
 
 const statusColors = {
-  attente: 'bg-yellow-100 text-yellow-700',
-  valide: 'bg-green-100 text-green-700',
-  rejeter: 'bg-red-100 text-red-700',
-  revoquer: 'bg-purple-100 text-purple-700'
+  attente: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+  valide: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30',
+  rejeter: 'bg-red-500/20 text-red-300 border border-red-500/30',
+  revoquer: 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
 }
 
 export function DevistTable({ token, onEditDevis }) {
@@ -107,37 +107,42 @@ export function DevistTable({ token, onEditDevis }) {
 
 
   if (isPending) {
-    return <div className="p-6 text-gray-500">Chargement des devis…</div>
+    return <div className="futuristic-card rounded-2xl p-6 text-slate-400 slide-in-up">Chargement des devis…</div>
   }
 
   /* ================= RENDER ================= */
 
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
+    <div className="futuristic-card rounded-2xl p-4 sm:p-6 slide-in-up">
+      {/* Effet de grille en arrière-plan */}
+      <div className="absolute inset-0 opacity-5 rounded-2xl">
+        <div className="grid-pattern w-full h-full"></div>
+      </div>
+
       {/* Header */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
-        <h2 className="text-xl font-bold text-[#1A1A1A]">
+      <div className="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
+        <h2 className="text-xl font-bold glow-text">
           Liste des devis
         </h2>
 
         <div className="relative">
           <button
             onClick={() => setIsFilterModalOpen(!isFilterModalOpen)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors text-sm ${hasActiveFilters()
-              ? 'border-blue-300 bg-blue-50 text-blue-700'
-              : 'border-gray-200 hover:bg-gray-50 text-gray-700'
+            className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-sm backdrop-blur-sm ${hasActiveFilters()
+                ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300 shadow-lg shadow-indigo-500/20'
+                : 'border-slate-600/50 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:border-indigo-500/50'
               }`}
           >
             <div className="relative">
               <Filter className="w-4 h-4" />
               {hasActiveFilters() && (
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
               )}
             </div>
             <span>Filtrer</span>
 
             {hasActiveFilters() && (
-              <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+              <span className="ml-1 px-1.5 py-0.5 bg-indigo-500/30 text-indigo-200 rounded-full text-xs font-medium border border-indigo-400/30">
                 {filteredDevis.length}
               </span>
             )}
@@ -156,63 +161,64 @@ export function DevistTable({ token, onEditDevis }) {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[900px]">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+            <tr className="border-b border-slate-600/50">
+              <th className="py-4 px-4 text-left text-sm font-semibold text-slate-300 uppercase tracking-wider">
                 Produit
               </th>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+              <th className="py-4 px-4 text-left text-sm font-semibold text-slate-300 uppercase tracking-wider">
                 Client
               </th>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+              <th className="py-4 px-4 text-left text-sm font-semibold text-slate-300 uppercase tracking-wider">
                 Impression
               </th>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+              <th className="py-4 px-4 text-left text-sm font-semibold text-slate-300 uppercase tracking-wider">
                 Montant TTC
               </th>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+              <th className="py-4 px-4 text-left text-sm font-semibold text-slate-300 uppercase tracking-wider">
                 Statut
               </th>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+              <th className="py-4 px-4 text-left text-sm font-semibold text-slate-300 uppercase tracking-wider">
                 Créé le
               </th>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+              <th className="py-4 px-4 text-left text-sm font-semibold text-slate-300 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
 
           <tbody>
-            {filteredDevis?.map((devis) => (
+            {filteredDevis?.map((devis, index) => (
               <tr
                 key={devis.id}
-                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                className="border-b border-slate-700/50 hover:bg-slate-800/30 transition-all duration-300 group"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <td className="py-4 px-4 text-sm font-medium text-gray-900">
+                <td className="py-4 px-4 text-sm font-medium text-white group-hover:text-indigo-300 transition-colors">
                   {devis.name_product}
                 </td>
 
-                <td className="py-4 px-4 text-sm text-gray-600">
+                <td className="py-4 px-4 text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
                   {devis.name_customer} {devis.first_name_customer}
                 </td>
 
-                <td className="py-4 px-4 text-sm text-gray-600">
+                <td className="py-4 px-4 text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
                   {devis.impression}
                 </td>
 
-                <td className="py-4 px-4 text-sm font-semibold text-gray-900">
+                <td className="py-4 px-4 text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors">
                   {devis.montant_ttc?.toLocaleString('fr-FR')} FCFA
                 </td>
 
                 <td className="py-4 px-4">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[devis.status] || 'bg-gray-100 text-gray-700'
+                    className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm ${statusColors[devis.status] || 'bg-slate-500/20 text-slate-300 border border-slate-500/30'
                       }`}
                   >
                     {devis.status}
                   </span>
                 </td>
 
-                <td className="py-4 px-4 text-sm text-gray-600">
+                <td className="py-4 px-4 text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
                   {formatDate(devis.created_at)}
                 </td>
 

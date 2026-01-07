@@ -7,45 +7,46 @@ export function Button({
   ...props
 }) {
   const baseStyles =
-    'px-8 py-3 rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent'
+    'px-8 py-3 rounded-2xl font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent backdrop-blur-sm border relative overflow-hidden group'
   const variantStyles = {
     primary:
-      'bg-[#2ec866] hover:bg-[#29b159] text-white shadow-lg shadow-[#29b159]/30 hover:shadow-xl active:scale-95',
+      'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-400/50 hover:scale-105 border-indigo-400/30',
     secondary:
-      'bg-white/15 text-white border border-white/30 hover:bg-white/25 active:scale-95',
+      'bg-slate-800/50 text-slate-300 border border-slate-600/50 hover:bg-slate-700/50 hover:border-indigo-500/50 hover:text-white',
     secondaryred:
-      'bg-red-100 text-white hover:bg-red-200 active:scale-95',
-    tertiery:
-      'bg-purple-100 text-purple-700 hover:bg-purple-200 active:scale-95',
-
+      'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-2xl shadow-red-500/30 hover:shadow-red-400/50 hover:scale-105 border-red-400/30',
+    tertiary:
+      'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-2xl shadow-purple-500/30 hover:shadow-purple-400/50 hover:scale-105 border-purple-400/30',
   }
   return (
     <button
       className={`${baseStyles} ${variantStyles[variant]} ${className}`}
       {...props}
     >
-      {children}
+      {/* Effet de shimmer */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+      <span className="relative z-10">{children}</span>
     </button>
   )
 }
 
 
 export function ButtonForm({ children, onClick, type = "button", variant = "primary", disabled = false, className = "" }) {
-  let baseClasses = "flex-1 px-4 py-2 rounded-lg font-medium transition-colors text-center";
+  let baseClasses = "flex-1 px-4 py-2 rounded-2xl font-medium transition-all duration-300 text-center backdrop-blur-sm border relative overflow-hidden group";
 
   const variants = {
     primary: disabled
-      ? "bg-blue-400 text-white cursor-not-allowed"
-      : "bg-blue-600 text-white hover:bg-blue-700",
+      ? "bg-slate-700/50 text-slate-500 cursor-not-allowed border-slate-600/30"
+      : "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white hover:from-indigo-500 hover:to-indigo-400 shadow-lg shadow-indigo-500/30 border-indigo-400/30",
     secondary: disabled
-      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-      : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+      ? "bg-slate-800/50 text-slate-600 cursor-not-allowed border-slate-700/50"
+      : "bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-white border-slate-600/50 hover:border-indigo-500/50",
     secondaryred: disabled
-      ? "bg-red-200 text-white cursor-not-allowed"
-      : "bg-red-600 text-white hover:bg-red-700",
-    tertiery: disabled
-      ? "bg-purple-200 text-purple-500 cursor-not-allowed"
-      : "bg-purple-600 text-white hover:bg-purple-700",
+      ? "bg-slate-700/50 text-slate-500 cursor-not-allowed border-slate-600/30"
+      : "bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-400 shadow-lg shadow-red-500/30 border-red-400/30",
+    tertiary: disabled
+      ? "bg-slate-700/50 text-slate-500 cursor-not-allowed border-slate-600/30"
+      : "bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:from-purple-500 hover:to-purple-400 shadow-lg shadow-purple-500/30 border-purple-400/30",
   };
 
   return (
@@ -55,7 +56,11 @@ export function ButtonForm({ children, onClick, type = "button", variant = "prim
       disabled={disabled}
       className={`${baseClasses} ${variants[variant]} ${className}`}
     >
-      {children}
+      {/* Effet de shimmer pour les boutons actifs */}
+      {!disabled && (
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+      )}
+      <span className="relative z-10">{children}</span>
     </button>
   );
 }

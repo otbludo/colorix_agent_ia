@@ -36,28 +36,43 @@ export function CustomerFilter({ isOpen, onClose, onApplyFilters, currentFilters
     if (!isOpen) return null;
 
     return (
-        <div ref={dropdownRef} className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-4 z-50 max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between px-4 pb-3 border-b border-gray-100">
-                <div className="flex items-center gap-2"><Filter className="w-5 h-5 text-blue-600" /><h3 className="text-lg font-semibold text-gray-900">Filtrer les Customer</h3></div>
-                <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 transition-colors"><X className="w-4 h-4 text-gray-500" /></button>
+        <div ref={dropdownRef} className="absolute right-0 top-full mt-2 w-80 futuristic-card rounded-2xl shadow-2xl py-4 z-50 max-h-[80vh] overflow-y-auto">
+            {/* Effet de grille en arrière-plan */}
+            <div className="absolute inset-0 opacity-10 rounded-2xl">
+                <div className="grid-pattern w-full h-full"></div>
             </div>
 
-            <div className="px-4 py-3 space-y-4">
+            <div className="relative z-10 flex items-center justify-between px-4 pb-3 border-b border-slate-600/50">
+                <div className="flex items-center gap-2">
+                    <div className="p-2 bg-indigo-500/20 rounded-lg">
+                        <Filter className="w-5 h-5 text-indigo-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white">Filtrer les clients</h3>
+                </div>
+                <button onClick={onClose} className="p-2 rounded-2xl hover:bg-slate-700/50 transition-all duration-300 group">
+                    <X className="w-4 h-4 text-slate-400 group-hover:text-slate-300" />
+                </button>
+            </div>
+
+            <div className="relative z-10 px-4 py-3 space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Statut</label>
                     <div className="flex flex-wrap gap-2">
                         {['supprime'].map(s => (
                             <button key={s} onClick={() => toggleStatus(s)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${filters.status[s] ? 'ring-2 ring-blue-500 ring-offset-1' : ''} bg-red-100 text-red-700 hover:bg-red-200`}
+                                className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 backdrop-blur-sm hover:scale-105 ${filters.status[s]
+                                        ? 'bg-red-500/30 text-red-200 border border-red-400/50 ring-2 ring-red-400/50'
+                                        : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                                    }`}
                             >{s.charAt(0).toUpperCase() + s.slice(1)}</button>
                         ))}
                     </div>
                 </div>
             </div>
 
-            <div className="flex gap-2 px-4 pt-3 border-t border-gray-100">
-                <button onClick={resetFilters} className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Réinitialiser</button>
-                <button onClick={applyFilters} className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">Appliquer</button>
+            <div className="relative z-10 flex gap-2 px-4 pt-3 border-t border-slate-600/50">
+                <button onClick={resetFilters} className="flex-1 px-3 py-2 bg-slate-800/50 text-slate-300 rounded-2xl border border-slate-600/50 hover:bg-slate-700/50 hover:border-slate-500/50 transition-all duration-300 text-sm font-medium backdrop-blur-sm">Réinitialiser</button>
+                <button onClick={applyFilters} className="flex-1 px-3 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-400/50 border border-indigo-400/30 text-sm font-medium">Appliquer</button>
             </div>
         </div>
     );

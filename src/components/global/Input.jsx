@@ -5,12 +5,12 @@ export function Input({ label, className = '', ...props }) {
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm text-[#9fb5d6] mb-2 text-center">
+        <label className="block text-sm text-slate-400 mb-2 text-center">
           {label}
         </label>
       )}
       <input
-        className={`w-full px-6 py-3 bg-white/5 border border-white/40 rounded-full text-white placeholder-gray-400 focus:outline-none focus:border-[#33c46f] focus:bg-white/10 transition-colors ${className}`}
+        className={`w-full px-6 py-3 bg-slate-800/50 backdrop-blur-sm border border-slate-600/50 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500/50 focus:bg-slate-700/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 ${className}`}
         {...props}
       />
     </div>
@@ -31,9 +31,9 @@ export function InputField({
 }) {
   return (
     <div>
-      {label && <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>}
+      {label && <label className="block text-sm font-medium text-slate-300 mb-2">{label}</label>}
       <div className="relative">
-        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
+        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />}
         <input
           type={type}
           name={name}
@@ -41,7 +41,7 @@ export function InputField({
           onChange={onChange}
           disabled={disabled}
           placeholder={placeholder}
-          className={`w-full pl-10 pr-4 py-3 rounded-lg border text-gray-900 bg-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''} ${className}`}
+          className={`w-full ${Icon ? 'pl-10' : 'pl-4'} pr-4 py-3 rounded-2xl border backdrop-blur-sm text-white bg-slate-800/50 border-slate-600/50 placeholder-slate-400 focus:outline-none focus:border-indigo-500/50 focus:bg-slate-700/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 ${disabled ? 'bg-slate-800/30 text-slate-500 cursor-not-allowed' : ''} ${className}`}
         />
       </div>
     </div>
@@ -61,18 +61,18 @@ export function SelectField({
 }) {
   return (
     <div>
-      {label && <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>}
+      {label && <label className="block text-sm font-medium text-slate-300 mb-2">{label}</label>}
       <div className="relative">
-        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
+        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />}
         <select
           name={name}
           value={value}
           onChange={onChange}
           disabled={disabled}
-          className={`w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors appearance-none bg-white ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''} ${className}`}
+          className={`w-full ${Icon ? 'pl-10' : 'pl-4'} pr-4 py-3 rounded-2xl border backdrop-blur-sm text-white bg-slate-800/50 border-slate-600/50 focus:outline-none focus:border-indigo-500/50 focus:bg-slate-700/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 appearance-none ${disabled ? 'bg-slate-800/30 text-slate-500 cursor-not-allowed' : ''} ${className}`}
         >
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
+            <option key={opt.value} value={opt.value} className="bg-slate-800 text-white">
               {opt.label}
             </option>
           ))}
@@ -96,19 +96,19 @@ export function SelectFieldUser({
 }) {
   return (
     <div>
-      {label && <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>}
+      {label && <label className="block text-sm font-medium text-slate-300 mb-2">{label}</label>}
       <div className="relative">
-        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
+        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />}
         <select
           name={name}
           value={value}
           onChange={onChange}
           disabled={disabled}
-          className={`w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors appearance-none bg-white ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''} ${className}`}
+          className={`w-full ${Icon ? 'pl-10' : 'pl-4'} pr-4 py-3 rounded-2xl border backdrop-blur-sm text-white bg-slate-800/50 border-slate-600/50 focus:outline-none focus:border-indigo-500/50 focus:bg-slate-700/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 appearance-none ${disabled ? 'bg-slate-800/30 text-slate-500 cursor-not-allowed' : ''} ${className}`}
         >
-          <option value="">Sélectionner un client</option>
+          <option value="" className="bg-slate-800 text-white">Sélectionner un client</option>
           {options?.map(opt => (
-            <option key={opt.id} value={opt.id}>{opt.name}</option>
+            <option key={opt.id} value={opt.id} className="bg-slate-800 text-white">{opt.name}</option>
           ))}
         </select>
       </div>

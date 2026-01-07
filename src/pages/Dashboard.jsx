@@ -15,31 +15,49 @@ export function Dashboard() {
 
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen futuristic-bg">
+      {/* Particules animées en arrière-plan */}
+      <div className="particles-container">
+        <div className="particle w-3 h-3 top-20 left-20"></div>
+        <div className="particle w-2 h-2 top-40 right-32"></div>
+        <div className="particle w-4 h-4 bottom-40 left-40"></div>
+        <div className="particle w-1.5 h-1.5 top-60 right-20"></div>
+        <div className="particle w-2.5 h-2.5 bottom-20 right-40"></div>
+        <div className="particle w-1 h-1 top-80 left-60"></div>
+      </div>
+
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="flex flex-col lg:pl-[280px]">
         <Header
           onToggleSidebar={() => setIsSidebarOpen(true)}
         />
-        <main className="p-4 sm:p-6 lg:p-10">
-          <div className="space-y-8 bg-white rounded-3xl shadow-[0_15px_45px_rgba(15,23,42,0.06)] p-6 sm:p-8 lg:p-10 border border-gray-100">
-            <div className="flex flex-wrap gap-4 items-center justify-between">
-              <h2 className="text-2xl font-bold text-[#102040]">Overview</h2>
+        <main className="p-4 sm:p-6 lg:p-10 slide-in-up">
+          <div className="futuristic-card rounded-3xl p-6 sm:p-8 lg:p-10">
+            {/* Effet de grille en arrière-plan */}
+            <div className="absolute inset-0 opacity-5 rounded-3xl">
+              <div className="grid-pattern w-full h-full"></div>
+            </div>
+
+            <div className="relative z-10 mb-8">
+              <h1 className="text-4xl font-bold mb-2 glow-text">
+                Dashboard Analytics
+              </h1>
+              <p className="text-slate-400">Statistiques en temps réel de votre plateforme</p>
             </div>
             <Stats />
             <div className="grid gap-6 xl:grid-cols-3">
-              <div className="xl:col-span-2">
+              <div className="xl:col-span-2 fade-in" style={{ animationDelay: '0.2s' }}>
                 <DevistTable token={token} />
               </div>
-              <div>
+              <div className="fade-in" style={{ animationDelay: '0.4s' }}>
                 <ProgressGauge token={token} />
               </div>
             </div>
             <div className="grid gap-6 xl:grid-cols-3">
-              <div className="xl:col-span-2">
-                <LogsList token={token}/>
+              <div className="xl:col-span-2 fade-in" style={{ animationDelay: '0.6s' }}>
+                <LogsList token={token} />
               </div>
-              <div>
+              <div className="fade-in" style={{ animationDelay: '0.8s' }}>
                 <CustomerCategoryLoad token={token} />
               </div>
             </div>

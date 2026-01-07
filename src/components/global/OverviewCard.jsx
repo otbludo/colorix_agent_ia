@@ -8,16 +8,42 @@ export const OverviewCard = (({ icon, title, value, subtitle, iconBgColor }) => 
   const colorixRed = '#b91c1c'
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-      <div
-        className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${iconBgColor} flex items-center justify-center mb-4 shadow-lg`}
-      >
-        {icon}
+    <div className="futuristic-card rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-500">
+      {/* Effet de grille en arrière-plan */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="grid-pattern w-full h-full"></div>
       </div>
-      <div className="text-sm text-gray-500 mb-1">{title}</div>
-      <div className="text-3xl font-bold text-gray-800 mb-1">
-        {value}
-        <span className="text-lg text-gray-400 ml-1">{subtitle}</span>
+
+      {/* Effet de lumière animé */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+
+      <div className="relative z-10">
+        <div
+          className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${iconBgColor} shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300`}
+        >
+          {React.cloneElement(icon, { className: "w-6 h-6 text-white" })}
+        </div>
+
+        <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-wider">
+          {title}
+        </h3>
+
+        <div className="flex items-baseline gap-2">
+          <span className="text-4xl font-bold text-white bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+            {value}
+          </span>
+          {subtitle && <span className="text-slate-500 text-lg">{subtitle}</span>}
+        </div>
+
+        {/* Ligne de progression décorative */}
+        <div className="mt-4 h-1 w-full bg-slate-700/50 rounded-full overflow-hidden">
+          <div className={`h-full bg-gradient-to-r ${iconBgColor} rounded-full group-hover:w-full w-2/3 transition-all duration-1000`}></div>
+        </div>
+      </div>
+
+      {/* Bordure lumineuse au hover */}
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-0 rounded-2xl border-2 border-indigo-500/50 blur-sm"></div>
       </div>
     </div>
   )
@@ -26,13 +52,39 @@ export const OverviewCard = (({ icon, title, value, subtitle, iconBgColor }) => 
 
 export function OverviewCardBlue({ Icon, title, value }) {
   return (
-    <div className="bg-blue-50 p-4 rounded-lg">
-      <div className="flex items-center">
-        <Icon className="w-8 h-8 text-blue-600" />
-        <div className="ml-3">
-          <p className="text-sm font-medium text-blue-600">{title}</p>
-          <p className="text-2xl font-bold text-blue-900">{value}</p>
+    <div className="futuristic-card rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-500">
+      {/* Effet de grille en arrière-plan */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="grid-pattern w-full h-full"></div>
+      </div>
+
+      {/* Effet de lumière animé */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+
+      <div className="relative z-10">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300">
+          <Icon className="w-6 h-6 text-white" />
         </div>
+
+        <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-wider">
+          {title}
+        </h3>
+
+        <div className="flex items-baseline gap-2">
+          <span className="text-4xl font-bold text-white bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+            {value}
+          </span>
+        </div>
+
+        {/* Ligne de progression décorative */}
+        <div className="mt-4 h-1 w-full bg-slate-700/50 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-full group-hover:w-full w-2/3 transition-all duration-1000"></div>
+        </div>
+      </div>
+
+      {/* Bordure lumineuse au hover */}
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-0 rounded-2xl border-2 border-blue-500/50 blur-sm"></div>
       </div>
     </div>
   )
@@ -41,15 +93,39 @@ export function OverviewCardBlue({ Icon, title, value }) {
 
 export function OverviewCardGreen({ Icon, title, value }) {
   return (
-    <div className="bg-green-50 p-4 rounded-lg">
-      <div className="flex items-center">
-        <Icon className="w-8 h-8 text-green-600" />
-        <div className="ml-3">
-          <p className="text-sm font-medium text-green-600">{title}</p>
-          <p className="text-2xl font-bold text-green-900">
-            {value}
-          </p>
+    <div className="futuristic-card rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-500">
+      {/* Effet de grille en arrière-plan */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="grid-pattern w-full h-full"></div>
+      </div>
+
+      {/* Effet de lumière animé */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+
+      <div className="relative z-10">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-500 shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300">
+          <Icon className="w-6 h-6 text-white" />
         </div>
+
+        <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-wider">
+          {title}
+        </h3>
+
+        <div className="flex items-baseline gap-2">
+          <span className="text-4xl font-bold text-white bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+            {value}
+          </span>
+        </div>
+
+        {/* Ligne de progression décorative */}
+        <div className="mt-4 h-1 w-full bg-slate-700/50 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-full group-hover:w-full w-2/3 transition-all duration-1000"></div>
+        </div>
+      </div>
+
+      {/* Bordure lumineuse au hover */}
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-0 rounded-2xl border-2 border-emerald-500/50 blur-sm"></div>
       </div>
     </div>
   )
@@ -58,15 +134,39 @@ export function OverviewCardGreen({ Icon, title, value }) {
 
 export function OverviewCardYellow({ Icon, title, value }) {
   return (
-    <div className="bg-yellow-50 p-4 rounded-lg">
-      <div className="flex items-center">
-        <Icon className="w-8 h-8 text-yellow-600" />
-        <div className="ml-3">
-          <p className="text-sm font-medium text-yellow-600">{title}</p>
-          <p className="text-2xl font-bold text-yellow-900">
-            {value}
-          </p>
+    <div className="futuristic-card rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-500">
+      {/* Effet de grille en arrière-plan */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="grid-pattern w-full h-full"></div>
+      </div>
+
+      {/* Effet de lumière animé */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-amber-500/20 to-yellow-500/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+
+      <div className="relative z-10">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-amber-600 to-amber-500 shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300">
+          <Icon className="w-6 h-6 text-white" />
         </div>
+
+        <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-wider">
+          {title}
+        </h3>
+
+        <div className="flex items-baseline gap-2">
+          <span className="text-4xl font-bold text-white bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+            {value}
+          </span>
+        </div>
+
+        {/* Ligne de progression décorative */}
+        <div className="mt-4 h-1 w-full bg-slate-700/50 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-amber-600 to-amber-500 rounded-full group-hover:w-full w-2/3 transition-all duration-1000"></div>
+        </div>
+      </div>
+
+      {/* Bordure lumineuse au hover */}
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-0 rounded-2xl border-2 border-amber-500/50 blur-sm"></div>
       </div>
     </div>
   )
@@ -75,15 +175,39 @@ export function OverviewCardYellow({ Icon, title, value }) {
 
 export function OverviewCardRed({ Icon, title, value }) {
   return (
-    <div className="bg-red-50 p-4 rounded-lg">
-      <div className="flex items-center">
-        <Icon className="w-8 h-8 text-red-600" />
-        <div className="ml-3">
-          <p className="text-sm font-medium text-red-600">{title}</p>
-          <p className="text-2xl font-bold text-red-900">
-            {value}
-          </p>
+    <div className="futuristic-card rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-500">
+      {/* Effet de grille en arrière-plan */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="grid-pattern w-full h-full"></div>
+      </div>
+
+      {/* Effet de lumière animé */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-red-500/20 to-rose-500/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+
+      <div className="relative z-10">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-red-600 to-red-500 shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300">
+          <Icon className="w-6 h-6 text-white" />
         </div>
+
+        <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-wider">
+          {title}
+        </h3>
+
+        <div className="flex items-baseline gap-2">
+          <span className="text-4xl font-bold text-white bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+            {value}
+          </span>
+        </div>
+
+        {/* Ligne de progression décorative */}
+        <div className="mt-4 h-1 w-full bg-slate-700/50 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-red-600 to-red-500 rounded-full group-hover:w-full w-2/3 transition-all duration-1000"></div>
+        </div>
+      </div>
+
+      {/* Bordure lumineuse au hover */}
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-0 rounded-2xl border-2 border-red-500/50 blur-sm"></div>
       </div>
     </div>
   )

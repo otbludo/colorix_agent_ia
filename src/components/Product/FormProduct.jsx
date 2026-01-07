@@ -87,12 +87,17 @@ export function FormProduct({ isOpen, onClose, productToEdit = null, isEditing =
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-opacity-10 backdrop-blur-sm" onClick={handleClose} />
-      <div className="relative bg-white rounded-xl shadow-2xl border border-gray-200 p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto animate-in fade-in-0 zoom-in-95 duration-200">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">{formTitle}</h3>
-          <button onClick={handleClose} className="p-1 rounded-full hover:bg-gray-100 transition-colors">
-            <X className="w-5 h-5 text-gray-500" />
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={handleClose} />
+      <div className="relative futuristic-card rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto animate-in fade-in-0 zoom-in-95 duration-300">
+        {/* Effet de grille en arrière-plan */}
+        <div className="absolute inset-0 opacity-5 rounded-2xl">
+          <div className="grid-pattern w-full h-full"></div>
+        </div>
+
+        <div className="relative z-10 flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold glow-text">{formTitle}</h3>
+          <button onClick={handleClose} className="p-2 rounded-2xl hover:bg-slate-700/50 transition-all duration-300 group">
+            <X className="w-5 h-5 text-slate-400 group-hover:text-slate-300" />
           </button>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit}>

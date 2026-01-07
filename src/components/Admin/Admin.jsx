@@ -16,16 +16,16 @@ export function Admins({ token, statusFilter, dateRange, onEditAdmin, onDeleteAd
 
   const getRoleIcon = (role) => {
     return role === 'superadmin'
-      ? <Crown className="w-4 h-4 text-purple-600" />
-      : <Shield className="w-4 h-4 text-gray-600" />;
+      ? <Crown className="w-4 h-4 text-purple-400" />
+      : <Shield className="w-4 h-4 text-slate-400" />;
   };
 
   const getStatusBadge = (status) => (
-    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${status === 'actif'
-      ? 'bg-green-100 text-green-800'
+    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full backdrop-blur-sm ${status === 'actif'
+      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
       : status === 'inactif'
-        ? 'bg-yellow-100 text-yellow-800'
-        : 'bg-yellow-100 text-yellow-800'
+        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+        : 'bg-red-500/20 text-red-300 border border-red-500/30'
       }`}>
       {status}
     </span>
@@ -37,64 +37,79 @@ export function Admins({ token, statusFilter, dateRange, onEditAdmin, onDeleteAd
   }, [isSuccesRecoveryAdmin]);
 
   return (
-    <div className="overflow-hidden border border-gray-200 rounded-xl">
-      <table className="w-full">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created at</th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {data?.map((admin) => (
-            <tr key={admin.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10">
-                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-sm font-medium text-blue-600">
-                        {admin.name.split(' ').map(n => n[0]).join('')}
-                      </span>
+    <div className="futuristic-card rounded-2xl overflow-hidden">
+      {/* Effet de grille en arrière-plan */}
+      <div className="absolute inset-0 opacity-5 rounded-2xl">
+        <div className="grid-pattern w-full h-full"></div>
+      </div>
+
+      <div className="relative z-10">
+        <table className="w-full">
+          <thead className="bg-slate-800/50 backdrop-blur-sm border-b border-slate-600/50">
+            <tr>
+              <th className="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Utilisateur</th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Number</th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Rôle</th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Created at</th>
+              <th className="px-6 py-4 text-right text-xs font-medium text-slate-300 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-700/30">
+            {data?.map((admin, index) => (
+              <tr
+                key={admin.id}
+                className="hover:bg-slate-800/30 transition-all duration-300 group"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 h-10 w-10">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-600 to-indigo-500 flex items-center justify-center ring-2 ring-indigo-500/30 group-hover:ring-indigo-400/50 transition-all duration-300">
+                        <span className="text-sm font-medium text-white">
+                          {admin.name.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <div className="text-sm font-medium text-white group-hover:text-indigo-300 transition-colors">{admin.name}</div>
+                      <div className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">{admin.email}</div>
                     </div>
                   </div>
-                  <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-900">{admin.name}</div>
-                    <div className="text-sm text-gray-500">{admin.email}</div>
-                  </div>
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{admin.number}</td>
-              <td className="px-6 py-4 whitespace-nowrap flex items-center">
-                {getRoleIcon(admin.role)}
-                <span className="ml-2 text-sm text-gray-900">{admin.role}</span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(admin.status)}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{admin.created_at}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                {statusFilter == "supprime" ? (
-                  <button
-                    onClick={() => recoverAdmin(admin.id)}
-                    className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-                    title="Restaurer"
-                  >
-                    <RotateCcw className="w-5 h-5 text-green-600" />
-                  </button>
-                ) : (
-                  <AdminsActionsDropdown
-                    onEdit={() => onEditAdmin(admin)}
-                    onDelete={() => onDeleteAdmin(admin)}
-                  />
-                )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 group-hover:text-slate-300 transition-colors">{admin.number}</td>
+                <td className="px-6 py-4 whitespace-nowrap flex items-center">
+                  {React.cloneElement(getRoleIcon(admin.role), {
+                    className: admin.role === 'superadmin'
+                      ? "w-4 h-4 text-purple-400 group-hover:text-purple-300"
+                      : "w-4 h-4 text-slate-400 group-hover:text-slate-300"
+                  })}
+                  <span className="ml-2 text-sm text-white group-hover:text-indigo-300 transition-colors">{admin.role}</span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(admin.status)}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 group-hover:text-slate-300 transition-colors">{admin.created_at}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  {statusFilter == "supprime" ? (
+                    <button
+                      onClick={() => recoverAdmin(admin.id)}
+                      className="p-2 rounded-2xl hover:bg-emerald-500/20 transition-all duration-300 group/btn"
+                      title="Restaurer"
+                    >
+                      <RotateCcw className="w-5 h-5 text-emerald-400 group-hover/btn:text-emerald-300" />
+                    </button>
+                  ) : (
+                    <AdminsActionsDropdown
+                      onEdit={() => onEditAdmin(admin)}
+                      onDelete={() => onDeleteAdmin(admin)}
+                    />
+                  )}
 
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

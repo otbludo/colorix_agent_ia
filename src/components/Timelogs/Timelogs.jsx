@@ -36,36 +36,37 @@ export function Timelogs() {
             </div> */}
 
       {/* Time Entries */}
-      <div className=" flex flex-col-reverse gap-4">
-        {data?.all?.map((log) => (
-          <div key={log.id} className="bg-white border border-gray-200 rounded-xl p-6">
-            <div className="flex items-center justify-between">
+      <div className="flex flex-col-reverse gap-4">
+        {data?.all?.map((log, index) => (
+          <div
+            key={log.id}
+            className="futuristic-card rounded-2xl p-6 hover:scale-[1.01] transition-all duration-500 slide-in-up group"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            {/* Effet de grille en arrière-plan */}
+            <div className="absolute inset-0 opacity-5 rounded-2xl">
+              <div className="grid-pattern w-full h-full"></div>
+            </div>
+
+            <div className="relative z-10 flex items-center justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className="font-semibold text-gray-900">{log.action}</h3>
-                  <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
-                    Effectuer
+                  <h3 className="font-semibold text-white group-hover:text-indigo-300 transition-colors">{log.action}</h3>
+                  <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full backdrop-blur-sm">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full mr-1 animate-pulse"></div>
+                    Effectué
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
+                <div className="flex items-center gap-4 text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
                   <div className="flex items-center gap-1">
                     <User className="w-4 h-4" />
                     <span>{log.performed_by_email}</span>
                   </div>
-                  {/* <div>
-                          Projet: <span className="font-medium">{log.project}</span>
-                        </div> */}
-                  {/* <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          <span>{new Date(log.date).toLocaleDateString('fr-FR')}</span>
-                        </div> */}
                 </div>
-                {/* <p className="text-gray-600 text-sm mt-2">{log.description}</p> */}
               </div>
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <div className="text-lg font-semibold text-gray-900">
+                  <div className="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">
                     {log.timestamp}
                   </div>
                 </div>

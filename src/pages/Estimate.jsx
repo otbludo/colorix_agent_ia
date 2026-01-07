@@ -25,22 +25,35 @@ export function EstimateScreen() {
   const openShowInfosDevis = (devis) => { setDevisInfo(devis); setIsDevisInfoModalOpen(true); };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen futuristic-bg">
+      {/* Particules animées en arrière-plan */}
+      <div className="particles-container">
+        <div className="particle w-3 h-3 top-20 left-20"></div>
+        <div className="particle w-2 h-2 top-40 right-32"></div>
+        <div className="particle w-4 h-4 bottom-40 left-40"></div>
+        <div className="particle w-1.5 h-1.5 top-60 right-20"></div>
+      </div>
+
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="flex flex-col lg:pl-[280px]">
         <Header
           onToggleSidebar={() => setIsSidebarOpen(true)}
         />
-        <main className="p-4 sm:p-6 lg:p-10">
-          <div className="space-y-8 bg-white rounded-3xl shadow-[0_15px_45px_rgba(15,23,42,0.06)] p-6 sm:p-8 lg:p-10 border border-gray-100">
-            <div className="flex flex-wrap gap-4 items-center justify-between">
+        <main className="p-4 sm:p-6 lg:p-10 slide-in-up">
+          <div className="futuristic-card rounded-3xl p-6 sm:p-8 lg:p-10">
+            {/* Effet de grille en arrière-plan */}
+            <div className="absolute inset-0 opacity-5 rounded-3xl">
+              <div className="grid-pattern w-full h-full"></div>
+            </div>
+
+            <div className="relative z-10 flex flex-wrap gap-4 items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-[#102040]">Gestion des devis</h2>
-                <p className="text-gray-600 mt-1">Gérer vos devis et propositions commerciales</p>
+                <h2 className="text-2xl font-bold glow-text">Gestion des devis</h2>
+                <p className="text-slate-400 mt-1">Gérer vos devis et propositions commerciales</p>
               </div>
               <button
                 onClick={openAddModal}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-400/50 hover:scale-105 border border-indigo-400/30 font-medium"
               >
                 <Plus className="w-4 h-4" />
                 Nouveau devis

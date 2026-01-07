@@ -38,6 +38,15 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#020c1f] via-[#051937] to-[#073061] relative overflow-hidden flex items-center justify-center px-4">
+      {/* Particules animées en arrière-plan */}
+      <div className="particles-container">
+        <div className="particle w-3 h-3 top-20 left-20"></div>
+        <div className="particle w-2 h-2 top-40 right-32"></div>
+        <div className="particle w-4 h-4 bottom-40 left-40"></div>
+        <div className="particle w-1.5 h-1.5 top-60 right-20"></div>
+        <div className="particle w-2.5 h-2.5 bottom-20 right-40"></div>
+        <div className="particle w-1 h-1 top-80 left-60"></div>
+      </div>
       <div className="absolute inset-0 opacity-[0.2]">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -131,19 +140,23 @@ export function LoginPage() {
             </div>
             <h1 className="text-4xl lg:text-5xl font-semibold text-white leading-tight">
               Connexion
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-300">
+              <span className="block glow-text">
                 Colorix
               </span>
             </h1>
           </div>
           <div className="w-full max-w-md mx-auto">
-            <div className="bg-gradient-to-b from-white/15 via-white/10 to-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_25px_80px_rgba(3,12,32,0.45)] px-8 py-8">
-              <div className="text-center mb-6">
+            <div className="futuristic-card rounded-3xl shadow-[0_25px_80px_rgba(3,12,32,0.45)] px-8 py-8">
+              {/* Effet de grille en arrière-plan */}
+              <div className="absolute inset-0 opacity-5 rounded-3xl">
+                <div className="grid-pattern w-full h-full"></div>
+              </div>
+              <div className="relative z-10 text-center mb-6">
                 <h2 className="text-xl font-semibold text-white">
                   Se connecter
                 </h2>
               </div>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
                 <Input
                   type="email"
                   placeholder="vous@exemple.com"
