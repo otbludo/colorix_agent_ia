@@ -12,6 +12,19 @@ import { CustomerCategoryLoad } from '../components/Dashboard/CustomerCategoryLo
 export function Dashboard() {
   const token = localStorage.getItem('colorix_token');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [categoryToDelete, setCategoryToDelete] = useState(null)
+
+  const handleCategoryDelete = (category) => {
+    setCategoryToDelete(category)
+  }
+
+  // Simulation de suppression d'une catégorie
+  const handleConfirmCategoryDelete = async () => {
+    // Simulation - en production, cela ferait un appel API réel
+    console.log('Suppression de la catégorie:', categoryToDelete)
+    alert(`Catégorie "${categoryToDelete.name}" supprimée avec succès`)
+    setCategoryToDelete(null)
+  }
 
 
   return (
@@ -58,12 +71,14 @@ export function Dashboard() {
                 <LogsList token={token} />
               </div>
               <div className="fade-in" style={{ animationDelay: '0.8s' }}>
-                <CustomerCategoryLoad token={token} />
+                <CustomerCategoryLoad token={token} onDeleteCategory={handleCategoryDelete} />
               </div>
             </div>
           </div>
         </main>
       </div>
+
+      {/* Modal de suppression des devis */}
       {/* <DeleteConfirmModal
         isOpen={!!devisToDelete}
         onClose={() => setDevisToDelete(null)}
@@ -76,6 +91,22 @@ export function Dashboard() {
         data={data}
         error={error}
       /> */}
+
+      {/* Modal de suppression des catégories */}
+      {categoryToDelete && (
+        <DeleteConfirmModal
+          isOpen={!!categoryToDelete}
+          onClose={() => setCategoryToDelete(null)}
+          entityName={categoryToDelete.name}
+          entityId={categoryToDelete.id}
+          deleteApi={handleConfirmCategoryDelete}
+          isPending={false}
+          isSuccess={false}
+          isError={false}
+          data={null}
+          error={null}
+        />
+      )}
     </div>
   )
 }

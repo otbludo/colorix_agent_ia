@@ -1,9 +1,34 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { GetCustomerCategory } from '../../api/get/GetCustomerCategory'
+import { AddCategoryWidget } from './AddCategoryWidget'
+import { CustomerCategoryActionsDropdown } from './CustomerCategoryActionsDropdown'
 
-export function CustomerCategoryLoad({ token }) {
+export function CustomerCategoryLoad({ token, onDeleteCategory }) {
   const { data } = GetCustomerCategory(token, null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingCategory, setEditingCategory] = useState(null)
+
+  const handleAddCategory = (newCategory) => {
+    // Simulation d'ajout - en production, cela ferait un appel API
+    console.log('Nouvelle catégorie:', newCategory)
+    alert(`${editingCategory ? 'Catégorie modifiée' : 'Nouvelle catégorie ajoutée'}: ${newCategory.name} (${newCategory.rate}%)`)
+
+    // Ici on pourrait mettre à jour les données ou faire un refresh
+    // Pour l'instant, c'est juste une simulation
+    setEditingCategory(null)
+  }
+
+  const handleDeleteCategory = (category) => {
+    if (onDeleteCategory) {
+      onDeleteCategory(category)
+    }
+  }
+
+  const handleEditCategory = (category) => {
+    setEditingCategory(category)
+    setIsFormOpen(true)
+  }
 
 
   // Couleurs futuristes pour les catégories
@@ -23,14 +48,41 @@ export function CustomerCategoryLoad({ token }) {
 
       <div className="relative z-10 flex flex-wrap gap-3 items-center justify-between mb-6">
         <h2 className="text-xl font-bold glow-text">Pourcentage Catégorie</h2>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-slate-600/50 bg-slate-800/50 backdrop-blur-sm hover:bg-slate-700/50 hover:border-indigo-500/50 transition-all duration-300 group">
-          <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-slate-300" />
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => {
+              setEditingCategory(null)
+              setIsFormOpen(!isFormOpen)
+            }}
+            className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-slate-600/50 bg-slate-800/50 backdrop-blur-sm hover:bg-slate-700/50 hover:border-indigo-500/50 transition-all duration-300 group"
+          >
+            <ChevronDown className={`w-4 h-4 text-slate-400 group-hover:text-slate-300 transition-transform duration-300 ${isFormOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          <AddCategoryWidget
+            isOpen={isFormOpen}
+            onClose={() => {
+              setIsFormOpen(false)
+              setEditingCategory(null)
+            }}
+            onAddCategory={handleAddCategory}
+            editingCategory={editingCategory}
+          />
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-6 py-4 sm:py-8">
         {data?.map((item, index) => (
-          <div key={item.id} className="flex flex-col items-center group">
+          <div key={item.id} className="flex flex-col items-center group relative">
+            {/* Menu d'actions */}
+            <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
+              <CustomerCategoryActionsDropdown
+                category={item}
+                onEdit={handleEditCategory}
+                onDelete={handleDeleteCategory}
+              />
+            </div>
+
             {/* Cercle avec effet futuriste */}
             <div className="relative mb-4">
               <div
