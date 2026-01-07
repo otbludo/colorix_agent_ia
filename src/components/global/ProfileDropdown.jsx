@@ -52,67 +52,78 @@ export function ProfileDropdown({ isOpen, onClose }) {
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200 z-50"
+      className="absolute right-0 top-full mt-2 w-80 futuristic-card rounded-2xl shadow-2xl py-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-300 z-50"
     >
+      {/* Effet de grille en arrière-plan */}
+      <div className="absolute inset-0 opacity-10 rounded-2xl">
+        <div className="grid-pattern w-full h-full"></div>
+      </div>
+
       {/* Header avec informations principales */}
-      <div className="px-4 pb-4 border-b border-gray-100">
+      <div className="relative z-10 px-4 pb-4 border-b border-slate-600/50">
         <div className="flex items-center gap-3">
           <img
             src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
             alt="Alex Meian"
-            className="w-12 h-12 rounded-full border-2 border-blue-100"
+            className="w-12 h-12 rounded-full border-2 border-indigo-400/50 ring-2 ring-indigo-500/30"
           />
           <div className="flex-1">
-            <div className="font-semibold text-gray-900 text-base">Alex Meian</div>
-            <div className="text-sm text-gray-500">Product Manager</div>
+            <div className="font-semibold text-white text-base">Alex Meian</div>
+            <div className="text-sm text-slate-400">Product Manager</div>
           </div>
         </div>
       </div>
 
       {/* Informations détaillées */}
-      <div className="px-4 py-3 border-b border-gray-100">
+      <div className="relative z-10 px-4 py-3 border-b border-slate-600/50">
         <div className="space-y-2">
           <div className="flex items-center gap-3 text-sm">
-            <Mail className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-600">alex.meian@colorix.com</span>
+            <Mail className="w-4 h-4 text-slate-400" />
+            <span className="text-slate-300">alex.meian@colorix.com</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <Shield className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-600">Administrateur</span>
+            <Shield className="w-4 h-4 text-slate-400" />
+            <span className="text-slate-300">Administrateur</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-green-600 font-medium">Connecté</span>
+            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse ring-2 ring-emerald-500/30"></div>
+            <span className="text-emerald-400 font-medium">Connecté</span>
           </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="px-2 pt-2">
+      <div className="relative z-10 px-2 pt-2">
         <button
           onClick={() => handleAction(handleEditProfile)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg group"
+          className="w-full flex items-center gap-3 px-3 py-3 text-sm text-slate-300 hover:bg-indigo-500/20 hover:text-indigo-300 transition-all duration-300 rounded-xl group"
         >
-          <User className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+          <div className="p-1 rounded-lg bg-indigo-500/20 group-hover:bg-indigo-500/30 transition-colors">
+            <User className="w-4 h-4 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
+          </div>
           <span>Modifier le profil</span>
         </button>
 
         <button
           onClick={() => handleAction(handleSettings)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200 rounded-lg group"
+          className="w-full flex items-center gap-3 px-3 py-3 text-sm text-slate-300 hover:bg-slate-700/50 hover:text-white transition-all duration-300 rounded-xl group"
         >
-          <Settings className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+          <div className="p-1 rounded-lg bg-slate-500/20 group-hover:bg-slate-500/30 transition-colors">
+            <Settings className="w-4 h-4 text-slate-400 group-hover:text-slate-300 transition-colors" />
+          </div>
           <span>Paramètres</span>
         </button>
 
         {/* Séparateur */}
-        <div className="h-px bg-gray-200 my-2 mx-2"></div>
+        <div className="h-px bg-slate-600/50 my-2 mx-2"></div>
 
         <button
           onClick={() => handleAction(handleLogout)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-200 rounded-lg group"
+          className="w-full flex items-center gap-3 px-3 py-3 text-sm text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all duration-300 rounded-xl group"
         >
-          <LogOut className="w-4 h-4 text-red-400 group-hover:text-red-500 transition-colors" />
+          <div className="p-1 rounded-lg bg-red-500/20 group-hover:bg-red-500/30 transition-colors">
+            <LogOut className="w-4 h-4 text-red-400 group-hover:text-red-300 transition-colors" />
+          </div>
           <span>Se déconnecter</span>
         </button>
       </div>
