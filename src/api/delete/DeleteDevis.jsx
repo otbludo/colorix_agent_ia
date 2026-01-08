@@ -1,10 +1,12 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const DeleteCustomer = (token) => {
+export const DeleteDevis = (token) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationKey: ["DeleteCustomer"],
+    mutationKey: ["DeleteDevis"],
 
     mutationFn: async (formData) => {
       const response = await fetch(`${API_URL}/api/v1/delete_customer`, {
@@ -17,6 +19,10 @@ export const DeleteCustomer = (token) => {
       });
 
       return response.json();
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries(['GetDevis']);
     },
   });
 };

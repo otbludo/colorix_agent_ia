@@ -17,7 +17,6 @@ export const GetStatDevisFromCustomer = (token, customer_id) => {
                     },
                 }
             );
-            console.log("data:", response)
             return response.json();
         },
         {

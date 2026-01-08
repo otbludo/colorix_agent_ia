@@ -7,10 +7,13 @@ import { Plus } from 'lucide-react'
 import { Estimates } from '../components/Estimate/Estimates'
 import { StatEstimate } from '../components/Estimate/Stats'
 import { ShowInfosEstimate } from '../components/Estimate/ShowInfosEstimate'
+import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal'
+import { DeleteDevis } from '../api/delete/DeleteDevis'
 
 
 export function EstimateScreen() {
   const token = localStorage.getItem('colorix_token');
+  const { mutate, isPending, data, isSuccess, isError, error } = DeleteDevis(token);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isAddQuoteModalOpen, setIsAddQuoteModalOpen] = useState(false)
   const [isDevisInfoModalOpen, setIsDevisInfoModalOpen] = useState(false);
@@ -23,6 +26,7 @@ export function EstimateScreen() {
   const openAddModal = () => { setDevisToEdit(null); setIsEditing(false); setIsAddQuoteModalOpen(true); };
   const openEditModal = (devis) => { setDevisToEdit(devis); setIsEditing(true); setIsAddQuoteModalOpen(true); };
   const openShowInfosDevis = (devis) => { setDevisInfo(devis); setIsDevisInfoModalOpen(true); };
+  const openDeleteModal = (devis) => setDevisToDelete(devis);
 
   return (
     <div className="min-h-screen futuristic-bg">
@@ -63,6 +67,7 @@ export function EstimateScreen() {
               <Estimates
                 onEditDevis={openEditModal}
                 onShowInfosDevis={openShowInfosDevis}
+                onDeleteDevis={openDeleteModal}
                 token={token} />
               <StatEstimate token={token} />
             </div>
@@ -82,6 +87,20 @@ export function EstimateScreen() {
         estimate={devisInfo}
         onClose={() => setIsDevisInfoModalOpen(false)}
       />
+      {devisToDelete && (
+        <DeleteConfirmModal
+          isOpen={!!devisToDelete}
+          onClose={() => setDevisToDelete(null)}
+          entityName={`Devis ${devisToDelete.name_product}`}
+          entityId={devisToDelete.id}
+          deleteApi={mutate}
+          isPending={isPending}
+          isSuccess={isSuccess}
+          isError={isError}
+          data={data}
+          error={error}
+        />
+      )}
       <ToastContainer position="bottom-center" />
     </div>
   )

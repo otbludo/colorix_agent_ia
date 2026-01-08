@@ -20,7 +20,6 @@ export const GetCustomerCategory = (token, statusFilter) => {
                 }
             );
 
-            console.log('response', response);
             return response.json();
         },
         {

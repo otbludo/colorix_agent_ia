@@ -1,22 +1,15 @@
 import { useEffect } from 'react'
-import { FileText, Eye, Edit, Download, Calendar, User2 } from 'lucide-react'
+import { FileText, Eye, Edit, Download, Calendar, User2, Trash2 } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { GetDevis } from '../../api/get/GetDevis'
 
 
-export function Estimates({ token, onEditDevis, onShowInfosDevis }) {
+export function Estimates({ token, onEditDevis, onShowInfosDevis, onDeleteDevis }) {
   const { data, isPending, isError, error } = GetDevis(token, null)
 
   useEffect(() => {
     if (isError) toast.error(error?.message || error || 'Erreur réseau')
   }, [isError, error])
-
-  // Debug: Afficher les données reçues
-  useEffect(() => {
-    if (data) {
-      console.log('Estimates data:', data)
-    }
-  }, [data])
 
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString('fr-FR') : '—'
@@ -135,6 +128,17 @@ export function Estimates({ token, onEditDevis, onShowInfosDevis }) {
                       title="Télécharger"
                     >
                       <Download className="w-4 h-4 text-purple-400 group-hover/btn:text-purple-300" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (onDeleteDevis && typeof onDeleteDevis === 'function' && devis) {
+                          onDeleteDevis(devis)
+                        }
+                      }}
+                      className="p-2 hover:bg-red-500/20 rounded-xl transition-all duration-300 group/btn"
+                      title="Supprimer"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-400 group-hover/btn:text-red-300" />
                     </button>
                   </div>
                 </div>
