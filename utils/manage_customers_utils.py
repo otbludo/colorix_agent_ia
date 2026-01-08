@@ -1,6 +1,8 @@
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import func, extract
+from datetime import datetime
 from db.models import Customer, CustomerDeleted, Devis, DevisDeleted, AuditLog       
 from schemas.customer_schemas import CustomerCreate, CustomerUpdate, CustomerStatus, CustomerDelete, CustomerRecovery, GetDevisFromCustomer
 from messages.exceptions import CustomerEmailExists, CustomerNumberExists, CustomerNotFound, CustomerEmailUsedByOther, CustomerNumberUsedByOther
@@ -479,6 +481,53 @@ class CustomerCRUD:
                 )
 
             return devis_list
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
+
+
+#--------------------------------------------------------------------------------------
+# update customer status based on devis validation
+#--------------------------------------------------------------------------------------
+    async def update_customer_status_based_on_devis(self):
+        """
+        Met à jour automatiquement le statut des clients :
+        - "client" si le client a au moins un devis validé créé dans le mois en cours
+        - "potentiel" sinon
+        """
+        try:
+            async with self.db.begin():
+
+                # Récupérer tous les clients
+                result = await self.db.execute(select(Customer))
+                customers = result.scalars().all()
+
+                current_month = datetime.now().month
+                current_year = datetime.now().year
+
+                for customer in customers:
+                    # Vérifier si le client a des devis validés créés dans le mois en cours
+                    devis_result = await self.db.execute(
+                        select(Devis).where(
+                            Devis.id_customer == customer.id,
+                            Devis.status == "valide",
+                            extract('month', Devis.created_at) == current_month,
+                            extract('year', Devis.created_at) == current_year
+                        )
+                    )
+                    valid_current_month_devis = devis_result.scalars().all()
+
+                    # Déterminer le nouveau statut
+                    new_status = "client" if valid_current_month_devis else "potentiel"
+
+                    # Mettre à jour le statut si nécessaire
+                    if customer.status != new_status:
+                        old_status = customer.status
+                        customer.status = new_status
+                        self.db.add(customer)
+
+                return {"message": "Mise à jour automatique des statuts clients terminée"}
 
         except Exception as e:
             await self.db.rollback()

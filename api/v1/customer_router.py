@@ -50,3 +50,9 @@ async def delete_customer(customer_data: CustomerDelete, current_user: dict = De
 async def recovery_customer(customer_data: CustomerRecovery, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
     customer_crud = CustomerCRUD(db)
     return await customer_crud.recovery_customer(customer_data, current_user)
+
+
+@router.post("/update-customer-status", status_code=status.HTTP_200_OK)
+async def update_customer_status(current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_crud = CustomerCRUD(db)
+    return await customer_crud.update_customer_status_based_on_devis()

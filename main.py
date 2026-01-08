@@ -12,6 +12,7 @@ from api.v1.audit_router import router as audit_router
 from messages.error import register_error_handlers
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from utils.maintenance_utils import clean_expired_archives
+from utils.automatique_cron_utils import update_customer_statuses
 
 app = FastAPI()
 
@@ -21,14 +22,20 @@ scheduler = AsyncIOScheduler()
 @app.on_event("startup")
 async def start_scheduler():
     scheduler.add_job(
-        clean_expired_archives, 
-        'cron', 
-        day=1, 
-        hour=0, 
+        clean_expired_archives,
+        'cron',
+        day=1,
+        hour=0,
         minute=0
     )
+    # Mise à jour perpétuelle des statuts clients toutes les secondes
+    scheduler.add_job(
+        update_customer_statuses,
+        'interval',
+        seconds=1
+    )
     scheduler.start()
-    print("Scheduler démarré : Nettoyage mensuel activé.")
+    print("Scheduler démarré : Nettoyage mensuel et mise à jour perpétuelle des statuts clients activés.")
 
 @app.on_event("shutdown")
 def stop_scheduler():
