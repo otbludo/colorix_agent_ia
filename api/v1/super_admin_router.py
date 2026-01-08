@@ -1,9 +1,8 @@
+from db.database import get_db
 from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
 from utils.admin_utils import AdminCRUD
 from schemas.admin_schemas import AdminCreate, AdminStatus, AdminDelete,AdminRecovery, AdminEditStatusRequest
-from db.database import get_db
 from dependencies.auth import superadmin_required
 
 
