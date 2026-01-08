@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, func, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import ARRAY, JSON
 from db.database import Base
@@ -79,6 +79,7 @@ class CustomerDeleted(Base):
     country = Column(String(50))
     category = Column(String(15))
     status = Column(String(15))
+    deleted_cascade = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -135,6 +136,7 @@ class DevisDeleted(Base):
     id_customer = Column(Integer, index=True)
     id_admin = Column(Integer, index=True)
     status = Column(String(15))
+    deleted_cascade = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True))
     deleted_at = Column(DateTime(timezone=True), server_default=func.now())
 

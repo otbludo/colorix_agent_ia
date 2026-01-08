@@ -2,7 +2,7 @@
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from db.models import CustomerCategory, AuditLog, CustomerCategoryDeleted
+from db.models import CustomerCategory, CustomerCategoryDeleted, Customer, CustomerDeleted, Devis, DevisDeleted, AuditLog
 from messages.exceptions import CustomerCategoryNameExists, CustomerCategoryNotFound
 from schemas.customer_category_schemas import CustomerCategoryCreate, CustomerCategoryUpdate, CustomerCategoryDelete, CustomerCategoryRecovery, CustomerCategoryStatus
 
@@ -169,6 +169,90 @@ class CustomerCategoryCRUD:
                 if not category:
                     raise CustomerCategoryNotFound()
 
+                # Suppression en cascade : supprimer tous les clients de cette catégorie
+                customers_result = await self.db.execute(
+                    select(Customer).where(Customer.category == category.name)
+                )
+                customers_list = customers_result.scalars().all()
+
+                # Pour chaque client, faire une suppression en cascade de ses devis
+                for customer in customers_list:
+                    # Supprimer en cascade les devis du client
+                    devis_result = await self.db.execute(
+                        select(Devis).where(Devis.id_customer == customer.id)
+                    )
+                    devis_list = devis_result.scalars().all()
+
+                    # Créer les copies des devis dans DevisDeleted
+                    for devis in devis_list:
+                        deleted_devis = DevisDeleted(
+                            original_id=devis.id,
+                            name=devis.name_product,
+                            description=devis.description,
+                            format=devis.format,
+                            quantity=devis.quantity,
+                            impression=devis.impression,
+                            printing_time=devis.printing_time,
+                            description_devis=devis.description_devis,
+                            tva=devis.tva,
+                            prix_base=devis.prix_base,
+                            price_taux=devis.price_taux,
+                            montant_tva=devis.montant_tva,
+                            montant_ttc=devis.montant_ttc,
+                            taux_applique=devis.taux_applique,
+                            name_customer=devis.name_customer,
+                            first_name_customer=devis.first_name_customer,
+                            email_customer=devis.email_customer,
+                            id_product=devis.id_product,
+                            id_customer=devis.id_customer,
+                            id_admin=devis.id_admin,
+                            status=devis.status,
+                            deleted_cascade=True,  # Marquer comme supprimé en cascade
+                            created_at=devis.created_at
+                        )
+                        self.db.add(deleted_devis)
+
+                        # Log pour chaque devis supprimé
+                        devis_action_desc = f"Suppression en cascade du devis {devis.name_product} (catégorie supprimée: {category.name})"
+                        audit_entry = AuditLog(
+                            object_id=devis.id,
+                            action=devis_action_desc,
+                            performed_by=performed_by,
+                            performed_by_email=performed_by_email
+                        )
+                        self.db.add(audit_entry)
+
+                        # Supprimer le devis
+                        await self.db.delete(devis)
+
+                    # Créer la copie du client dans CustomerDeleted
+                    deleted_customer = CustomerDeleted(
+                        original_id=customer.id,
+                        name=customer.name,
+                        first_name=customer.first_name,
+                        number=customer.number,
+                        email=customer.email,
+                        company=customer.company,
+                        city=customer.city,
+                        country=customer.country,
+                        category=customer.category,
+                        status=customer.status,
+                        deleted_cascade=True  # Marquer comme supprimé en cascade
+                    )
+                    self.db.add(deleted_customer)
+
+                    # Log pour chaque client supprimé
+                    customer_action_desc = f"Suppression en cascade du client {customer.email} (catégorie supprimée: {category.name})"
+                    audit_entry = AuditLog(
+                        object_id=customer.id,
+                        action=customer_action_desc,
+                        performed_by=performed_by,
+                        performed_by_email=performed_by_email
+                    )
+                    self.db.add(audit_entry)
+
+                    # Supprimer le client
+                    await self.db.delete(customer)
 
                 # Copier dans la table CustomerCategoryDeleted
                 deleted_category = CustomerCategoryDeleted(
@@ -184,12 +268,13 @@ class CustomerCategoryCRUD:
 
                 # Ajouter un log dans AuditLog
                 action_desc = f"Suppression de la catégorie {category.name}"
-                await self.create_audit_log(
+                audit_entry = AuditLog(
                     object_id=category.id,
                     action=action_desc,
                     performed_by=performed_by,
                     performed_by_email=performed_by_email
                 )
+                self.db.add(audit_entry)
 
             # Commit automatique si tout est OK
             return {"message": f"Catégorie '{deleted_category.name}' supprimée avec succès et journalisée."}
@@ -239,6 +324,110 @@ class CustomerCategoryCRUD:
                 self.db.add(restored_category)
                 await self.db.flush()
 
+                # Restauration en cascade : récupérer tous les clients supprimés de cette catégorie lors de la suppression en cascade
+                customers_deleted_result = await self.db.execute(
+                    select(CustomerDeleted).where(
+                        CustomerDeleted.category == deleted_category.name,
+                        CustomerDeleted.deleted_cascade == True
+                    )
+                )
+                customers_deleted_list = customers_deleted_result.scalars().all()
+
+                # Restaurer tous les clients
+                restored_customers_list = []
+                for customer_deleted in customers_deleted_list:
+                    # Vérifier que l'email n'existe pas déjà dans la table Customer
+                    email_check = await self.db.execute(
+                        select(Customer).where(Customer.email == customer_deleted.email)
+                    )
+                    if email_check.scalars().first():
+                        # L'email existe déjà, on ne restaure pas ce client
+                        continue
+
+                    restored_customer = Customer(
+                        id=customer_deleted.original_id,
+                        name=customer_deleted.name,
+                        first_name=customer_deleted.first_name,
+                        number=customer_deleted.number,
+                        email=customer_deleted.email,
+                        company=customer_deleted.company,
+                        city=customer_deleted.city,
+                        country=customer_deleted.country,
+                        category=customer_deleted.category,
+                        status=customer_deleted.status
+                    )
+                    self.db.add(restored_customer)
+                    restored_customers_list.append((restored_customer, customer_deleted))
+
+                # Pour chaque client restauré, restaurer ses devis
+                for restored_customer, customer_deleted in restored_customers_list:
+                    # Chercher les devis supprimés de ce client lors de la suppression en cascade
+                    devis_deleted_result = await self.db.execute(
+                        select(DevisDeleted).where(
+                            DevisDeleted.id_customer == customer_deleted.original_id,
+                            DevisDeleted.deleted_cascade == True
+                        )
+                    )
+                    devis_deleted_list = devis_deleted_result.scalars().all()
+
+                    # Restaurer tous les devis
+                    restored_devis_list = []
+                    for devis_deleted in devis_deleted_list:
+                        restored_devis = Devis(
+                            id=devis_deleted.original_id,
+                            name_product=devis_deleted.name,
+                            description=devis_deleted.description,
+                            format=devis_deleted.format,
+                            quantity=devis_deleted.quantity,
+                            impression=devis_deleted.impression,
+                            printing_time=devis_deleted.printing_time,
+                            description_devis=devis_deleted.description_devis,
+                            tva=devis_deleted.tva,
+                            prix_base=devis_deleted.prix_base,
+                            price_taux=devis_deleted.price_taux,
+                            montant_tva=devis_deleted.montant_tva,
+                            montant_ttc=devis_deleted.montant_ttc,
+                            taux_applique=devis_deleted.taux_applique,
+                            name_customer=devis_deleted.name_customer,
+                            first_name_customer=devis_deleted.first_name_customer,
+                            email_customer=devis_deleted.email_customer,
+                            id_product=devis_deleted.id_product,
+                            id_customer=devis_deleted.id_customer,
+                            id_admin=devis_deleted.id_admin,
+                            status=devis_deleted.status,
+                            created_at=devis_deleted.created_at
+                        )
+                        self.db.add(restored_devis)
+                        restored_devis_list.append((restored_devis, devis_deleted))
+
+                    # Supprimer tous les devis de la table supprimée et créer les logs
+                    for restored_devis, devis_deleted in restored_devis_list:
+                        await self.db.delete(devis_deleted)
+
+                        # Log pour chaque devis restauré
+                        devis_action_desc = f"Restauration en cascade du devis {restored_devis.name_product} (catégorie restaurée: {restored_category.name})"
+                        audit_entry = AuditLog(
+                            object_id=restored_devis.id,
+                            action=devis_action_desc,
+                            performed_by=performed_by,
+                            performed_by_email=performed_by_email
+                        )
+                        self.db.add(audit_entry)
+
+                # Supprimer tous les clients de la table supprimée et créer les logs
+                for restored_customer, customer_deleted in restored_customers_list:
+                    await self.db.delete(customer_deleted)
+
+                    # Log pour chaque client restauré
+                    customer_action_desc = f"Restauration en cascade du client {restored_customer.email} (catégorie restaurée: {restored_category.name})"
+                    audit_entry = AuditLog(
+                        object_id=restored_customer.id,
+                        action=customer_action_desc,
+                        performed_by=performed_by,
+                        performed_by_email=performed_by_email
+                    )
+                    self.db.add(audit_entry)
+
                 # Supprimer la catégorie de la table supprimée
                 await self.db.delete(deleted_category)
 
@@ -246,12 +435,13 @@ class CustomerCategoryCRUD:
                 action_desc = (
                     f"Restauration de la catégorie: {restored_category.name}"
                 )
-                await self.create_audit_log(
+                audit_entry = AuditLog(
                     object_id=restored_category.id,
                     action=action_desc,
                     performed_by=performed_by,
                     performed_by_email=performed_by_email
                 )
+                self.db.add(audit_entry)
 
             return {"message": f"Catégorie '{deleted_category.name}' restaurée avec succès."}
 

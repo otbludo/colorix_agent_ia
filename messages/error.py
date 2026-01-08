@@ -2,6 +2,7 @@ from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from fastapi.requests import Request
 from .exceptions import *
+from .exceptions import DevisNotFound
 
 
 def create_exception_handler(status_code: int, detail: dict):
@@ -196,6 +197,15 @@ def register_error_handlers(app: FastAPI):
         create_exception_handler(
             status.HTTP_401_UNAUTHORIZED,
             {"detail": "Token invalide"}
+        )
+    )
+
+    # Devis errors
+    app.add_exception_handler(
+        DevisNotFound,
+        create_exception_handler(
+            status.HTTP_404_NOT_FOUND,
+            {"detail": "Devis introuvable.", "code": "devis_not_found"}
         )
     )
 

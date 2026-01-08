@@ -29,8 +29,16 @@ class DevisUpdate(BaseModel):
 class DevisValidate(BaseModel):
     id: int
     status: DevisValidationStatus
-    
-    
+
+
+class DevisDelete(BaseModel):
+    id: int
+
+
+class DevisRecovery(BaseModel):
+    id: int
+
+
 class DevisGet(BaseModel):
     status: Optional[str] = None
 

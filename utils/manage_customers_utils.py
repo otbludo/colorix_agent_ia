@@ -1,7 +1,7 @@
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from db.models import Customer, CustomerDeleted, AuditLog       
+from db.models import Customer, CustomerDeleted, Devis, DevisDeleted, AuditLog       
 from schemas.customer_schemas import CustomerCreate, CustomerUpdate, CustomerStatus, CustomerDelete, CustomerRecovery, GetDevisFromCustomer
 from messages.exceptions import CustomerEmailExists, CustomerNumberExists, CustomerNotFound, CustomerEmailUsedByOther, CustomerNumberUsedByOther
 
@@ -179,6 +179,58 @@ class CustomerCRUD:
                 if not customer:
                     raise CustomerNotFound()
 
+                # Suppression en cascade : déplacer tous les devis associés vers DevisDeleted
+                devis_result = await self.db.execute(
+                    select(Devis).where(Devis.id_customer == customer.id)
+                )
+                devis_list = devis_result.scalars().all()
+
+                # D'abord, créer toutes les copies dans DevisDeleted
+                deleted_devis_list = []
+                for devis in devis_list:
+                    deleted_devis = DevisDeleted(
+                        original_id=devis.id,
+                        name=devis.name_product,
+                        description=devis.description,
+                        format=devis.format,
+                        quantity=devis.quantity,
+                        impression=devis.impression,
+                        printing_time=devis.printing_time,
+                        description_devis=devis.description_devis,
+                        tva=devis.tva,
+                        prix_base=devis.prix_base,
+                        price_taux=devis.price_taux,
+                        montant_tva=devis.montant_tva,
+                        montant_ttc=devis.montant_ttc,
+                        taux_applique=devis.taux_applique,
+                        name_customer=devis.name_customer,
+                        first_name_customer=devis.first_name_customer,
+                        email_customer=devis.email_customer,
+                        id_product=devis.id_product,
+                        id_customer=devis.id_customer,
+                        id_admin=devis.id_admin,
+                        status=devis.status,
+                        deleted_cascade=True,  # Marquer comme supprimé en cascade
+                        created_at=devis.created_at
+                    )
+                    self.db.add(deleted_devis)
+                    deleted_devis_list.append((devis, deleted_devis))
+
+                # Ensuite, supprimer tous les devis de la table principale
+                for devis, _ in deleted_devis_list:
+                    await self.db.delete(devis)
+
+                # Enfin, créer les logs d'audit pour chaque devis supprimé
+                for devis, _ in deleted_devis_list:
+                    devis_action_desc = f"Suppression en cascade du devis {devis.name_product} (client supprimé: {customer.email})"
+                    audit_entry = AuditLog(
+                        object_id=devis.id,
+                        action=devis_action_desc,
+                        performed_by=performed_by,
+                        performed_by_email=performed_by_email
+                    )
+                    self.db.add(audit_entry)
+
                 # Créer une copie du client dans la table deleted
                 deleted_customer = CustomerDeleted(
                     original_id=customer.id,
@@ -203,12 +255,13 @@ class CustomerCRUD:
                     f"delete customer: {customer.email}"
                 )
 
-                await self.create_audit_log(
+                audit_entry = AuditLog(
                     object_id=customer.id,
                     action=action_desc,
                     performed_by=performed_by,
                     performed_by_email=performed_by_email
                 )
+                self.db.add(audit_entry)
 
             # Commit automatique si tout va bien
             return {"message": f"Client '{deleted_customer.email}' supprimé avec succès (soft delete)."}
@@ -264,11 +317,66 @@ class CustomerCRUD:
                     company=deleted_customer.company,
                     city=deleted_customer.city,
                     country=deleted_customer.country,
-                    status=deleted_customer.status 
+                    category=deleted_customer.category,
+                    status=deleted_customer.status
                 )
 
                 self.db.add(restored_customer)
                 await self.db.flush()
+
+                # Restauration en cascade : récupérer tous les devis supprimés associés à ce client lors de la suppression en cascade
+                devis_deleted_result = await self.db.execute(
+                    select(DevisDeleted).where(
+                        DevisDeleted.id_customer == deleted_customer.original_id,
+                        DevisDeleted.deleted_cascade == True
+                    )
+                )
+                devis_deleted_list = devis_deleted_result.scalars().all()
+
+                # Restaurer tous les devis
+                restored_devis_list = []
+                for devis_deleted in devis_deleted_list:
+                    restored_devis = Devis(
+                        id=devis_deleted.original_id,
+                        name_product=devis_deleted.name,
+                        description=devis_deleted.description,
+                        format=devis_deleted.format,
+                        quantity=devis_deleted.quantity,
+                        impression=devis_deleted.impression,
+                        printing_time=devis_deleted.printing_time,
+                        description_devis=devis_deleted.description_devis,
+                        tva=devis_deleted.tva,
+                        prix_base=devis_deleted.prix_base,
+                        price_taux=devis_deleted.price_taux,
+                        montant_tva=devis_deleted.montant_tva,
+                        montant_ttc=devis_deleted.montant_ttc,
+                        taux_applique=devis_deleted.taux_applique,
+                        name_customer=devis_deleted.name_customer,
+                        first_name_customer=devis_deleted.first_name_customer,
+                        email_customer=devis_deleted.email_customer,
+                        id_product=devis_deleted.id_product,
+                        id_customer=devis_deleted.id_customer,
+                        id_admin=devis_deleted.id_admin,
+                        status=devis_deleted.status,
+                        created_at=devis_deleted.created_at
+                    )
+                    self.db.add(restored_devis)
+                    restored_devis_list.append((restored_devis, devis_deleted))
+
+                # Supprimer toutes les lignes de devis_deleted
+                for _, devis_deleted in restored_devis_list:
+                    await self.db.delete(devis_deleted)
+
+                # Créer les logs d'audit pour chaque devis restauré
+                for restored_devis, _ in restored_devis_list:
+                    devis_action_desc = f"Restauration en cascade du devis {restored_devis.name_product} (client restauré: {restored_customer.email})"
+                    audit_entry = AuditLog(
+                        object_id=restored_devis.id,
+                        action=devis_action_desc,
+                        performed_by=performed_by,
+                        performed_by_email=performed_by_email
+                    )
+                    self.db.add(audit_entry)
 
                 # Supprimer la ligne de customer_deleted
                 await self.db.delete(deleted_customer)
@@ -277,12 +385,13 @@ class CustomerCRUD:
                 action_desc = (
                    f"recovery customer: {restored_customer.email}"
                 )
-                await self.create_audit_log(
+                audit_entry = AuditLog(
                     object_id=restored_customer.id,
                     action=action_desc,
                     performed_by=performed_by,
                     performed_by_email=performed_by_email
                 )
+                self.db.add(audit_entry)
 
             return {"message": f"Customer ({restored_customer.email}) restauré avec succès."}
 

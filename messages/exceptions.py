@@ -75,6 +75,12 @@ class ProductNotFound(AppException):
 
 
 
+# Devis errors
+class DevisNotFound(AppException):
+    pass
+
+
+
 # Customer category
 class CustomerCategoryNameExists(AppException):
     pass

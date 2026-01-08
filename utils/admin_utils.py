@@ -436,3 +436,50 @@ class AdminCRUD:
             await self.db.rollback()
             raise e
 
+
+#--------------------------------------------------------------------------------------
+# get current admin info
+#--------------------------------------------------------------------------------------
+    async def get_current_admin_info(self, current_user: dict):
+        try:
+            async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+
+                # Récupérer les informations complètes de l'admin depuis la base de données
+                result = await self.db.execute(
+                    select(Admin).where(Admin.id == performed_by)
+                )
+                admin = result.scalars().first()
+                if not admin:
+                    raise AdminNotFound()
+
+                # Créer un log d'audit pour cette consultation
+                action_desc = f"Consultation des informations personnelles par l'admin {admin.email}"
+                audit_entry = AuditLog(
+                    object_id=admin.id,
+                    action=action_desc,
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
+                )
+                self.db.add(audit_entry)
+
+                # Retourner les informations de l'admin (sans le mot de passe)
+                admin_info = {
+                    "id": admin.id,
+                    "name": admin.name,
+                    "first_name": admin.first_name,
+                    "email": admin.email,
+                    "number": admin.number,
+                    "status": admin.status,
+                    "role": admin.role,
+                    "created_at": admin.created_at
+                }
+
+                return admin_info
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
+

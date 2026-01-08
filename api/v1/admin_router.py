@@ -51,6 +51,12 @@ async def apply_update(token: str = Form(...), new_email: str = Form(...), new_p
     return HTMLResponse(content="<h3>Vos informations ont été mises à jour avec succès !</h3>")
 
 
+@router.get("/current-admin-info", status_code=status.HTTP_200_OK)
+async def get_current_admin_info(current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    admin_crud = AdminCRUD(db)
+    return await admin_crud.get_current_admin_info(current_user)
+
+
 
 
 

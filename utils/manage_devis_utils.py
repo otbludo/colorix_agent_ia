@@ -8,7 +8,8 @@ from starlette.concurrency import run_in_threadpool
 from services.email.send_mail import send_email
 from services.email.model import Model
 from db.models import ProductPrinting, Devis, DevisDeleted, Customer, Admin, CustomerCategory, AuditLog
-from schemas.devis_schemas import DevisCreate, DevisUpdate, DevisStatus, DevisValidate
+from schemas.devis_schemas import DevisCreate, DevisUpdate, DevisStatus, DevisValidate, DevisDelete, DevisRecovery
+from messages.exceptions import DevisNotFound
 
 class DevisCRUD:
     def __init__(self, db: AsyncSession):
@@ -354,6 +355,152 @@ class DevisCRUD:
             raise HTTPException(status_code=500, detail=f"Erreur système : {str(e)}")
 
 
+
+
+#--------------------------------------------------------------------------------------
+# Delete devis
+#--------------------------------------------------------------------------------------
+    async def delete_devis(self, devis_data: DevisDelete, current_user: dict):
+        try:
+            async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+
+                # Vérifier que l'admin existe encore (il peut avoir été supprimé par le superadmin)
+                query = select(Admin).where(Admin.id == performed_by)
+                admin = (await self.db.execute(query)).scalar_one_or_none()
+                if not admin:
+                    raise HTTPException(status_code=404, detail="Admin introuvable")
+
+                # Vérifier que le devis existe
+                result = await self.db.execute(
+                    select(Devis).where(Devis.id == devis_data.id)
+                )
+                devis = result.scalars().first()
+                if not devis:
+                    raise DevisNotFound()
+
+                # Copier le devis dans la table DevisDeleted
+                deleted_devis = DevisDeleted(
+                    original_id=devis.id,
+                    name=devis.name_product,
+                    description=devis.description,
+                    format=devis.format,
+                    quantity=devis.quantity,
+                    impression=devis.impression,
+                    printing_time=devis.printing_time,
+                    description_devis=devis.description_devis,
+                    tva=devis.tva,
+                    prix_base=devis.prix_base,
+                    price_taux=devis.price_taux,
+                    montant_tva=devis.montant_tva,
+                    montant_ttc=devis.montant_ttc,
+                    taux_applique=devis.taux_applique,
+                    name_customer=devis.name_customer,
+                    first_name_customer=devis.first_name_customer,
+                    email_customer=devis.email_customer,
+                    id_product=devis.id_product,
+                    id_customer=devis.id_customer,
+                    id_admin=devis.id_admin,
+                    status=devis.status,
+                    created_at=devis.created_at
+                )
+                self.db.add(deleted_devis)
+
+                # Supprimer le devis de la table principale
+                await self.db.delete(devis)
+
+                # Ajouter un log dans AuditLog
+                action_desc = (
+                    f"Suppression du devis {devis.name_product} "
+                )
+                await self.create_audit_log(
+                    object_id=devis.id,
+                    action=action_desc,
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
+                )
+
+            # Commit automatique si tout est OK
+            return {"message": f"Devis '{deleted_devis.name}' supprimé avec succès et journalisé."}
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
+
+
+#--------------------------------------------------------------------------------------
+# Recovery devis
+#--------------------------------------------------------------------------------------
+    async def recovery_devis(self, devis_data: DevisRecovery, current_user: dict):
+        try:
+            async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+
+                # Vérifier que l'admin existe encore (il peut avoir été supprimé par le superadmin)
+                query = select(Admin).where(Admin.id == performed_by)
+                admin = (await self.db.execute(query)).scalar_one_or_none()
+                if not admin:
+                    raise HTTPException(status_code=404, detail="Admin introuvable")
+
+                # Récupérer le devis supprimé
+                result = await self.db.execute(
+                    select(DevisDeleted).where(DevisDeleted.id == devis_data.id)
+                )
+                deleted_devis = result.scalars().first()
+                if not deleted_devis:
+                    raise DevisNotFound()
+
+                # Restaurer le devis dans la table principale
+                restored_devis = Devis(
+                    id=deleted_devis.original_id,
+                    name_product=deleted_devis.name,
+                    description=deleted_devis.description,
+                    format=deleted_devis.format,
+                    quantity=deleted_devis.quantity,
+                    impression=deleted_devis.impression,
+                    printing_time=deleted_devis.printing_time,
+                    description_devis=deleted_devis.description_devis,
+                    tva=deleted_devis.tva,
+                    prix_base=deleted_devis.prix_base,
+                    price_taux=deleted_devis.price_taux,
+                    montant_tva=deleted_devis.montant_tva,
+                    montant_ttc=deleted_devis.montant_ttc,
+                    taux_applique=deleted_devis.taux_applique,
+                    name_customer=deleted_devis.name_customer,
+                    first_name_customer=deleted_devis.first_name_customer,
+                    email_customer=deleted_devis.email_customer,
+                    id_product=deleted_devis.id_product,
+                    id_customer=deleted_devis.id_customer,
+                    id_admin=deleted_devis.id_admin,
+                    status=deleted_devis.status,
+                    created_at=deleted_devis.created_at
+                )
+                self.db.add(restored_devis)
+                await self.db.flush()
+
+                # Supprimer le devis de la table supprimée
+                await self.db.delete(deleted_devis)
+
+                # Ajouter un log dans AuditLog
+                action_desc = f"Restauration du devis: {restored_devis.name_product}"
+
+                await self.create_audit_log(
+                    object_id=restored_devis.id,
+                    action=action_desc,
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
+                )
+
+            # Commit automatique si tout est OK
+            return {"message": f"Devis '{restored_devis.name_product}' restauré avec succès et journalisé."}
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
 
 
 #--------------------------------------------------------------------------------------
