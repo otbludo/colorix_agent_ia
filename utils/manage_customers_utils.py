@@ -1,8 +1,8 @@
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from fastapi import HTTPException
 from db.models import Customer, CustomerDeleted, AuditLog       
-from schemas.customer_schemas import CustomerCreate, CustomerUpdate, CustomerStatus, CustomerDelete, CustomerRecovery
+from schemas.customer_schemas import CustomerCreate, CustomerUpdate, CustomerStatus, CustomerDelete, CustomerRecovery, GetDevisFromCustomer
 from messages.exceptions import CustomerEmailExists, CustomerNumberExists, CustomerNotFound, CustomerEmailUsedByOther, CustomerNumberUsedByOther
 
 
@@ -330,6 +330,46 @@ class CustomerCRUD:
                 )
 
             return customers
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e
+        
+        
+    async def get_devis_from_customer(self, customer_id: int, current_user: dict | None = None):
+        try:
+            async with self.db.begin():
+
+                performed_by = int(current_user["sub"])
+                performed_by_email = current_user["email"]
+                
+               # Utilisation de selectinload pour charger la relation 'devis'
+                result = await self.db.execute(
+                    select(Customer)
+                    .options(selectinload(Customer.devis)) 
+                    .where(Customer.id == customer_id)
+                )
+                customer = result.scalars().first()
+
+                if not customer:
+                    raise CustomerNotFound()
+                
+                # Maintenant devis_list contient bien les données
+                devis_list = customer.devis
+
+                action_desc = (
+                    f"Consultation des devis du client: {customer.email} "
+                )
+
+                # Ajouter un log dans AuditLog
+                await self.create_audit_log(
+                    object_id=customer.id,
+                    action=action_desc,
+                    performed_by=performed_by,
+                    performed_by_email=performed_by_email
+                )
+
+            return devis_list
 
         except Exception as e:
             await self.db.rollback()

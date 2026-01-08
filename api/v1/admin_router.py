@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from db.database import get_db, AsyncSession
 from utils.admin_utils import AdminCRUD
 from schemas.admin_schemas import AdminUpdateInit
-from schemas.customer_schemas import CustomerCreate, CustomerGet, CustomerDelete, CustomerUpdate, CustomerRecovery, CustomerStatus
+from schemas.customer_schemas import CustomerCreate, GetDevisFromCustomer, CustomerDelete, CustomerUpdate, CustomerRecovery, CustomerStatus
 from schemas.product_schemas import ProductCreate, ProductUpdate, ProductDelete, ProductRecovery, ProductStatus
 from utils.manage_customers_utils import CustomerCRUD
 from utils.manage_product_utils import ProductCRUD
@@ -34,7 +34,18 @@ router = APIRouter()
 # manage customer
 #------------------------------------------------------------------------------
 
-tags=["customer"]
+@router.get("/get_customer", status_code=status.HTTP_200_OK)
+async def get_customer(customer_data: CustomerStatus | None = Query(None), current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_crud = CustomerCRUD(db)
+    return await customer_crud.get_customer(customer_data, current_user)
+
+
+@router.get("/get_devis_from_customer/{customer_id}",status_code=status.HTTP_200_OK)
+async def get_customer(customer_id: int, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    customer_crud = CustomerCRUD(db)
+    return await customer_crud.get_devis_from_customer(customer_id, current_user=current_user)
+
+
 
 @router.post("/add_customer", status_code=status.HTTP_201_CREATED)
 async def add_customer(customer_data: CustomerCreate, current_user: dict = Depends(admin_required),db: AsyncSession = Depends(get_db)):
@@ -58,14 +69,6 @@ async def delete_customer(customer_data: CustomerDelete, current_user: dict = De
 async def recovery_customer(customer_data: CustomerRecovery, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
     customer_crud = CustomerCRUD(db)
     return await customer_crud.recovery_customer(customer_data, current_user)
-
-
-@router.get("/get_customer", status_code=status.HTTP_200_OK)
-async def get_customer(customer_data: CustomerStatus | None = Query(None), current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
-    customer_crud = CustomerCRUD(db)
-    return await customer_crud.get_customer(customer_data, current_user)
-
-
 
 
 @router.post("/request-update-info", status_code=status.HTTP_200_OK)
@@ -110,6 +113,11 @@ async def apply_update(token: str = Form(...), new_email: str = Form(...), new_p
 async def get_stats(current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
     stats_service = StatsCRUD(db)
     return await stats_service.get_stats()
+
+@router.get("/stats_from_customer/{customer_id}", status_code=status.HTTP_200_OK)
+async def get_stats_from_customer(customer_id:int, current_user: dict = Depends(admin_required), db: AsyncSession = Depends(get_db)):
+    stats_service = StatsCRUD(db)
+    return await stats_service.get_stats_from_customer(customer_id, current_user)
 
 
 @router.get("/audit_logs", status_code=status.HTTP_200_OK)

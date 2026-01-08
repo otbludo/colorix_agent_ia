@@ -1,12 +1,27 @@
 from sqlalchemy.future import select
 from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
-from db.models import Customer, CustomerDeleted, Admin, AdminDeleted, Devis, DevisDeleted, ProductPrinting, ProductPrintingDeleted
+from db.models import Customer, CustomerDeleted, Admin, AdminDeleted, Devis, DevisDeleted, ProductPrinting, ProductPrintingDeleted, AuditLog
+from messages.exceptions import CustomerNotFound
 
 
 class StatsCRUD:
     def __init__(self, db: AsyncSession):
         self.db = db
+
+    #--------------------------------------------------------------------------------------
+    # create audit_log
+    #--------------------------------------------------------------------------------------     
+    async def create_audit_log(self, object_id: int, action: str, performed_by: int, performed_by_email: str):
+        audit_entry = AuditLog(
+            object_id=object_id,
+            action=action,
+            performed_by=performed_by,
+            performed_by_email=performed_by_email
+        )
+        self.db.add(audit_entry)
+        await self.db.commit()
+
 
     async def get_stats(self):
         
@@ -116,3 +131,59 @@ class StatsCRUD:
             },
             
         }
+
+
+    #--------------------------------------------------------------------------------------
+    # Stats from a specific customer
+    #--------------------------------------------------------------------------------------
+
+    async def get_stats_from_customer(self, customer_id: int, current_user: dict | None = None):
+        try:
+            performed_by = int(current_user["sub"])
+            performed_by_email = current_user["email"]
+            
+            result = await self.db.execute(select(Customer).where(Customer.id == customer_id))
+            customer = result.scalars().first()
+            
+            if not customer:
+                raise CustomerNotFound()
+
+            count_result = await self.db.execute(
+            select(func.count(Devis.id)).where(Devis.id_customer == customer_id)
+            )
+            total_devis_count = count_result.scalar() or 0
+        
+            stats_status = await self.db.execute(
+                select(Devis.status, func.count(Devis.id))
+                .where(Devis.id_customer == customer_id)
+                .group_by(Devis.status)
+            )
+
+            status_distribution = {row[0]: row[1] for row in stats_status.all()} 
+
+            stats_prices = await self.db.execute(
+                select(Devis.name_product, func.max(Devis.montant_ttc))
+                .where(Devis.id_customer == customer_id)
+                .group_by(Devis.name_product)
+            )
+            max_prices_per_product = {row[0]: row[1] for row in stats_prices.all()}
+            
+            await self.create_audit_log(
+                object_id=customer.id,
+                action=f"Retrieved dynamic devis stats for customer: {customer.email}",
+                performed_by=performed_by,
+                performed_by_email=performed_by_email
+            )
+
+            return {
+                "stats": {
+                    "total_devis": total_devis_count,
+                    "by_status": status_distribution, 
+                    "max_prices_by_product": max_prices_per_product,
+                    "total_devis": sum(status_distribution.values())
+                }
+            }
+
+        except Exception as e:
+            await self.db.rollback()
+            raise e

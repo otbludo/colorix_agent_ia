@@ -5,6 +5,10 @@ from enum import Enum
 
 class CustomerStatus(str, Enum):
     supprime = "supprime"
+    
+    
+class GetDevisFromCustomer(BaseModel):
+    id: int
 
 class CustomerCreate(BaseModel):
     name: str
