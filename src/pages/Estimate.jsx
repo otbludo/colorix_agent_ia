@@ -46,7 +46,7 @@ export function EstimateScreen() {
               <div className="grid-pattern w-full h-full"></div>
             </div>
 
-            <div className="relative z-10 flex flex-wrap gap-4 items-center justify-between">
+            <div className="relative z-10 flex flex-wrap gap-4 items-center justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold glow-text">Gestion des devis</h2>
                 <p className="text-slate-400 mt-1">Gérer vos devis et propositions commerciales</p>
@@ -59,11 +59,14 @@ export function EstimateScreen() {
                 Nouveau devis
               </button>
             </div>
-            <Estimates
-              onEditDevis={openEditModal}
-              onShowInfosDevis={openShowInfosDevis}
-              token={token} />
-            <StatEstimate token={token} />
+            <div className="flex flex-col gap-6">
+              <Estimates
+                onEditDevis={openEditModal}
+                onShowInfosDevis={openShowInfosDevis}
+                token={token} />
+              <StatEstimate token={token} />
+            </div>
+
           </div>
         </main>
       </div>

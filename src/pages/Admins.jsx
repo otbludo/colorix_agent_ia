@@ -60,18 +60,18 @@ export function AdminsScreen() {
             <div className="absolute inset-0 opacity-5 rounded-3xl">
               <div className="grid-pattern w-full h-full"></div>
             </div>
-            <div className="flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-[#102040]">Gestion des Administrateurs</h2>
+                <h2 className="text-2xl font-bold glow-text">Gestion des Administrateurs</h2>
                 <p className="text-gray-600 mt-1">Gérer les comptes utilisateurs et leurs permissions</p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <button
                     onClick={() => setIsFilterOpen(prev => !prev)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors text-sm ${statusFilter
-                      ? 'border-blue-300 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 hover:bg-gray-50 text-gray-700'
+                    className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-sm backdrop-blur-sm ${statusFilter
+                      ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300 shadow-lg shadow-indigo-500/20'
+                      : 'border-slate-600/50 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:border-indigo-500/50'
                       }`}
                   >
                     <div className="relative">
@@ -94,20 +94,25 @@ export function AdminsScreen() {
                     currentFilters={filters}
                   />
                 </div>
-                <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button
+                  onClick={openAddModal}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-400/50 hover:scale-105 border border-indigo-400/30"
+                >
                   <UserPlus className="w-4 h-4" />
                   Nouveau administrateur
                 </button>
               </div>
             </div>
-            <Admins
-              token={token}
-              statusFilter={statusFilter}
-              dateRange={filters.dateRange}
-              onEditAdmin={openEditModal}
-              onDeleteAdmin={openDeleteModal}
-            />
-            <StatsAdmins token={token} />
+            <div className="flex flex-col gap-6">
+              <Admins
+                token={token}
+                statusFilter={statusFilter}
+                dateRange={filters.dateRange}
+                onEditAdmin={openEditModal}
+                onDeleteAdmin={openDeleteModal}
+              />
+              <StatsAdmins token={token} />
+            </div>
           </div>
         </main>
       </div>
@@ -116,6 +121,7 @@ export function AdminsScreen() {
         onClose={() => setIsAdminModalOpen(false)}
         adminToEdit={adminToEdit}
         isEditing={isEditing}
+        token={token}
       />
       {adminToDelete && (
         <DeleteConfirmModal

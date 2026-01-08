@@ -6,8 +6,7 @@ import { toast } from 'react-toastify';
 import { InputField, SelectField } from '../../components/global/Input';
 import { ButtonForm } from '../../components/global/Button';
 
-export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = false }) {
-  const token = localStorage.getItem('colorix_token');
+export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = false, token }) {
   const { mutate: mutateAdd, isPending: isPendingAdd, isSuccess: isSuccessAdd, data: dataAdd, isError: isErrorAdd, error: errorAdd } = AddAdmin(token);
   const { mutate: mutateEdit, isPending: isPendingEdit, isSuccess: isSuccessEdit, data: dataEdit, isError: isErrorEdit, error: errorEdit } = EditAdmin(token);
 

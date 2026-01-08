@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ToastContainer } from 'react-toastify'
 import { Sidebar } from '../components/global/Sidebar'
 import { Header } from '../components/global/Header'
 import { Stats } from "../components/Dashboard/stats"
@@ -7,23 +8,34 @@ import { ProgressGauge } from '../components/Dashboard/ProgressGauge'
 import { LogsList } from '../components/Dashboard/LogsList'
 import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal'
 import { CustomerCategoryLoad } from '../components/Dashboard/CustomerCategoryLoad'
+import { FormCustomerCategory } from '../components/Dashboard/FormCustomerCategory'
+import { DeleteCustomerCategory } from '../api/delete/DeleteCustomerCategory'
 
 
 export function Dashboard() {
   const token = localStorage.getItem('colorix_token');
+  const { mutate, isPending, data, isSuccess, isError, error } = DeleteCustomerCategory(token);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [categoryToDelete, setCategoryToDelete] = useState(null)
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
+  const [categoryToEdit, setCategoryToEdit] = useState(null)
+  const [isEditing, setIsEditing] = useState(false)
 
   const handleCategoryDelete = (category) => {
     setCategoryToDelete(category)
   }
 
-  // Simulation de suppression d'une catégorie
-  const handleConfirmCategoryDelete = async () => {
-    // Simulation - en production, cela ferait un appel API réel
-    console.log('Suppression de la catégorie:', categoryToDelete)
-    alert(`Catégorie "${categoryToDelete.name}" supprimée avec succès`)
-    setCategoryToDelete(null)
+
+  const openAddCategoryModal = () => {
+    setCategoryToEdit(null)
+    setIsEditing(false)
+    setIsCategoryModalOpen(true)
+  }
+
+  const openEditCategoryModal = (category) => {
+    setCategoryToEdit(category)
+    setIsEditing(true)
+    setIsCategoryModalOpen(true)
   }
 
 
@@ -57,10 +69,22 @@ export function Dashboard() {
               </h1>
               <p className="text-slate-400">Statistiques en temps réel de votre plateforme</p>
             </div>
-            <Stats />
-            <div className="grid gap-6 xl:grid-cols-3">
+            <div className="mb-6">
+              <Stats />
+            </div>
+            <div className="grid gap-6 xl:grid-cols-3 mb-6">
               <div className="xl:col-span-2 fade-in" style={{ animationDelay: '0.2s' }}>
-                <DevistTable token={token} />
+                <DevistTable
+                  token={token}
+                  onEditDevis={(devis) => {
+                    // Logique d'édition de devis - à implémenter
+                    console.log('Éditer devis:', devis);
+                  }}
+                  onDeleteDevis={(devis) => {
+                    // Logique de suppression de devis - à implémenter
+                    console.log('Supprimer devis:', devis);
+                  }}
+                />
               </div>
               <div className="fade-in" style={{ animationDelay: '0.4s' }}>
                 <ProgressGauge token={token} />
@@ -71,26 +95,17 @@ export function Dashboard() {
                 <LogsList token={token} />
               </div>
               <div className="fade-in" style={{ animationDelay: '0.8s' }}>
-                <CustomerCategoryLoad token={token} onDeleteCategory={handleCategoryDelete} />
+                <CustomerCategoryLoad
+                  token={token}
+                  onDeleteCategory={handleCategoryDelete}
+                  onEditCategory={openEditCategoryModal}
+                  onAddCategory={openAddCategoryModal}
+                />
               </div>
             </div>
           </div>
         </main>
       </div>
-
-      {/* Modal de suppression des devis */}
-      {/* <DeleteConfirmModal
-        isOpen={!!devisToDelete}
-        onClose={() => setDevisToDelete(null)}
-        entityName={devisToDelete.name}
-        entityId={devisToDelete.id}
-        deleteApi={mutate}
-        isPending={isPending}
-        isSuccess={isSuccess}
-        isError={isError}
-        data={data}
-        error={error}
-      /> */}
 
       {/* Modal de suppression des catégories */}
       {categoryToDelete && (
@@ -99,14 +114,24 @@ export function Dashboard() {
           onClose={() => setCategoryToDelete(null)}
           entityName={categoryToDelete.name}
           entityId={categoryToDelete.id}
-          deleteApi={handleConfirmCategoryDelete}
-          isPending={false}
-          isSuccess={false}
-          isError={false}
-          data={null}
-          error={null}
+          deleteApi={mutate}
+          isPending={isPending}
+          isSuccess={isSuccess}
+          isError={isError}
+          data={data}
+          error={error}
         />
       )}
+
+      {/* Modal d'ajout/modification de catégories */}
+      <FormCustomerCategory
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        categoryToEdit={categoryToEdit}
+        isEditing={isEditing}
+        token={token}
+      />
+      <ToastContainer position="bottom-center" />
     </div>
   )
 }

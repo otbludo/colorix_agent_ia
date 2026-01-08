@@ -11,8 +11,8 @@ export function FormCustomer({
   onClose,
   customerToEdit = null,
   isEditing = false,
+  token
 }) {
-  const token = localStorage.getItem("colorix_token");
 
   const {
     mutate: mutateAdd,

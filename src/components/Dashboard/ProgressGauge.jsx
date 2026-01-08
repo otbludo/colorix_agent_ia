@@ -72,7 +72,7 @@ export function ProgressGauge({ token }) {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mt-8 w-full">
           <div className="futuristic-card p-4 rounded-2xl text-center group hover:scale-105 transition-all duration-300">
             <div className="text-3xl font-bold text-white group-hover:text-indigo-300 transition-colors">{totalDevis}</div>
-            <div className="text-xs text-slate-400 mt-1 uppercase tracking-wider group-hover:text-slate-300 transition-colors">Total devis</div>
+            <div className="text-xs text-slate-400 mt-1 uppercase tracking-wider group-hover:text-slate-300 transition-colors">Total</div>
           </div>
           <div className="futuristic-card p-4 rounded-2xl text-center group hover:scale-105 transition-all duration-300">
             <div className="text-3xl font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">{totalValide}</div>
@@ -80,7 +80,7 @@ export function ProgressGauge({ token }) {
           </div>
           <div className="futuristic-card p-4 rounded-2xl text-center group hover:scale-105 transition-all duration-300">
             <div className="text-3xl font-bold text-amber-400 group-hover:text-amber-300 transition-colors">{totalAttente}</div>
-            <div className="text-xs text-slate-400 mt-1 uppercase tracking-wider group-hover:text-slate-300 transition-colors">En attente</div>
+            <div className="text-xs text-slate-400 mt-1 uppercase tracking-wider group-hover:text-slate-300 transition-colors">Attente</div>
           </div>
           {totalRejeter > 0 && (
             <div className="futuristic-card p-4 rounded-2xl text-center group hover:scale-105 transition-all duration-300">

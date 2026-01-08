@@ -59,19 +59,19 @@ export function ProductScreen() {
               <div className="grid-pattern w-full h-full"></div>
             </div>
 
-            <div className="relative z-10 flex flex-wrap gap-4 items-center justify-between">
+            <div className="relative z-10 flex flex-wrap gap-4 items-center justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold glow-text">Gestion des produits</h2>
                 <p className="text-slate-400 mt-1">Gérer les produits</p>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 ">
                 <div className="relative">
                   <button
                     onClick={() => setIsFilterOpen(prev => !prev)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-sm backdrop-blur-sm ${statusFilter
-                        ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300 shadow-lg shadow-indigo-500/20'
-                        : 'border-slate-600/50 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:border-indigo-500/50'
+                      ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300 shadow-lg shadow-indigo-500/20'
+                      : 'border-slate-600/50 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:border-indigo-500/50'
                       }`}
                   >
                     <div className="relative">
@@ -98,13 +98,16 @@ export function ProductScreen() {
                 </button>
               </div>
             </div>
-            <Products
-              token={token}
-              statusFilter={statusFilter}
-              onEditproduct={openEditModal}
-              onDeleteproduct={openDeleteModal}
-            />
-            <StatsProducts token={token} />
+            <div className="flex flex-col gap-6">
+              <Products
+                token={token}
+                statusFilter={statusFilter}
+                onEditproduct={openEditModal}
+                onDeleteproduct={openDeleteModal}
+              />
+              <StatsProducts token={token} />
+            </div>
+
           </div>
         </main>
       </div>

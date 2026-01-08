@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Plus, X } from 'lucide-react'
+import { toast } from 'react-toastify'
 import { ButtonForm } from '../global/Button'
 import { InputField } from '../global/Input'
 import { AddCustomerCategory } from '../../api/post/AddcustomerCategory'
+import { EditCustomerCategory } from '../../api/put/EditCustomerCategory'
 
 
-export function AddCategoryWidget({ isOpen, onClose, onAddCategory, categoryToEdit = null, isEditing = false, token }) {
+export function FormCustomerCategory({ isOpen, onClose, categoryToEdit = null, isEditing = false, token }) {
     const formRef = useRef(null)
-    const { isPending: isPendingAdd, isError: isErrorAdd, error: errorAdd, isSuccess: isSuccessAdd, data: dataAdd } = AddCustomerCategory(token)
+    const { mutate: mutateAdd, isPending: isPendingAdd, isSuccess: isSuccessAdd, data: dataAdd, isError: isErrorAdd, error: errorAdd } = AddCustomerCategory(token)
+    const { mutate: mutateEdit, isPending: isPendingEdit, isSuccess: isSuccessEdit, data: dataEdit, isError: isErrorEdit, error: errorEdit } = EditCustomerCategory(token)
 
     const emptyForm = {
         name: "",
@@ -52,14 +55,42 @@ export function AddCategoryWidget({ isOpen, onClose, onAddCategory, categoryToEd
     const handleSubmit = (e) => {
         e.preventDefault()
         if (formData.name.trim() && formData.rate) {
-            onAddCategory({
-                name: formData.name.trim(),
-                rate: parseInt(formData.rate)
-            })
-            setFormData({ name: '', rate: '' })
-            onClose()
+            if (isEditing) {
+                mutateEdit({
+                    id: categoryToEdit.id,
+                    name: formData.name.trim(),
+                    rate: parseInt(formData.rate)
+                })
+            } else {
+                mutateAdd({
+                    name: formData.name.trim(),
+                    rate: parseInt(formData.rate)
+                })
+            }
         }
     }
+
+    const isLoading = isPendingAdd || isPendingEdit
+
+    useEffect(() => {
+        if (isSuccessAdd && dataAdd?.message) {
+            toast.success(dataAdd.message);
+            onClose();
+        }
+        if (isSuccessAdd && dataAdd?.detail) toast.error(dataAdd.detail);
+    }, [isSuccessAdd]);
+
+    useEffect(() => {
+        if (isSuccessEdit && dataEdit?.message) {
+            toast.success(dataEdit.message);
+            onClose();
+        }
+        if (isSuccessEdit && dataEdit?.detail) toast.error(dataEdit.detail);
+    }, [isSuccessEdit]);
+
+    useEffect(() => {
+        if (isErrorAdd || isErrorEdit) toast.error((errorAdd || errorEdit) || 'Erreur réseau !');
+    }, [isErrorAdd, isErrorEdit, errorAdd, errorEdit]);
 
     if (!isOpen) return null
 
@@ -110,9 +141,9 @@ export function AddCategoryWidget({ isOpen, onClose, onAddCategory, categoryToEd
                         />
                     </div>
 
-                    <ButtonForm type="submit" variant="primary" className="w-full">
+                    <ButtonForm type="submit" variant="primary" className="w-full" disabled={isLoading}>
                         <Plus className="w-4 h-4 mr-2" />
-                        {isEditing ? 'Modifier la catégorie' : 'Ajouter la catégorie'}
+                        {isLoading ? 'Chargement...' : (isEditing ? 'Modifier la catégorie' : 'Ajouter la catégorie')}
                     </ButtonForm>
                 </form>
             </div>

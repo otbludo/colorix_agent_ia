@@ -10,8 +10,8 @@ export const DeleteCustomer = (token) => {
       const response = await fetch(`${API_URL}/api/v1/delete_customer`, {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });

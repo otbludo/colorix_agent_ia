@@ -46,7 +46,7 @@ export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700/30">
-            {data?.map((product, index) => (
+            {data && data.length > 0 ? data.map((product, index) => (
               <tr
                 key={product.id}
                 className="hover:bg-slate-800/30 transition-all duration-300 group"
@@ -56,43 +56,43 @@ export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }
                   <div className="flex items-center">
                     <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-600 to-indigo-500 flex items-center justify-center ring-2 ring-indigo-500/30 group-hover:ring-indigo-400/50 transition-all duration-300">
                       <span className="text-sm font-medium text-white">
-                        {product.name?.[0]}{product.name?.[1]}
+                        {product?.name ? product.name[0] + (product.name[1] || '') : '?'}
                       </span>
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-white group-hover:text-indigo-300 transition-colors">
-                        {product.name}
+                        {product?.name || 'Nom inconnu'}
                       </div>
                       <div className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">Produit</div>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
-                  {product.format}
+                  {product?.format || '—'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
-                  {Array.isArray(product.peliculage)
+                  {Array.isArray(product?.peliculage)
                     ? product.peliculage.join(', ')
                     : "—"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
-                  {Array.isArray(product.papier_grammage)
+                  {Array.isArray(product?.papier_grammage)
                     ? product.papier_grammage.join(', ')
                     : "—"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
-                  {product.quantity}
+                  {product?.quantity || '—'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white group-hover:text-emerald-300 transition-colors">
-                  {product.front_price} FCFA
+                  {product?.front_price ? `${product.front_price} FCFA` : '—'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
-                  {formatDate(product.created_at)}
+                  {product?.created_at ? formatDate(product.created_at) : '—'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   {statusFilter === "supprime" ? (
                     <button
-                      onClick={() => recoverproduct(product.id)}
+                      onClick={() => product?.id && recoverproduct(product.id)}
                       className="p-2 rounded-2xl hover:bg-emerald-500/20 transition-all duration-300 group/btn"
                       title="Restaurer"
                     >
@@ -100,13 +100,24 @@ export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }
                     </button>
                   ) : (
                     <ProductsActionsDropdown
-                      onEdit={() => onEditproduct(product)}
-                      onDelete={() => onDeleteproduct(product)}
+                      onEdit={() => product && onEditproduct && onEditproduct(product)}
+                      onDelete={() => product && onDeleteproduct && onDeleteproduct(product)}
                     />
                   )}
                 </td>
               </tr>
-            ))}
+            )) : (
+              <tr>
+                <td colSpan="8" className="px-6 py-8 text-center text-slate-400">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center">
+                      <span className="text-slate-500">📦</span>
+                    </div>
+                    <span>Aucun produit trouvé</span>
+                  </div>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

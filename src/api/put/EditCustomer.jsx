@@ -10,11 +10,11 @@ export const EditCustomer = (token) => {
       const response = await fetch(`${API_URL}/api/v1/update_customer`, {
         method: "PUT",
         headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-        
+
       });
 
       return response.json();

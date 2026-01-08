@@ -10,8 +10,8 @@ export const AddCustomer = (token) => {
       const response = await fetch(`${API_URL}/api/v1/add_customer`, {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });

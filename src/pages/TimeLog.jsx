@@ -36,8 +36,10 @@ export function TimeLog() {
                 <p className="text-slate-400 mt-1">Gérer et suivre le temps passé sur les tâches</p>
               </div>
             </div>
-            <Timelogs />
-            <StatsTimelogs />
+            <div className="flex flex-col gap-6">
+              <Timelogs />
+              <StatsTimelogs />
+            </div>
           </div>
         </main>
       </div>
