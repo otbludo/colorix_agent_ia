@@ -7,8 +7,8 @@ async def update_customer_statuses():
     try:
         async for db in get_db():
             customer_crud = CustomerCRUD(db)
-            result = await customer_crud.update_customer_status_based_on_devis()
-            print(f"Mise à jour automatique des statuts clients: {result['message']}")
+            await customer_crud.update_customer_status_based_on_devis()
             break  # On sort après la première itération
     except Exception as e:
-        print(f"Erreur lors de la mise à jour automatique des statuts clients: {e}")
+        # Log silencieux des erreurs sans affichage console
+        pass

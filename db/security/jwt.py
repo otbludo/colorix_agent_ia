@@ -11,13 +11,14 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-def create_access_token(data: dict):
+def create_access_token(data: dict, expires_delta_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES):
     """
-    Création d’un JWT contenant l'utilisateur.
+    Création d'un JWT contenant l'utilisateur.
+    expires_delta_minutes: durée d'expiration en minutes (défaut: ACCESS_TOKEN_EXPIRE_MINUTES)
     """
     to_encode = data.copy()
     to_encode["exp"] = datetime.utcnow() + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=expires_delta_minutes
     )
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 

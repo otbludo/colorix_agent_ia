@@ -187,30 +187,32 @@ class AdminCRUD:
     async def request_update_info(self, admin_update: AdminUpdateInit, current_user: dict):
         current_admin_id = int(current_user["sub"])
 
-        # Récupération de l'admin connecté
-        result = await self.db.execute(
-            select(Admin).filter(Admin.id == current_admin_id)
-        )
-        connected_admin = result.scalars().first()
-
-        if not connected_admin:
-            raise AdminNotFound()
-
-        # Vérifier si l'email fourni correspond à celui actuel
-        if admin_update.email != connected_admin.email:
-            raise AdminEmailMismatch()
-
         try:
-            async with self.db.begin():  # transaction pour sécuriser le log
+            async with self.db.begin():  # transaction pour sécuriser toute l'opération
 
-                # Créer le lien sécurisé pour la mise à jour
+                # Récupération de l'admin connecté
+                result = await self.db.execute(
+                    select(Admin).filter(Admin.id == current_admin_id)
+                )
+                connected_admin = result.scalars().first()
+
+                if not connected_admin:
+                    raise AdminNotFound()
+
+                # Vérifier si l'email fourni correspond à celui actuel
+                if admin_update.email != connected_admin.email:
+                    raise AdminEmailMismatch()
+
+                # Créer le lien sécurisé pour la mise à jour (expire après 5 minutes)
                 payload = {
                     "sub": str(connected_admin.id),
                     "email": connected_admin.email,
-                    "role": connected_admin.role
+                    "role": connected_admin.role,
+                    "status": connected_admin.status
                 }
 
-                token = create_access_token(payload)
+                # Créer un token qui expire après 5 minutes
+                token = create_access_token(payload, expires_delta_minutes=5)
 
                 update_url = f"{os.getenv('FRONTEND_URL')}/api/v1/update-info?token={token}"
 
