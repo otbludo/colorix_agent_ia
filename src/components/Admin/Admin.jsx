@@ -6,7 +6,7 @@ import { ButtonRecovery } from '../global/Button'
 import { GetAdmin } from '../../api/get/GetAdmin';
 import { useRecoveryAdmin } from '../../api/post/RecoveryAdmin';
 
-export function Admins({ token, statusFilter, dateRange, onEditAdmin, onDeleteAdmin }) {
+export function Admins({ token, statusFilter, dateRange, onEditAdmin, onDeleteAdmin, onCountChange }) {
 
   const { data, isPending, isError, error } = GetAdmin(token, statusFilter, dateRange);
   const { mutate: recoverAdmin, isPending: isRecovering, isSuccess: isSuccesRecoveryAdmin, data: dataRecoveryAdmin } = useRecoveryAdmin(token);
@@ -17,10 +17,12 @@ export function Admins({ token, statusFilter, dateRange, onEditAdmin, onDeleteAd
 
   // Debug: Afficher les données reçues
   useEffect(() => {
-    if (data) {
-      console.log('Admins data:', data)
+    if (Array.isArray(data)) {
+      onCountChange?.(data.length);
+    } else {
+      onCountChange?.(0);
     }
-  }, [data])
+  }, [data]);
 
   const getRoleIcon = (role) => {
     if (!role) {
@@ -123,16 +125,8 @@ export function Admins({ token, statusFilter, dateRange, onEditAdmin, onDeleteAd
                       <ButtonRecovery onClick={() => admin?.id && recoverAdmin(admin.id)} />
                     ) : (
                       <AdminsActionsDropdown
-                        onEdit={() => {
-                          if (onEditAdmin && typeof onEditAdmin === 'function' && admin) {
-                            onEditAdmin(admin)
-                          }
-                        }}
-                        onDelete={() => {
-                          if (onDeleteAdmin && typeof onDeleteAdmin === 'function' && admin) {
-                            onDeleteAdmin(admin)
-                          }
-                        }}
+                        onEdit={() => admin && onEditAdmin && onEditAdmin(admin)}
+                        onDelete={() => admin && onDeleteAdmin && onDeleteAdmin(admin)}
                       />
                     )}
 

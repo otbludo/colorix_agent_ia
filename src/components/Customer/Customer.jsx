@@ -6,7 +6,7 @@ import { ButtonRecovery } from '../global/Button'
 import { GetCustomer } from '../../api/get/GetCustomers';
 import { RecoveryCustomer } from '../../api/post/RecoveryCustomer';
 
-export function Customers({ token, statusFilter, onEditcustomer, onDeletecustomer, onViewDetails }) {
+export function Customers({ token, statusFilter, onEditcustomer, onDeletecustomer, onViewDetails, onCountChange }) {
 
   const { data, isPending, isError, error } = GetCustomer(token, statusFilter);
   const { mutate: recovercustomer, isPending: isRecovering, isSuccess: isSuccesRecoveryCustomer, data: dataRecoveryCustomer } = RecoveryCustomer(token);
@@ -15,12 +15,13 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
     if (isError) toast.error(error?.message || error || 'Erreur réseau !');
   }, [isError, error]);
 
-  // Debug: Afficher les données reçues
   useEffect(() => {
-    if (data) {
-      console.log('Customers data:', data)
+    if (Array.isArray(data)) {
+      onCountChange?.(data.length);
+    } else {
+      onCountChange?.(0);
     }
-  }, [data])
+  }, [data]);
 
   const getStatusBadge = (status) => {
     if (!status) {
@@ -126,16 +127,8 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
                       <ButtonRecovery onClick={() => customer?.id && recovercustomer(customer.id)} />
                     ) : (
                       <CustomersActionsDropdown
-                        onEdit={() => {
-                          if (onEditcustomer && typeof onEditcustomer === 'function' && customer) {
-                            onEditcustomer(customer)
-                          }
-                        }}
-                        onDelete={() => {
-                          if (onDeletecustomer && typeof onDeletecustomer === 'function' && customer) {
-                            onDeletecustomer(customer)
-                          }
-                        }}
+                        onEdit={() => customer && onEditcustomer && onEditcustomer(customer)}
+                        onDelete={() => customer && onDeletecustomer && onDeletecustomer(customer)}
                       />
                     )}
                   </td>

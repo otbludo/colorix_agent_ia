@@ -8,10 +8,11 @@ import { Estimates } from '../components/Estimate/Estimates'
 import { StatEstimate } from '../components/Estimate/Stats'
 import { ShowInfosEstimate } from '../components/Estimate/ShowInfosEstimate'
 import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal'
-import { DeleteDevis } from '../api/delete/DeleteDevis'
-import { GetInfoAdmin } from '../api/get/GetInfoAdmin'
 import { DevisFilter } from '../components/Dashboard/DevisFilter'
 import { Filter } from 'lucide-react'
+import { Button, ButtonFilter } from "../components/global/Button"
+import { DeleteDevis } from '../api/delete/DeleteDevis'
+import { GetInfoAdmin } from '../api/get/GetInfoAdmin'
 
 
 export function EstimateScreen() {
@@ -21,6 +22,7 @@ export function EstimateScreen() {
   const [isAddQuoteModalOpen, setIsAddQuoteModalOpen] = useState(false)
   const [isDevisInfoModalOpen, setIsDevisInfoModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filteredCount, setFilteredCount] = useState(0);
 
   const [devisToEdit, setDevisToEdit] = useState(null);
   const [devisInfo, setDevisInfo] = useState(null);
@@ -86,21 +88,11 @@ export function EstimateScreen() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <button
+                  <ButtonFilter
+                    isActive={!!statusFilter}
+                    count={filteredCount}
                     onClick={() => setIsFilterOpen(prev => !prev)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-sm backdrop-blur-sm ${(filters.status.valide || filters.status.attente || filters.status.supprime || filters.client || filters.dateRange.start || filters.dateRange.end)
-                      ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300 shadow-lg shadow-indigo-500/20'
-                      : 'border-slate-600/50 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:border-indigo-500/50'
-                      }`}
-                  >
-                    <div className="relative">
-                      <Filter className="w-4 h-4" />
-                      {(filters.status.valide || filters.status.attente || filters.status.supprime || filters.client || filters.dateRange.start || filters.dateRange.end) && (
-                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-                      )}
-                    </div>
-                    <span>Filtrer</span>
-                  </button>
+                  />
                   <DevisFilter
                     isOpen={isFilterOpen}
                     onClose={() => setIsFilterOpen(false)}
@@ -108,13 +100,12 @@ export function EstimateScreen() {
                     currentFilters={filters}
                   />
                 </div>
-                <button
+                <Button
                   onClick={openAddModal}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-400/50 hover:scale-105 border border-indigo-400/30 font-medium"
-                >
+                  variant="quaternary">
                   <Plus className="w-4 h-4" />
                   Nouveau devis
-                </button>
+                </Button>
               </div>
             </div>
             <div className="flex flex-col gap-6">
@@ -124,7 +115,9 @@ export function EstimateScreen() {
                 onDeleteDevis={openDeleteModal}
                 statusFilter={statusFilter}
                 filters={filters}
-                token={token} />
+                token={token}
+                onCountChange={setFilteredCount}
+              />
               <StatEstimate token={token} />
             </div>
 

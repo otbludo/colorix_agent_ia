@@ -5,6 +5,7 @@ import { Header } from '../components/global/Header';
 import { FormProduct } from '../components/Product/FormProduct';
 import { Products } from '../components/Product/Product';
 import { StatsProducts } from '../components/Product/Stats';
+import { Button, ButtonFilter } from "../components/global/Button";
 import { Plus, Filter } from 'lucide-react';
 import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal';
 import { ProductFilter } from '../components/Product/ProductFilter';
@@ -18,6 +19,7 @@ export function ProductScreen() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filteredCount, setFilteredCount] = useState(0);
 
   const [productToEdit, setproductToEdit] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -49,7 +51,7 @@ export function ProductScreen() {
         <div className="particle w-1.5 h-1.5 top-60 right-20"></div>
       </div>
 
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} token={token}/>
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} token={token} />
       <div className="flex flex-col lg:pl-[280px]">
         <Header onToggleSidebar={() => setIsSidebarOpen(true)} />
         <main className="p-4 sm:p-6 lg:p-10 slide-in-up">
@@ -67,21 +69,11 @@ export function ProductScreen() {
 
               <div className="flex items-center gap-3 ">
                 <div className="relative">
-                  <button
+                  <ButtonFilter
+                    isActive={!!statusFilter}
+                    count={filteredCount}
                     onClick={() => setIsFilterOpen(prev => !prev)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-sm backdrop-blur-sm ${statusFilter
-                      ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300 shadow-lg shadow-indigo-500/20'
-                      : 'border-slate-600/50 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:border-indigo-500/50'
-                      }`}
-                  >
-                    <div className="relative">
-                      <Filter className="w-4 h-4" />
-                      {statusFilter && (
-                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-                      )}
-                    </div>
-                    <span>Filtrer</span>
-                  </button>
+                  />
                   <ProductFilter
                     isOpen={isFilterOpen}
                     onClose={() => setIsFilterOpen(false)}
@@ -89,13 +81,12 @@ export function ProductScreen() {
                     currentFilters={filters}
                   />
                 </div>
-                <button
+                <Button
                   onClick={openAddModal}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-400/50 hover:scale-105 border border-indigo-400/30"
-                >
+                  variant="quaternary">
                   <Plus className="w-4 h-4" />
                   Nouveau produit
-                </button>
+                </Button>
               </div>
             </div>
             <div className="flex flex-col gap-6">
@@ -104,10 +95,10 @@ export function ProductScreen() {
                 statusFilter={statusFilter}
                 onEditproduct={openEditModal}
                 onDeleteproduct={openDeleteModal}
+                onCountChange={setFilteredCount}
               />
               <StatsProducts token={token} />
             </div>
-
           </div>
         </main>
       </div>

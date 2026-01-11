@@ -14,12 +14,6 @@ export function StatsProducts({ token }) {
     }
   }, [isError]);
 
-  // Debug: Afficher les données reçues
-  useEffect(() => {
-    if (data) {
-      console.log('StatsProducts data:', data);
-    }
-  }, [data]);
 
   // Valeurs par défaut si les données ne sont pas disponibles
   const totalProducts = data?.products?.total_products ?? 0;

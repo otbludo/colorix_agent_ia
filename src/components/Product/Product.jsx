@@ -5,7 +5,7 @@ import { ButtonRecovery } from '../global/Button'
 import { GetProduct } from '../../api/get/GetProduct';
 import { RecoveryProduct } from '../../api/post/RecoveryProduct';
 
-export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }) {
+export function Products({ token, statusFilter, onEditproduct, onDeleteproduct, onCountChange }) {
 
   const { data, isPending, isError, error } = GetProduct(token, statusFilter);
   const { mutate: recoverproduct, isPending: isRecovering, isSuccess: isSuccesRecoveryProduct, data: dataRecoveryProduct } = RecoveryProduct(token);
@@ -20,9 +20,18 @@ export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }
   };
 
   useEffect(() => {
+    if (Array.isArray(data)) {
+      onCountChange?.(data.length);
+    } else {
+      onCountChange?.(0);
+    }
+  }, [data]);
+
+  useEffect(() => {
     if (isSuccesRecoveryProduct && dataRecoveryProduct?.message) toast.success(dataRecoveryProduct.message);
     if (isSuccesRecoveryProduct && dataRecoveryProduct?.detail) toast.error(dataRecoveryProduct.detail);
   }, [isSuccesRecoveryProduct]);
+
 
   return (
     <div className="futuristic-card rounded-2xl overflow-hidden">

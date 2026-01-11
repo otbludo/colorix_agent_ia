@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Plus, X } from 'lucide-react'
-import { ButtonForm } from '../global/Button'
+import { Button } from '../global/Button'
 import { InputField } from '../global/Input'
 import { AddCustomerCategory } from '../../api/post/AddcustomerCategory'
 
@@ -110,10 +110,10 @@ export function AddCategoryWidget({ isOpen, onClose, onAddCategory, categoryToEd
                         />
                     </div>
 
-                    <ButtonForm type="submit" variant="primary" className="w-full">
+                    <Button type="submit" variant="primary" className="w-full">
                         <Plus className="w-4 h-4 mr-2" />
                         {isEditing ? 'Modifier la catégorie' : 'Ajouter la catégorie'}
-                    </ButtonForm>
+                    </Button>
                 </form>
             </div>
         </div>

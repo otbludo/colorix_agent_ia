@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Plus, X } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { ButtonForm } from '../global/Button'
+import { Button } from '../global/Button'
 import { InputField } from '../global/Input'
 import { AddCustomerCategory } from '../../api/post/AddcustomerCategory'
 import { EditCustomerCategory } from '../../api/put/EditCustomerCategory'
@@ -141,10 +141,10 @@ export function FormCustomerCategory({ isOpen, onClose, categoryToEdit = null, i
                         />
                     </div>
 
-                    <ButtonForm type="submit" variant="primary" className="w-full" disabled={isLoading}>
+                    <Button type="submit" variant="primary" className="w-full" disabled={isLoading}>
                         <Plus className="w-4 h-4 mr-2" />
                         {isLoading ? 'Chargement...' : (isEditing ? 'Modifier la catégorie' : 'Ajouter la catégorie')}
-                    </ButtonForm>
+                    </Button>
                 </form>
             </div>
         </div>

@@ -7,7 +7,7 @@ import { DevistTable } from '../components/Dashboard/DevistTable'
 import { ProgressGauge } from '../components/Dashboard/ProgressGauge'
 import { LogsList } from '../components/Dashboard/LogsList'
 import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal'
-import { CustomerCategoryLoad } from '../components/Dashboard/CustomerCategoryLoad'
+import { CustomerCategoryLoad } from '../components/Dashboard/CustomerCategory'
 import { FormCustomerCategory } from '../components/Dashboard/FormCustomerCategory'
 import { DeleteCustomerCategory } from '../api/delete/DeleteCustomerCategory'
 

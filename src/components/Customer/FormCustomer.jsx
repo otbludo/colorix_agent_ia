@@ -5,7 +5,7 @@ import { EditCustomer } from "../../api/put/EditCustomer";
 import { GetCustomerCategory } from "../../api/get/GetCustomerCategory";
 import { X, User, Mail, Building, Globe, Phone, Tag } from "lucide-react";
 import { InputField, SelectField } from "../../components/global/Input";
-import { ButtonForm } from "../../components/global/Button";
+import { Button } from "../../components/global/Button";
 
 export function FormCustomer({
   isOpen,
@@ -202,12 +202,12 @@ export function FormCustomer({
             ]}
           />
           <div className="flex gap-3 mt-6">
-            <ButtonForm onClick={handleClose} variant="secondary">
+            <Button onClick={handleClose} variant="secondary">
               Annuler
-            </ButtonForm>
-            <ButtonForm type="submit" disabled={isLoading} variant="primary">
+            </Button>
+            <Button type="submit" disabled={isLoading} variant="primary">
               {isLoading ? "Chargement..." : submitButtonText}
-            </ButtonForm>
+            </Button>
           </div>
         </form>
       </div>

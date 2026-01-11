@@ -4,7 +4,7 @@ import { EditAdmin } from '../../api/put/EditAddmin';
 import { X, User, Mail, Lock, Shield, Phone } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { InputField, SelectField } from '../../components/global/Input';
-import { ButtonForm } from '../../components/global/Button';
+import { Button } from '../../components/global/Button';
 
 export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = false, token }) {
   const { mutate: mutateAdd, isPending: isPendingAdd, isSuccess: isSuccessAdd, data: dataAdd, isError: isErrorAdd, error: errorAdd } = AddAdmin(token);
@@ -106,8 +106,8 @@ export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = fa
             options={[{ value: 'actif', label: 'Actif' }, { value: 'inactif', label: 'Inactif' }]}
           />
           <div className="flex gap-3 mt-6">
-            <ButtonForm onClick={handleClose} variant="secondary">Annuler</ButtonForm>
-            <ButtonForm type="submit" disabled={isLoading} variant="primary">{isLoading ? 'Chargement...' : submitButtonText}</ButtonForm>
+            <Button onClick={handleClose} variant="secondary">Annuler</Button>
+            <Button type="submit" disabled={isLoading} variant="primary">{isLoading ? 'Chargement...' : submitButtonText}</Button>
           </div>
         </form>
       </div>

@@ -6,6 +6,7 @@ import { FormAdmins } from '../components/Admin/FormAdmin';
 import { Admins } from '../components/Admin/Admin';
 import { StatsAdmins } from '../components/Admin/Stats';
 import { UserPlus, Filter } from 'lucide-react';
+import { Button, ButtonFilter } from "../components/global/Button";
 import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal';
 import { AdminFilter } from '../components/Admin/AdminFilter';
 import { useDeleteAdmin } from '../api/delete/DeleteAdmin';
@@ -18,6 +19,7 @@ export function AdminsScreen() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filteredCount, setFilteredCount] = useState(0);
 
   const [adminToEdit, setAdminToEdit] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -67,26 +69,11 @@ export function AdminsScreen() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <button
+                  <ButtonFilter
+                    isActive={!!statusFilter}
+                    count={filteredCount}
                     onClick={() => setIsFilterOpen(prev => !prev)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-sm backdrop-blur-sm ${statusFilter
-                      ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300 shadow-lg shadow-indigo-500/20'
-                      : 'border-slate-600/50 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:border-indigo-500/50'
-                      }`}
-                  >
-                    <div className="relative">
-                      <Filter className="w-4 h-4" />
-                      {statusFilter && (
-                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full"></div>
-                      )}
-                    </div>
-                    <span>Filtrer</span>
-                    {/* {statusFilter && (
-                      <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                        {/* {filteredClients.length} *
-                      </span>
-                    )} */}
-                  </button>
+                  />
                   <AdminFilter
                     isOpen={isFilterOpen}
                     onClose={() => setIsFilterOpen(false)}
@@ -94,13 +81,12 @@ export function AdminsScreen() {
                     currentFilters={filters}
                   />
                 </div>
-                <button
+                <Button
                   onClick={openAddModal}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-400/50 hover:scale-105 border border-indigo-400/30 z-20"
-                >
+                  variant="quaternary">
                   <UserPlus className="w-4 h-4" />
                   Nouveau administrateur
-                </button>
+                </Button>
               </div>
             </div>
             <div className="flex flex-col gap-6">
@@ -110,6 +96,7 @@ export function AdminsScreen() {
                 dateRange={filters.dateRange}
                 onEditAdmin={openEditModal}
                 onDeleteAdmin={openDeleteModal}
+                onCountChange={setFilteredCount}
               />
               <StatsAdmins token={token} />
             </div>

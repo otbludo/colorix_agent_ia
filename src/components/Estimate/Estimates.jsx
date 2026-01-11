@@ -6,7 +6,7 @@ import { GetDevis } from '../../api/get/GetDevis'
 import { RecoveryDevis } from '../../api/post/RecoveryDevis'
 
 
-export function Estimates({ token, onEditDevis, onShowInfosDevis, onDeleteDevis, statusFilter, filters }) {
+export function Estimates({ token, onEditDevis, onShowInfosDevis, onDeleteDevis, statusFilter, filters, onCountChange }) {
   console.log('Estimates statusFilter:', statusFilter);
   console.log('Estimates filters:', filters);
 
@@ -70,6 +70,14 @@ export function Estimates({ token, onEditDevis, onShowInfosDevis, onDeleteDevis,
       return true;
     })
     : rawData
+
+  useEffect(() => {
+    if (Array.isArray(data)) {
+      onCountChange?.(data.length);
+    } else {
+      onCountChange?.(0);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (isSuccesRecoveryDevis && dataRecoveryDevis?.message) toast.success(dataRecoveryDevis.message);

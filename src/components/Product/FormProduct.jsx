@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { AddProduct } from "../../api/post/AddProduct";
 import { EditProduct } from "../../api/put/EditProduct";
 import { InputField, SelectField, SelectMultiField } from "../../components/global/Input";
-import { ButtonForm } from "../../components/global/Button";
+import { Button } from "../../components/global/Button";
 
 export function FormProduct({ isOpen, onClose, productToEdit = null, isEditing = false }) {
   const token = localStorage.getItem("colorix_token");
@@ -157,10 +157,10 @@ export function FormProduct({ isOpen, onClose, productToEdit = null, isEditing =
             ]}
           />
           <div className="flex gap-3 mt-6">
-            <ButtonForm onClick={handleClose} variant="secondary">Annuler</ButtonForm>
-            <ButtonForm type="submit" disabled={isLoading} variant="primary">
+            <Button onClick={handleClose} variant="secondary">Annuler</Button>
+            <Button type="submit" disabled={isLoading} variant="primary">
               {isLoading ? "Chargement..." : submitButtonText}
-            </ButtonForm>
+            </Button>
           </div>
         </form>
       </div>

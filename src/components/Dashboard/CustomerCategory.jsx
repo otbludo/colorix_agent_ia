@@ -5,7 +5,7 @@ import { GetCustomerCategory } from '../../api/get/GetCustomerCategory'
 import { RecoveryCustomerCategory } from '../../api/post/RecoveryCustomerCategory'
 import { CustomerCategoryActionsDropdown } from './CustomerCategoryActionsDropdown'
 import { CustomerCategoryFilter } from './CustomerCategoryFilter'
-import { ButtonForm, ButtonRecovery } from '../global/Button'
+import { ButtonRecovery, ButtonFilter } from '../global/Button'
 
 export function CustomerCategoryLoad({ token, onDeleteCategory, onEditCategory, onAddCategory }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -23,41 +23,10 @@ export function CustomerCategoryLoad({ token, onDeleteCategory, onEditCategory, 
   const { mutate: recoverCategory, isPending: isRecovering, isSuccess: isRecoverySuccess, data: recoveryData, isError: isRecoveryError, error: recoveryError } = RecoveryCustomerCategory(token)
   const { data, isPending, isError, error } = GetCustomerCategory(token, statusFilter)
 
-  // Gestion des erreurs
-  useEffect(() => {
-    if (isError) {
-      toast.error(error?.message || error || 'Erreur lors du chargement des catégories')
-    }
-  }, [isError, error])
-
-  // Debug: Afficher les données reçues
-  useEffect(() => {
-    if (data) {
-      console.log('CustomerCategoryLoad data:', data)
-    }
-  }, [data])
-
-  const handleDeleteCategory = (category) => {
-    if (onDeleteCategory) {
-      onDeleteCategory(category)
-    }
-  }
-
-  const handleEditCategory = (category) => {
-    if (onEditCategory && category && typeof category === 'object') {
-      onEditCategory(category)
-    }
-  }
 
   const handleAddCategory = () => {
     if (onAddCategory) {
       onAddCategory()
-    }
-  }
-
-  const handleRecoverCategory = (category) => {
-    if (category && category.id) {
-      recoverCategory({ id: category.id })
     }
   }
 
@@ -71,6 +40,12 @@ export function CustomerCategoryLoad({ token, onDeleteCategory, onEditCategory, 
   useEffect(() => {
     if (isRecoveryError) toast.error((recoveryError || recoveryError) || 'Erreur réseau !')
   }, [isRecoveryError, recoveryError])
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error?.message || error || 'Erreur lors du chargement des catégories')
+    }
+  }, [isError, error])
 
 
   // Couleurs futuristes pour les catégories
@@ -92,21 +67,11 @@ export function CustomerCategoryLoad({ token, onDeleteCategory, onEditCategory, 
         <h2 className="text-xl font-bold glow-text">Catégories clients</h2>
         <div className="flex items-center gap-3">
           <div className="relative">
-            <button
+            <ButtonFilter
+              isActive={!!statusFilter}
+              count={data?.length}
               onClick={() => setIsFilterOpen(prev => !prev)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-sm backdrop-blur-sm ${statusFilter
-                ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300 shadow-lg shadow-indigo-500/20'
-                : 'border-slate-600/50 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:border-indigo-500/50'
-                }`}
-            >
-              <div className="relative">
-                <Filter className="w-4 h-4" />
-                {statusFilter && (
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-                )}
-              </div>
-              <span>Filtrer</span>
-            </button>
+            />
             <CustomerCategoryFilter
               isOpen={isFilterOpen}
               onClose={() => setIsFilterOpen(false)}
@@ -135,15 +100,15 @@ export function CustomerCategoryLoad({ token, onDeleteCategory, onEditCategory, 
               <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
                 <CustomerCategoryActionsDropdown
                   category={item}
-                  onEdit={handleEditCategory}
-                  onDelete={handleDeleteCategory}
+                  onEdit={() => item && onEditCategory && onEditCategory(item)}
+                  onDelete={() => item && onDeleteCategory && onDeleteCategory(item)}
                 />
               </div>
 
               {/* Icône de récupération pour les catégories supprimées */}
               {statusFilter === 'supprime' && (
                 <div className="absolute -top-2 -left-2 z-10">
-                  <ButtonRecovery onClick={() => handleRecoverCategory(item)} />
+                  <ButtonRecovery onClick={() => item.id && recoverCategory({ id: item.id })} />
                 </div>
               )}
 

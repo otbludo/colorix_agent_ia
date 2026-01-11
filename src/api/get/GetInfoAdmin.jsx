@@ -17,7 +17,6 @@ export const GetInfoAdmin = (token) => {
                     },
                 }
             );
-            console.log("data:", response)
             return response.json();
         },
         {

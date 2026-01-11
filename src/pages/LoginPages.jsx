@@ -175,9 +175,13 @@ export function LoginPage() {
                   aria-label="Mot de passe"
                   label="Mot de passe"
                 />
-                <Button type="submit" className="w-full mt-6">
-                  Se connecter
-                </Button>
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button
+                    type="submit"
+                    variant="primary">
+                    Se connecter
+                  </Button>
+                </div>
               </form>
             </div>
           </div>

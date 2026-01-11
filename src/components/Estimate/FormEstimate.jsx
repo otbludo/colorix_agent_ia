@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from "react-toastify";
-import { ButtonForm } from "../../components/global/Button";
+import { Button } from "../../components/global/Button";
 import { InputField, SelectField } from '../../components/global/Input';
 import { X, Calculator, Calendar, User, FileText, Printer } from 'lucide-react'
 import { GetProduct } from '../../api/get/GetProduct';
@@ -213,12 +213,12 @@ export function AddEstimateModal({ token, isOpen, onClose, isEditing, devisToEdi
             </div>
           </div>
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-600/50">
-            <ButtonForm onClick={onClose} variant="secondary">
+            <Button onClick={onClose} variant="secondary">
               Annuler
-            </ButtonForm>
-            <ButtonForm type="submit" disabled={isLoading} variant="primary">
+            </Button>
+            <Button type="submit" disabled={isLoading} variant="primary">
               {isLoading ? "Chargement..." : submitButtonText}
-            </ButtonForm>
+            </Button>
           </div>
         </form>
       </div>

@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { toast } from 'react-toastify';
 import { X, Calculator, Calendar, User, FileText, Printer, Check, X as XIcon } from 'lucide-react'
-import { ButtonForm } from "../../components/global/Button";
+import { Button } from "../../components/global/Button";
 import { ValidateEstimate } from "../../api/put/ValidateEstimate";
 
 export function ShowInfosEstimate({ estimate, isOpen, onClose, token }) {
@@ -208,25 +208,25 @@ export function ShowInfosEstimate({ estimate, isOpen, onClose, token }) {
                     {/* Boutons d'action */}
                     {estimate.status === 'attente' && (
                         <div className="flex justify-end gap-3 pt-4 border-t border-slate-600/50">
-                            <ButtonForm
+                            <Button
                                 onClick={() => handleValidate('rejeter')}
                                 variant="secondaryred">
                                 Rejeter
-                            </ButtonForm>
-                            <ButtonForm
+                            </Button>
+                            <Button
                                 onClick={() => handleValidate('valide')}
                                 type="submit" variant="primary">
                                 Valider
-                            </ButtonForm>
+                            </Button>
                         </div>
                     )}
                     {estimate.status === 'valide' && (
                         <div className="flex justify-end gap-3 pt-4 border-t border-slate-600/50">
-                            <ButtonForm
+                            <Button
                                 onClick={() => handleValidate('revoquer')}
                                 variant="tertiary">
                                 Revoquer
-                            </ButtonForm>
+                            </Button>
                         </div>
                     )}
                 </div>
