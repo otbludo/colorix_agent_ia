@@ -237,7 +237,8 @@ class CustomerCategoryCRUD:
                         country=customer.country,
                         category=customer.category,
                         status=customer.status,
-                        deleted_cascade=True  # Marquer comme supprimé en cascade
+                        deleted_cascade=True,
+                        created_at=customer.created_at
                     )
                     self.db.add(deleted_customer)
 
@@ -354,7 +355,8 @@ class CustomerCategoryCRUD:
                         city=customer_deleted.city,
                         country=customer_deleted.country,
                         category=customer_deleted.category,
-                        status=customer_deleted.status
+                        status=customer_deleted.status,
+                        created_at=customer_deleted.created_at
                     )
                     self.db.add(restored_customer)
                     restored_customers_list.append((restored_customer, customer_deleted))

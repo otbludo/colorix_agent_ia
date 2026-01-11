@@ -18,6 +18,7 @@ class CustomerCreate(BaseModel):
     company: Optional[str] = None
     city: Optional[str] = None
     country: Optional[str] = None
+    category: str
     status: Optional[str] = "potentiel"
 
     class Config:
@@ -33,6 +34,7 @@ class CustomerUpdate(BaseModel):
     company: Optional[str]
     city: Optional[str]
     country: Optional[str]
+    category: Optional[str]
     status: Optional[str]
 
     class Config:

@@ -60,6 +60,7 @@ class CustomerCRUD:
                     company=customer_data.company,
                     city=customer_data.city,
                     country=customer_data.country,
+                    category=customer_data.category,
                     status=customer_data.status
                 )
 
