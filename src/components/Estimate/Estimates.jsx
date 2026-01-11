@@ -1,11 +1,80 @@
 import { useEffect } from 'react'
 import { FileText, Eye, Edit, Download, Calendar, User2, Trash2 } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { ButtonRecovery } from '../global/Button'
 import { GetDevis } from '../../api/get/GetDevis'
+import { RecoveryDevis } from '../../api/post/RecoveryDevis'
 
 
-export function Estimates({ token, onEditDevis, onShowInfosDevis, onDeleteDevis }) {
-  const { data, isPending, isError, error } = GetDevis(token, null)
+export function Estimates({ token, onEditDevis, onShowInfosDevis, onDeleteDevis, statusFilter, filters }) {
+  console.log('Estimates statusFilter:', statusFilter);
+  console.log('Estimates filters:', filters);
+
+  // Pour les statuts normaux (valide, attente), on filtre côté client
+  // Pour "supprime", on utilise l'API
+  const shouldUseApiFilter = statusFilter === 'supprime';
+  const { data: rawData, isPending, isError, error } = GetDevis(token, shouldUseApiFilter ? statusFilter : null)
+  const { mutate: recoverdevis, isPending: isRecovering, isSuccess: isSuccesRecoveryDevis, data: dataRecoveryDevis } = RecoveryDevis(token);
+
+  // Filtrage côté client pour statuts + nom + dates (tous filtres)
+  const data = rawData && !shouldUseApiFilter
+    ? rawData.filter(devis => {
+      if (!devis || typeof devis !== 'object') return false;
+
+      // Statut (un seul vrai à la fois)
+      if (filters.status.valide && devis.status !== 'valide') return false;
+      if (filters.status.attente && devis.status !== 'attente') return false;
+
+      // NOM DU CLIENT: tester aussi avec champ name_customer SEUL ou first_name_customer SEUL
+      if (filters.client) {
+        const nom = String(devis.name_customer || '').toLowerCase();
+        const prenom = String(devis.first_name_customer || '').toLowerCase();
+        const cherche = filters.client.toLowerCase();
+        if (!nom.includes(cherche) && !prenom.includes(cherche)) return false;
+      }
+
+      // Date début (création)
+      if (filters.dateRange.start && devis.created_at) {
+        try {
+          const start = new Date(filters.dateRange.start);
+          const createdAt = new Date(devis.created_at);
+          if (
+            createdAt.getFullYear() !== start.getFullYear() ||
+            createdAt.getMonth() !== start.getMonth() ||
+            createdAt.getDate() !== start.getDate()
+          ) {
+            return false;
+          }
+        } catch (error) {
+          return false;
+        }
+      }
+
+      // Date fin (impression)
+      if (filters.dateRange.end && devis.printing_time) {
+        try {
+          const end = new Date(filters.dateRange.end);
+          const printingTime = new Date(devis.printing_time);
+          if (
+            printingTime.getFullYear() !== end.getFullYear() ||
+            printingTime.getMonth() !== end.getMonth() ||
+            printingTime.getDate() !== end.getDate()
+          ) {
+            return false;
+          }
+        } catch (error) {
+          return false;
+        }
+      }
+
+      return true;
+    })
+    : rawData
+
+  useEffect(() => {
+    if (isSuccesRecoveryDevis && dataRecoveryDevis?.message) toast.success(dataRecoveryDevis.message);
+    if (isSuccesRecoveryDevis && dataRecoveryDevis?.detail) toast.error(dataRecoveryDevis.detail);
+  }, [isSuccesRecoveryDevis]);
 
   useEffect(() => {
     if (isError) toast.error(error?.message || error || 'Erreur réseau')
@@ -100,46 +169,53 @@ export function Estimates({ token, onEditDevis, onShowInfosDevis, onDeleteDevis 
                     {devis?.montant_ttc ? devis.montant_ttc.toLocaleString('fr-FR') : '—'} FCFA
                     <div className="text-sm text-slate-500 group-hover:text-slate-400 transition-colors">TTC</div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        if (onShowInfosDevis && typeof onShowInfosDevis === 'function' && devis) {
-                          onShowInfosDevis(devis)
-                        }
-                      }}
-                      className="p-2 hover:bg-indigo-500/20 rounded-xl transition-all duration-300 group/btn"
-                      title="Voir détails"
-                    >
-                      <Eye className="w-4 h-4 text-indigo-400 group-hover/btn:text-indigo-300" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (onEditDevis && typeof onEditDevis === 'function' && devis) {
-                          onEditDevis(devis)
-                        }
-                      }}
-                      className="p-2 hover:bg-emerald-500/20 rounded-xl transition-all duration-300 group/btn"
-                      title="Modifier"
-                    >
-                      <Edit className="w-4 h-4 text-emerald-400 group-hover/btn:text-emerald-300" />
-                    </button>
-                    <button
-                      className="p-2 hover:bg-purple-500/20 rounded-xl transition-all duration-300 group/btn"
-                      title="Télécharger"
-                    >
-                      <Download className="w-4 h-4 text-purple-400 group-hover/btn:text-purple-300" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (onDeleteDevis && typeof onDeleteDevis === 'function' && devis) {
-                          onDeleteDevis(devis)
-                        }
-                      }}
-                      className="p-2 hover:bg-red-500/20 rounded-xl transition-all duration-300 group/btn"
-                      title="Supprimer"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-400 group-hover/btn:text-red-300" />
-                    </button>
+
+                  <div className="flex justify-end gap-2">
+                    {shouldUseApiFilter ?
+                      <ButtonRecovery onClick={() => devis?.id && recoverdevis(devis.id)} />
+                      :
+                      <>
+                        <button
+                          onClick={() => {
+                            if (onShowInfosDevis && typeof onShowInfosDevis === 'function' && devis) {
+                              onShowInfosDevis(devis)
+                            }
+                          }}
+                          className="p-2 hover:bg-indigo-500/20 rounded-xl transition-all duration-300 group/btn"
+                          title="Voir détails"
+                        >
+                          <Eye className="w-4 h-4 text-indigo-400 group-hover/btn:text-indigo-300" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (onEditDevis && typeof onEditDevis === 'function' && devis) {
+                              onEditDevis(devis)
+                            }
+                          }}
+                          className="p-2 hover:bg-emerald-500/20 rounded-xl transition-all duration-300 group/btn"
+                          title="Modifier"
+                        >
+                          <Edit className="w-4 h-4 text-emerald-400 group-hover/btn:text-emerald-300" />
+                        </button>
+                        <button
+                          className="p-2 hover:bg-purple-500/20 rounded-xl transition-all duration-300 group/btn"
+                          title="Télécharger"
+                        >
+                          <Download className="w-4 h-4 text-purple-400 group-hover/btn:text-purple-300" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (onDeleteDevis && typeof onDeleteDevis === 'function' && devis) {
+                              onDeleteDevis(devis)
+                            }
+                          }}
+                          className="p-2 hover:bg-red-500/20 rounded-xl transition-all duration-300 group/btn"
+                          title="Supprimer"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-400 group-hover/btn:text-red-300" />
+                        </button>
+                      </>
+                    }
                   </div>
                 </div>
               </div>

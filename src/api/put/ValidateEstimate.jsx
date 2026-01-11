@@ -4,6 +4,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const ValidateEstimate = (token) => {
     const queryClient = useQueryClient();
+
     return useMutation({
         mutationKey: ["ValidateEstimate"],
 
@@ -21,9 +22,8 @@ export const ValidateEstimate = (token) => {
             return response.json();
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["GetDevis"],
-            });
+            queryClient.invalidateQueries({ queryKey: ["GetDevis"] });
         },
+
     });
 };

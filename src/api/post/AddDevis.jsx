@@ -22,9 +22,7 @@ export const AddDevis = (token) => {
         },
 
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["GetDevis"],
-            });
+            queryClient.invalidateQueries(['GetDevis']);
         },
     });
 };

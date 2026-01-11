@@ -19,6 +19,7 @@ export const useRecoveryAdmin = (token) => {
 
             return response.json();
         },
+        
         onSuccess: () => {
             queryClient.invalidateQueries(['getAdmins']);
         },

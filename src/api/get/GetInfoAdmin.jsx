@@ -2,15 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const GetDevis = (token, statusFilter) => {
+export const GetInfoAdmin = (token) => {
     return useQuery(
-        ['GetDevis', statusFilter],
+        ['GetInfoAdmin'],
         async () => {
-            let query = '';
-            if (statusFilter) query += `devis_data=${statusFilter}`;
 
             const response = await fetch(
-                `${API_URL}/api/v1/get_devis${query ? `?${query}` : ''}`,
+                `${API_URL}/api/v1/current_admin_info`,
                 {
                     method: 'GET',
                     headers: {
@@ -19,7 +17,7 @@ export const GetDevis = (token, statusFilter) => {
                     },
                 }
             );
-
+            console.log("data:", response)
             return response.json();
         },
         {

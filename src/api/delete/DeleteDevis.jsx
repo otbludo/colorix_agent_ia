@@ -9,7 +9,7 @@ export const DeleteDevis = (token) => {
     mutationKey: ["DeleteDevis"],
 
     mutationFn: async (formData) => {
-      const response = await fetch(`${API_URL}/api/v1/delete_customer`, {
+      const response = await fetch(`${API_URL}/api/v1/delete_devis`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

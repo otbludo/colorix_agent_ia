@@ -1,9 +1,12 @@
 import { useRef, useEffect } from 'react'
+import { toast } from 'react-toastify'
 import { Settings, LogOut, User, Mail, Shield } from 'lucide-react'
+import { InitResetInfosAdmin } from '../../api/post/InitResetInfosAdmin'
 
-
-export function ProfileDropdown({ isOpen, onClose }) {
+export function ProfileDropdown({ token, isOpen, onClose, data }) {
   const dropdownRef = useRef(null)
+  const { mutate: mutateInitResetInfo, isPending: isPendingInitResetInfo, isError: isErrorInitResetInfo, error: errorInitResetInfo, isSuccess: isSuccessInitResetInfo, data: dataInitResetInfo } = InitResetInfosAdmin(token)
+
 
   // Fermer le dropdown quand on clique en dehors
   useEffect(() => {
@@ -36,16 +39,19 @@ export function ProfileDropdown({ isOpen, onClose }) {
   }
 
   const handleEditProfile = () => {
-    // Simulation d'édition du profil
-    console.log('Ouverture de l\'édition du profil...')
-    alert('Ouverture simulée de la page d\'édition du profil')
+    const email = data?.email
+    mutateInitResetInfo({ email })
   }
 
-  const handleSettings = () => {
-    // Simulation des paramètres
-    console.log('Ouverture des paramètres...')
-    alert('Ouverture simulée de la page des paramètres')
-  }
+  useEffect(() => {
+    if (isSuccessInitResetInfo && dataInitResetInfo?.message) toast.success(dataInitResetInfo.message);
+    if (isSuccessInitResetInfo && dataInitResetInfo?.detail) toast.error(dataInitResetInfo.detail);
+  }, [isSuccessInitResetInfo]);
+
+  useEffect(() => {
+    if (isErrorInitResetInfo) toast.error((errorInitResetInfo) || 'Erreur réseau !');
+  }, [isErrorInitResetInfo, errorInitResetInfo]);
+
 
   if (!isOpen) return null
 
@@ -68,8 +74,8 @@ export function ProfileDropdown({ isOpen, onClose }) {
             className="w-12 h-12 rounded-full border-2 border-indigo-400/50 ring-2 ring-indigo-500/30"
           />
           <div className="flex-1">
-            <div className="font-semibold text-white text-base">Alex Meian</div>
-            <div className="text-sm text-slate-400">Product Manager</div>
+            <div className="font-semibold text-white text-base">{data?.name}</div>
+            <div className="text-sm text-slate-400">{data?.post}</div>
           </div>
         </div>
       </div>
@@ -79,15 +85,15 @@ export function ProfileDropdown({ isOpen, onClose }) {
         <div className="space-y-2">
           <div className="flex items-center gap-3 text-sm">
             <Mail className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-300">alex.meian@colorix.com</span>
+            <span className="text-slate-300">{data?.email}</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <Shield className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-300">Administrateur</span>
+            <span className="text-slate-300">{data?.role}</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse ring-2 ring-emerald-500/30"></div>
-            <span className="text-emerald-400 font-medium">Connecté</span>
+            <span className="text-emerald-400 font-medium">{data?.status}</span>
           </div>
         </div>
       </div>
@@ -102,16 +108,6 @@ export function ProfileDropdown({ isOpen, onClose }) {
             <User className="w-4 h-4 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
           </div>
           <span>Modifier le profil</span>
-        </button>
-
-        <button
-          onClick={() => handleAction(handleSettings)}
-          className="w-full flex items-center gap-3 px-3 py-3 text-sm text-slate-300 hover:bg-slate-700/50 hover:text-white transition-all duration-300 rounded-xl group"
-        >
-          <div className="p-1 rounded-lg bg-slate-500/20 group-hover:bg-slate-500/30 transition-colors">
-            <Settings className="w-4 h-4 text-slate-400 group-hover:text-slate-300 transition-colors" />
-          </div>
-          <span>Paramètres</span>
         </button>
 
         {/* Séparateur */}

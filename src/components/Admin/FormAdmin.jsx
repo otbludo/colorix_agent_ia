@@ -10,6 +10,8 @@ export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = fa
   const { mutate: mutateAdd, isPending: isPendingAdd, isSuccess: isSuccessAdd, data: dataAdd, isError: isErrorAdd, error: errorAdd } = AddAdmin(token);
   const { mutate: mutateEdit, isPending: isPendingEdit, isSuccess: isSuccessEdit, data: dataEdit, isError: isErrorEdit, error: errorEdit } = EditAdmin(token);
 
+  const handleClose = () => onClose();
+
   const emptyForm = {
     name: "",
     first_name: "",
@@ -44,12 +46,18 @@ export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = fa
   };
 
   useEffect(() => {
-    if (isSuccessAdd && dataAdd?.message) toast.success(dataAdd.message);
+    if (isSuccessAdd && dataAdd?.message) {
+      toast.success(dataAdd.message);
+      handleClose()
+    }
     if (isSuccessAdd && dataAdd?.detail) toast.error(dataAdd.detail);
   }, [isSuccessAdd]);
 
   useEffect(() => {
-    if (isSuccessEdit && dataEdit?.message) toast.success(dataEdit.message);
+    if (isSuccessEdit && dataEdit?.message) {
+      toast.success(dataEdit.message);
+      handleClose()
+    }
     if (isSuccessEdit && dataEdit?.detail) toast.error(dataEdit.detail);
   }, [isSuccessEdit]);
 
@@ -57,7 +65,7 @@ export function FormAdmins({ isOpen, onClose, adminToEdit = null, isEditing = fa
     if (isErrorAdd || isErrorEdit) toast.error((errorAdd || errorEdit) || 'Erreur réseau !');
   }, [isErrorAdd, isErrorEdit, errorAdd, errorEdit]);
 
-  const handleClose = () => onClose();
+
   if (!isOpen) return null;
 
   const formTitle = isEditing ? "Modifier le statut de l'utilisateur" : "Ajouter un utilisateur";

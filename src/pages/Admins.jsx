@@ -51,7 +51,7 @@ export function AdminsScreen() {
         <div className="particle w-1.5 h-1.5 top-60 right-20"></div>
       </div>
 
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} token={token} />
       <div className="flex flex-col lg:pl-[280px]">
         <Header onToggleSidebar={() => setIsSidebarOpen(true)} />
         <main className="p-4 sm:p-6 lg:p-10 slide-in-up">
@@ -96,7 +96,7 @@ export function AdminsScreen() {
                 </div>
                 <button
                   onClick={openAddModal}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-400/50 hover:scale-105 border border-indigo-400/30"
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-400/50 hover:scale-105 border border-indigo-400/30 z-20"
                 >
                   <UserPlus className="w-4 h-4" />
                   Nouveau administrateur

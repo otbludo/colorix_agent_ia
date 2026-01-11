@@ -6,6 +6,7 @@ import { Timelogs } from '../components/Timelogs/Timelogs'
 
 
 export function TimeLog() {
+  const token = localStorage.getItem('colorix_token');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
@@ -18,7 +19,7 @@ export function TimeLog() {
         <div className="particle w-1.5 h-1.5 top-60 right-20"></div>
       </div>
 
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} token={token}/>
       <div className="flex flex-col lg:pl-[280px]">
         <Header
           onToggleSidebar={() => setIsSidebarOpen(true)}

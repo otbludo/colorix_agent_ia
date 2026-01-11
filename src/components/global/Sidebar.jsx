@@ -1,13 +1,15 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import colorixLogo from '../../assets/colorixorigin.png'
 import { LayoutDashboard, FileText, Clock, Users2, Building, Settings, Plus, X, ShoppingBag } from 'lucide-react'
+import { GetInfoAdmin } from '../../api/get/GetInfoAdmin'
 
 
-export function Sidebar({ isOpen, onClose }) {
+export function Sidebar({ isOpen, onClose, token}) {
   const navigate = useNavigate()
   const location = useLocation()
+  const { data } = GetInfoAdmin(token)
 
-  const menuItems = [
+  const allMenuItems = [
     {
       icon: LayoutDashboard,
       label: 'Dashboard',
@@ -32,13 +34,23 @@ export function Sidebar({ isOpen, onClose }) {
       icon: Users2,
       label: 'Administrateurs',
       path: '/Admins',
+      requiresSuperAdmin: true,
     },
     {
       icon: Clock,
       label: 'Time log',
       path: '/time-log',
+      requiresSuperAdmin: true,
     },
   ]
+
+  // Filtrer les éléments de menu selon le rôle
+  const menuItems = allMenuItems.filter(item => {
+    if (item.requiresSuperAdmin) {
+      return data?.role === 'superadmin'
+    }
+    return true
+  })
 
   return (
     <>
@@ -160,8 +172,8 @@ export function Sidebar({ isOpen, onClose }) {
                         if (onClose) onClose() // Close mobile menu after navigation
                       }}
                       className={`group relative w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 overflow-hidden ${isActive
-                          ? 'bg-gradient-to-r from-indigo-600/90 to-purple-600/90 text-white shadow-2xl shadow-indigo-500/30 border border-indigo-400/50'
-                          : 'text-slate-300 hover:bg-slate-800/50 hover:text-white backdrop-blur-sm border border-transparent hover:border-slate-600/50'
+                        ? 'bg-gradient-to-r from-indigo-600/90 to-purple-600/90 text-white shadow-2xl shadow-indigo-500/30 border border-indigo-400/50'
+                        : 'text-slate-300 hover:bg-slate-800/50 hover:text-white backdrop-blur-sm border border-transparent hover:border-slate-600/50'
                         }`}
                     >
                       {/* Effet de fond animé */}
@@ -169,18 +181,18 @@ export function Sidebar({ isOpen, onClose }) {
 
                       {/* Icône avec effet lumineux */}
                       <div className={`relative z-10 p-1 rounded-lg transition-all duration-300 ${isActive
-                          ? 'bg-white/20'
-                          : 'group-hover:bg-indigo-500/20'
+                        ? 'bg-white/20'
+                        : 'group-hover:bg-indigo-500/20'
                         }`}>
                         <Icon className={`w-5 h-5 transition-colors duration-300 ${isActive
-                            ? 'text-white'
-                            : 'text-slate-400 group-hover:text-indigo-400'
+                          ? 'text-white'
+                          : 'text-slate-400 group-hover:text-indigo-400'
                           }`} />
                       </div>
 
                       <span className={`font-medium relative z-10 transition-colors duration-300 ${isActive
-                          ? 'text-white'
-                          : 'text-slate-300 group-hover:text-white'
+                        ? 'text-white'
+                        : 'text-slate-300 group-hover:text-white'
                         }`}>
                         {item.label}
                       </span>

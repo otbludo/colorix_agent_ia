@@ -1,4 +1,5 @@
 import React from 'react'
+import { RotateCcw } from 'lucide-react'
 
 export function Button({
   children,
@@ -7,7 +8,7 @@ export function Button({
   ...props
 }) {
   const baseStyles =
-    'px-8 py-3 rounded-2xl font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent backdrop-blur-sm border relative overflow-hidden group'
+    'px-8 py-3 rounded-2xl font-semibold transition-all duration-300 focus:outline-none focus:ring-offset-transparent backdrop-blur-sm  relative overflow-hidden group'
   const variantStyles = {
     primary:
       'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-400/50 hover:scale-105 border-indigo-400/30',
@@ -65,3 +66,15 @@ export function ButtonForm({ children, onClick, type = "button", variant = "prim
   );
 }
 
+
+export function ButtonRecovery({ onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="p-2 bg-green-500/20 hover:bg-green-500/30 rounded-full border border-green-400/50 transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+      title="Restaurer"
+    >
+      <RotateCcw className="w-5 h-5 text-emerald-400 group-hover/btn:text-emerald-300" />
+    </button>
+  )
+}

@@ -51,7 +51,7 @@ export function Dashboard() {
         <div className="particle w-1 h-1 top-80 left-60"></div>
       </div>
 
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} token={token}/>
       <div className="flex flex-col lg:pl-[280px]">
         <Header
           onToggleSidebar={() => setIsSidebarOpen(true)}

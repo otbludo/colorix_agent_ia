@@ -3,9 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { Search, Bell, ChevronDown, Menu } from 'lucide-react'
 import colorixLogo from '../../assets/Colo.svg'
 import { ProfileDropdown } from './ProfileDropdown'
+import { GetInfoAdmin } from '../../api/get/GetInfoAdmin'
 
 
 export function Header({ onToggleSidebar }) {
+  const token = localStorage.getItem('colorix_token');
+  const { isPending, isError, error, isSuccess, data } = GetInfoAdmin(token)
+
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const navigate = useNavigate()
 
@@ -17,6 +21,10 @@ export function Header({ onToggleSidebar }) {
     navigate('/dashboard')
   }
 
+
+  // useEffect(() => {
+  //   if (isError) toast.error(error?.message || 'Erreur réseau !')
+  // }, [isError])
 
   return (
     <>
@@ -86,15 +94,17 @@ export function Header({ onToggleSidebar }) {
                   className="w-8 h-8 rounded-full ring-2 ring-indigo-500/30"
                 />
                 <div className="text-left">
-                  <div className="text-sm font-semibold text-white">Alex Meian</div>
-                  <div className="text-xs text-slate-400">Product Manager</div>
+                  <div className="text-sm font-semibold text-white">{data?.name}</div>
+                  <div className="text-xs text-slate-400">{data?.first_name}</div>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-all duration-300 ${isProfileOpen ? 'rotate-180 text-indigo-400' : ''}`} />
               </button>
 
               <ProfileDropdown
+                token={token}
                 isOpen={isProfileOpen}
                 onClose={() => setIsProfileOpen(false)}
+                data={data}
               />
             </div>
           </div>

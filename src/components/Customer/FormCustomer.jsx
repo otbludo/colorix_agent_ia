@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { AddCustomer } from "../../api/post/AddCustomers";
 import { EditCustomer } from "../../api/put/EditCustomer";
+import { GetCustomerCategory } from "../../api/get/GetCustomerCategory";
 import { X, User, Mail, Building, Globe, Phone, Tag } from "lucide-react";
 import { InputField, SelectField } from "../../components/global/Input";
 import { ButtonForm } from "../../components/global/Button";
@@ -32,6 +33,9 @@ export function FormCustomer({
     error: errorEdit,
   } = EditCustomer(token);
 
+  // Récupérer les catégories pour les options du select
+  const { data: categoriesData } = GetCustomerCategory(token, null);
+
   const emptyForm = {
     id: "",
     name: "",
@@ -42,7 +46,7 @@ export function FormCustomer({
     city: "",
     country: "",
     category: "",
-    status: "potentiel",
+    status: "",
   };
 
   const [formData, setFormData] = useState(emptyForm);
@@ -89,6 +93,17 @@ export function FormCustomer({
   }, [isErrorAdd, isErrorEdit, errorAdd, errorEdit]);
 
   const handleClose = () => onClose();
+
+  // Créer les options pour les catégories dynamiquement
+  const categoryOptions = categoriesData && Array.isArray(categoriesData)
+    ? [
+      { value: "", label: "Sélectionner une catégorie" }, // Option vide par défaut
+      ...categoriesData.map(category => ({
+        value: category?.name, // Utiliser name ou id comme valeur unique
+        label: category?.name
+      }))
+    ]
+    : [{ value: "", label: "Chargement..." }];
 
   if (!isOpen) return null;
 
@@ -172,14 +187,9 @@ export function FormCustomer({
           <SelectField
             label="Catégorie"
             name="category"
-            value={formData.status}
+            value={formData.category}
             onChange={handleChange}
-            options={[
-              { value: "particulier", label: "Prticulier" },
-              { value: "entreprise", label: "Entreprise" },
-              { value: "ONG", label: "ONG" },
-              { value: "etat", label: "Etat" },
-            ]}
+            options={categoryOptions}
           />
           <SelectField
             label="Statut"

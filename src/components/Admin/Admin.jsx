@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { AdminsActionsDropdown } from './AdminActionsDropdown';
-import { Shield, Crown, RotateCcw } from 'lucide-react';
+import { Shield, Crown } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { ButtonRecovery } from '../global/Button'
 import { GetAdmin } from '../../api/get/GetAdmin';
 import { useRecoveryAdmin } from '../../api/post/RecoveryAdmin';
 
@@ -119,13 +120,7 @@ export function Admins({ token, statusFilter, dateRange, onEditAdmin, onDeleteAd
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 group-hover:text-slate-300 transition-colors">{admin?.created_at || '—'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     {statusFilter == "supprime" ? (
-                      <button
-                        onClick={() => admin?.id && recoverAdmin(admin.id)}
-                        className="p-2 rounded-2xl hover:bg-emerald-500/20 transition-all duration-300 group/btn"
-                        title="Restaurer"
-                      >
-                        <RotateCcw className="w-5 h-5 text-emerald-400 group-hover/btn:text-emerald-300" />
-                      </button>
+                      <ButtonRecovery onClick={() => admin?.id && recoverAdmin(admin.id)} />
                     ) : (
                       <AdminsActionsDropdown
                         onEdit={() => {

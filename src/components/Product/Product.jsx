@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { ProductsActionsDropdown } from './ProductActionsDropdown';
-import { RotateCcw } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { ButtonRecovery } from '../global/Button'
 import { GetProduct } from '../../api/get/GetProduct';
 import { RecoveryProduct } from '../../api/post/RecoveryProduct';
 
@@ -91,13 +91,7 @@ export function Products({ token, statusFilter, onEditproduct, onDeleteproduct }
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   {statusFilter === "supprime" ? (
-                    <button
-                      onClick={() => product?.id && recoverproduct(product.id)}
-                      className="p-2 rounded-2xl hover:bg-emerald-500/20 transition-all duration-300 group/btn"
-                      title="Restaurer"
-                    >
-                      <RotateCcw className="w-5 h-5 text-emerald-400 group-hover/btn:text-emerald-300" />
-                    </button>
+                    <ButtonRecovery onClick={() => product?.id && recoverproduct(product.id)} />
                   ) : (
                     <ProductsActionsDropdown
                       onEdit={() => product && onEditproduct && onEditproduct(product)}

@@ -2,7 +2,7 @@ import { Filter } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { GetDevis } from '../../api/get/GetDevis'
-import { CustomerFilterDropdown } from './DevisFilter'
+import { DevisFilter } from './DevisFilter'
 import { CustomersActionsDropdown } from '../Customer/CustomerActionsDropdown'
 import { DeleteConfirmModal } from '../global/DeleteConfirmModal'
 
@@ -172,7 +172,7 @@ export function DevistTable({ token, onEditDevis, onDeleteDevis }) {
             )}
           </button>
 
-          <CustomerFilterDropdown
+          <DevisFilter
             isOpen={isFilterModalOpen}
             onClose={() => setIsFilterModalOpen(false)}
             onApplyFilters={setActiveFilters}

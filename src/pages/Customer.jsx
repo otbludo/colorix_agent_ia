@@ -54,7 +54,7 @@ export function CustomerScreen() {
 
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="flex flex-col lg:pl-[280px]">
-        <Header onToggleSidebar={() => setIsSidebarOpen(true)} />
+        <Header onToggleSidebar={() => setIsSidebarOpen(true)} token={token}/>
         <main className="p-4 sm:p-6 lg:p-10 slide-in-up">
           <div className="futuristic-card rounded-3xl p-6">
             {/* Effet de grille en arrière-plan */}

@@ -19,6 +19,7 @@ export const RecoveryCustomerCategory = (token) => {
 
             return response.json();
         },
+
         onSuccess: () => {
             queryClient.invalidateQueries(['GetCustomerCategory']);
         },

@@ -1,8 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient} from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const EditCustomerCategory = (token) => {
+    const queryClient = useQueryClient();
+
     return useMutation({
         mutationKey: ["EditCustomerCategory"],
 
@@ -18,6 +20,10 @@ export const EditCustomerCategory = (token) => {
             });
 
             return response.json();
+        },
+
+        onSuccess: () => {
+            queryClient.invalidateQueries(['GetCustomerCategory']);
         },
     });
 };

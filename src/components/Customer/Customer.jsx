@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { CustomersActionsDropdown } from './CustomerActionsDropdown';
 import { RotateCcw } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { ButtonRecovery } from '../global/Button'
 import { GetCustomer } from '../../api/get/GetCustomers';
 import { RecoveryCustomer } from '../../api/post/RecoveryCustomer';
 
@@ -122,13 +123,7 @@ export function Customers({ token, statusFilter, onEditcustomer, onDeletecustome
                     onClick={(e) => e.stopPropagation()}
                   >
                     {statusFilter === "supprime" ? (
-                      <button
-                        onClick={() => customer?.id && recovercustomer(customer.id)}
-                        className="p-2 rounded-2xl hover:bg-emerald-500/20 transition-all duration-300 group/btn"
-                        title="Restaurer"
-                      >
-                        <RotateCcw className="w-5 h-5 text-emerald-400 group-hover/btn:text-emerald-300" />
-                      </button>
+                      <ButtonRecovery onClick={() => customer?.id && recovercustomer(customer.id)} />
                     ) : (
                       <CustomersActionsDropdown
                         onEdit={() => {

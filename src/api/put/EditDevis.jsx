@@ -1,8 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient} from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const EditDevis = (token) => {
+    const queryClient = useQueryClient();
+
     return useMutation({
         mutationKey: ["EditDevis"],
 
@@ -17,6 +19,10 @@ export const EditDevis = (token) => {
 
             });
             return response.json();
+        },
+
+        onSuccess: () => {
+            queryClient.invalidateQueries(['GetDevis']);
         },
     });
 };

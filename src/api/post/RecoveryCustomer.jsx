@@ -19,8 +19,9 @@ export const RecoveryCustomer = (token) => {
 
             return response.json();
         },
+
         onSuccess: () => {
-            queryClient.invalidateQueries(['getAdmins']);
+            queryClient.invalidateQueries(['GetCustomer']);
         },
     });
 };

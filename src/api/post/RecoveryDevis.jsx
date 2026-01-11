@@ -2,13 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const RecoveryProduct = (token) => {
+export const RecoveryDevis = (token) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationKey: ['RecoveryProduct'],
+        mutationKey: ['RecoveryDevis'],
         mutationFn: async (adminId) => {
-            const response = await fetch(`${API_URL}/api/v1/recovery_product`, {
+            const response = await fetch(`${API_URL}/api/v1/recovery_devis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ export const RecoveryProduct = (token) => {
         },
 
         onSuccess: () => {
-            queryClient.invalidateQueries(['GetProduct']);
+            queryClient.invalidateQueries(['GetDevis']);
         },
     });
 };

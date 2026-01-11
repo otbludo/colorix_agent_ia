@@ -1,15 +1,13 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const AddCustomerCategory = (token) => {
-    const queryClient = useQueryClient();
-
+export const InitResetInfosAdmin = (token) => {
     return useMutation({
-        mutationKey: ["AddCustomerCategory"],
+        mutationKey: ["InitResetInfosAdmin"],
 
         mutationFn: async (formData) => {
-            const response = await fetch(`${API_URL}/api/v1/add_category_customer`, {
+            const response = await fetch(`${API_URL}/api/v1/request-update-info`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -19,10 +17,6 @@ export const AddCustomerCategory = (token) => {
             });
 
             return response.json();
-        },
-        
-        onSuccess: () => {
-            queryClient.invalidateQueries(['GetCustomerCategory']);
         },
     });
 };

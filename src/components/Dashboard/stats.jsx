@@ -45,9 +45,9 @@ function OverviewCard({ icon, title, value, subtitle, iconBgColor }) {
         </div>
 
         {/* Ligne de progression décorative */}
-        <div className="mt-4 h-1 w-full bg-slate-700/50 rounded-full overflow-hidden">
+        {/* <div className="mt-4 h-1 w-full bg-slate-700/50 rounded-full overflow-hidden">
           <div className={`h-full bg-gradient-to-r ${iconBgColor} rounded-full group-hover:w-full w-2/3 transition-all duration-1000`}></div>
-        </div>
+        </div> */}
 
         {subtitle && (
           <p className="text-slate-500 text-xs mt-2">{subtitle}</p>

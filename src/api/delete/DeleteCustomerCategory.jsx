@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const DeleteCustomerCategory = (token) => {
     const queryClient = useQueryClient();
+
     return useMutation({
         mutationKey: ["DeleteCustomerCategory"],
 
@@ -20,6 +21,7 @@ export const DeleteCustomerCategory = (token) => {
 
             return response.json();
         },
+        
         onSuccess: () => {
             queryClient.invalidateQueries(['GetCustomerCategory']);
         },

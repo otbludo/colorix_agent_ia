@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Plus, Filter, RotateCcw } from 'lucide-react'
+import { Plus, Filter } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { GetCustomerCategory } from '../../api/get/GetCustomerCategory'
 import { RecoveryCustomerCategory } from '../../api/post/RecoveryCustomerCategory'
 import { CustomerCategoryActionsDropdown } from './CustomerCategoryActionsDropdown'
 import { CustomerCategoryFilter } from './CustomerCategoryFilter'
-import { ButtonForm } from '../global/Button'
+import { ButtonForm, ButtonRecovery } from '../global/Button'
 
 export function CustomerCategoryLoad({ token, onDeleteCategory, onEditCategory, onAddCategory }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -143,14 +143,7 @@ export function CustomerCategoryLoad({ token, onDeleteCategory, onEditCategory, 
               {/* Icône de récupération pour les catégories supprimées */}
               {statusFilter === 'supprime' && (
                 <div className="absolute -top-2 -left-2 z-10">
-                  <button
-                    onClick={() => handleRecoverCategory(item)}
-                    disabled={isRecovering}
-                    className="p-2 bg-green-500/20 hover:bg-green-500/30 rounded-full border border-green-400/50 transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Récupérer la catégorie"
-                  >
-                    <RotateCcw className="w-4 h-4 text-green-400" />
-                  </button>
+                  <ButtonRecovery onClick={() => handleRecoverCategory(item)} />
                 </div>
               )}
 

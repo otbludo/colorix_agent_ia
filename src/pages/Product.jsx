@@ -49,7 +49,7 @@ export function ProductScreen() {
         <div className="particle w-1.5 h-1.5 top-60 right-20"></div>
       </div>
 
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} token={token}/>
       <div className="flex flex-col lg:pl-[280px]">
         <Header onToggleSidebar={() => setIsSidebarOpen(true)} />
         <main className="p-4 sm:p-6 lg:p-10 slide-in-up">
