@@ -174,6 +174,7 @@ class ProductPrintingDeleted(Base):
     category = Column(String(50))
     front_price = Column(Float)
     front_back_price = Column(Float)
+    created_at = Column(DateTime(timezone=True))
     deleted_at = Column(DateTime(timezone=True), server_default=func.now())
 
 

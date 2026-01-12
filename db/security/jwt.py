@@ -1,11 +1,15 @@
-from fastapi import HTTPException, Depends
+import os
+from dotenv import load_dotenv
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta, datetime
 import jwt
 from messages.exceptions import ExpiredSignatureErrorToken, InvalidTokenErrorToken
 
-SECRET_KEY = "SUPER_SECRET_123"
-ALGORITHM = "HS256"
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
