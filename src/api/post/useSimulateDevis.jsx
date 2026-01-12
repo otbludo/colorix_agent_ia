@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 export function useDevisWebSocket(formData, devisId = null) {
     const [pricing, setPricing] = useState(null);
-    // console.log("useDevisWebSocket called with formData:", formData, "and devisId:", devisId);
     useEffect(() => {
         // MODE CREATE
         if (!devisId && (!formData.id_product || !formData.id_customer)) return;

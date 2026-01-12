@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { ShoppingBag, Trash } from 'lucide-react'
-import { OverviewCardBlue, OverviewCardRed } from '../global/OverviewCard'
+import { OverviewCard } from '../global/OverviewCard'
 import { useStats } from '../../api/get/stats'
 
 
@@ -21,13 +21,15 @@ export function StatsProducts({ token }) {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <OverviewCardBlue
-        Icon={ShoppingBag}
+      <OverviewCard
+        variant="blue"
+        icon={<ShoppingBag />}
         title={"Total produits"}
         value={totalProducts.toString()}
       />
-      <OverviewCardRed
-        Icon={Trash}
+      <OverviewCard
+        variant="red"
+        icon={<Trash />}
         title={"Total produits supprimes"}
         value={totalDeletedProducts.toString()}
       />

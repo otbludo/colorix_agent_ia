@@ -51,8 +51,6 @@ export function EstimateScreen() {
 
   const statusFilter = getSelectedStatus();
 
-  console.log('Estimate filters:', filters);
-  console.log('Estimate statusFilter:', statusFilter);
 
   const openAddModal = () => { setDevisToEdit(null); setIsEditing(false); setIsAddQuoteModalOpen(true); };
   const openEditModal = (devis) => { setDevisToEdit(devis); setIsEditing(true); setIsAddQuoteModalOpen(true); };

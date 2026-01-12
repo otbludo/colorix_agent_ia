@@ -10,6 +10,8 @@ import { DeleteConfirmModal } from '../components/global/DeleteConfirmModal'
 import { CustomerCategoryLoad } from '../components/Dashboard/CustomerCategory'
 import { FormCustomerCategory } from '../components/Dashboard/FormCustomerCategory'
 import { DeleteCustomerCategory } from '../api/delete/DeleteCustomerCategory'
+import { TimeLineChartDevis } from '../components/Dashboard/TimeLineChartDevis'
+import { TimeLineChartCustomer } from '../components/Dashboard/TimeLineChartCustomer'
 
 
 export function Dashboard() {
@@ -69,6 +71,10 @@ export function Dashboard() {
             </div>
             <div className="mb-6">
               <Stats />
+            </div>
+            <div className="flex gap-6 mb-6">
+              <TimeLineChartDevis token={token}/>
+              <TimeLineChartCustomer token={token}/>
             </div>
             <div className="grid gap-6 xl:grid-cols-3 mb-6">
               <div className="xl:col-span-2 fade-in" style={{ animationDelay: '0.2s' }}>

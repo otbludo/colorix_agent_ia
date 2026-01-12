@@ -7,8 +7,6 @@ import { RecoveryDevis } from '../../api/post/RecoveryDevis'
 
 
 export function Estimates({ token, onEditDevis, onShowInfosDevis, onDeleteDevis, statusFilter, filters, onCountChange }) {
-  console.log('Estimates statusFilter:', statusFilter);
-  console.log('Estimates filters:', filters);
 
   // Pour les statuts normaux (valide, attente), on filtre côté client
   // Pour "supprime", on utilise l'API

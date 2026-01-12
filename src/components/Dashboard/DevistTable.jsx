@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { GetDevis } from '../../api/get/GetDevis'
 import { DevisFilter } from './DevisFilter'
-import { CustomersActionsDropdown } from '../Customer/CustomerActionsDropdown'
 import { DeleteConfirmModal } from '../global/DeleteConfirmModal'
 
 const statusColors = {
@@ -15,7 +14,6 @@ const statusColors = {
 
 export function DevistTable({ token, onEditDevis, onDeleteDevis }) {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
-  const [selectedDevis, setSelectedDevis] = useState(null)
 
   const [activeFilters, setActiveFilters] = useState({
     status: {
@@ -35,13 +33,6 @@ export function DevistTable({ token, onEditDevis, onDeleteDevis }) {
   useEffect(() => {
     if (isError) toast.error(error?.detail || error?.message || 'Erreur réseau')
   }, [isError])
-
-  // Debug: Afficher les données reçues
-  useEffect(() => {
-    if (devisList) {
-      console.log('DevistTable devisList:', devisList)
-    }
-  }, [devisList])
 
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString('fr-FR') : '—'
@@ -245,21 +236,6 @@ export function DevistTable({ token, onEditDevis, onDeleteDevis }) {
                 <td className="py-4 px-4 text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
                   {formatDate(devis.created_at)}
                 </td>
-
-                <td className="py-4 px-4">
-                  <CustomersActionsDropdown
-                    onEdit={() => {
-                      if (onEditDevis && typeof onEditDevis === 'function' && devis) {
-                        onEditDevis(devis)
-                      }
-                    }}
-                    onDelete={() => {
-                      if (devis) {
-                        setSelectedDevis(devis)
-                      }
-                    }}
-                  />
-                </td>
               </tr>
             )) : (
               <tr>
@@ -277,26 +253,6 @@ export function DevistTable({ token, onEditDevis, onDeleteDevis }) {
         </table>
       </div>
 
-      {/* Modal de confirmation de suppression */}
-      {selectedDevis && (
-        <DeleteConfirmModal
-          isOpen={!!selectedDevis}
-          onClose={() => setSelectedDevis(null)}
-          entityName={selectedDevis.name_product || 'ce devis'}
-          entityId={selectedDevis.id}
-          deleteApi={() => {
-            // Simulation de suppression - à remplacer par l'API réelle
-            console.log('Suppression du devis:', selectedDevis);
-            alert(`Devis "${selectedDevis.name_product}" supprimé avec succès`);
-            setSelectedDevis(null);
-          }}
-          isPending={false}
-          isSuccess={false}
-          isError={false}
-          data={null}
-          error={null}
-        />
-      )}
     </div>
   )
 }
