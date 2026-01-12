@@ -50,7 +50,6 @@ export function ProductScreen() {
         <div className="particle w-4 h-4 bottom-40 left-40"></div>
         <div className="particle w-1.5 h-1.5 top-60 right-20"></div>
       </div>
-
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} token={token} />
       <div className="flex flex-col lg:pl-[280px]">
         <Header onToggleSidebar={() => setIsSidebarOpen(true)} />
@@ -60,13 +59,11 @@ export function ProductScreen() {
             <div className="absolute inset-0 opacity-5 rounded-3xl">
               <div className="grid-pattern w-full h-full"></div>
             </div>
-
             <div className="relative z-10 flex flex-wrap gap-4 items-center justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold glow-text">Gestion des produits</h2>
                 <p className="text-slate-400 mt-1">Gérer les produits</p>
               </div>
-
               <div className="flex items-center gap-3 ">
                 <div className="relative">
                   <ButtonFilter

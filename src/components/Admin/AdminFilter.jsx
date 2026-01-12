@@ -61,12 +61,12 @@ export function AdminFilter({ isOpen, onClose, onApplyFilters, currentFilters })
             {['actif', 'inactif', 'supprime'].map(s => (
               <button key={s} onClick={() => toggleStatus(s)}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 backdrop-blur-sm hover:scale-105 ${filters.status[s]
-                    ? 'ring-2 ring-indigo-400/50'
-                    : ''
+                  ? 'ring-2 ring-indigo-400/50'
+                  : ''
                   } ${s === 'actif'
                     ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                     : s === 'inactif'
-                      ? 'bg-slate-500/20 text-slate-300 border border-slate-500/30'
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                       : 'bg-red-500/20 text-red-300 border border-red-500/30'
                   }`}
               >{s.charAt(0).toUpperCase() + s.slice(1)}</button>

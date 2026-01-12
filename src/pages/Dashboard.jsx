@@ -50,8 +50,7 @@ export function Dashboard() {
         <div className="particle w-2.5 h-2.5 bottom-20 right-40"></div>
         <div className="particle w-1 h-1 top-80 left-60"></div>
       </div>
-
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} token={token}/>
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} token={token} />
       <div className="flex flex-col lg:pl-[280px]">
         <Header
           onToggleSidebar={() => setIsSidebarOpen(true)}
@@ -62,7 +61,6 @@ export function Dashboard() {
             <div className="absolute inset-0 opacity-5 rounded-3xl">
               <div className="grid-pattern w-full h-full"></div>
             </div>
-
             <div className="relative z-10 mb-8">
               <h1 className="text-4xl font-bold mb-2 glow-text">
                 Dashboard Analytics
@@ -76,14 +74,6 @@ export function Dashboard() {
               <div className="xl:col-span-2 fade-in" style={{ animationDelay: '0.2s' }}>
                 <DevistTable
                   token={token}
-                  onEditDevis={(devis) => {
-                    // Logique d'édition de devis - à implémenter
-                    console.log('Éditer devis:', devis);
-                  }}
-                  onDeleteDevis={(devis) => {
-                    // Logique de suppression de devis - à implémenter
-                    console.log('Supprimer devis:', devis);
-                  }}
                 />
               </div>
               <div className="fade-in" style={{ animationDelay: '0.4s' }}>
@@ -106,8 +96,13 @@ export function Dashboard() {
           </div>
         </main>
       </div>
-
-      {/* Modal de suppression des catégories */}
+      <FormCustomerCategory
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        categoryToEdit={categoryToEdit}
+        isEditing={isEditing}
+        token={token}
+      />
       {categoryToDelete && (
         <DeleteConfirmModal
           isOpen={!!categoryToDelete}
@@ -122,15 +117,6 @@ export function Dashboard() {
           error={error}
         />
       )}
-
-      {/* Modal d'ajout/modification de catégories */}
-      <FormCustomerCategory
-        isOpen={isCategoryModalOpen}
-        onClose={() => setIsCategoryModalOpen(false)}
-        categoryToEdit={categoryToEdit}
-        isEditing={isEditing}
-        token={token}
-      />
       <ToastContainer position="bottom-center" />
     </div>
   )

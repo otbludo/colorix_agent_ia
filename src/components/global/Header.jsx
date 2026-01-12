@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { Search, Bell, ChevronDown, Menu } from 'lucide-react'
 import colorixLogo from '../../assets/Colo.svg'
@@ -21,10 +22,15 @@ export function Header({ onToggleSidebar }) {
     navigate('/dashboard')
   }
 
+  useEffect(() => {
+    if (error?.code == "invalid_token") {
+      navigate('/')
+    }
+  }, [isError, error])
 
-  // useEffect(() => {
-  //   if (isError) toast.error(error?.message || 'Erreur réseau !')
-  // }, [isError])
+  useEffect(() => {
+    if (isError) toast.error(error?.message || 'Erreur réseau !')
+  }, [isError])
 
   return (
     <>
